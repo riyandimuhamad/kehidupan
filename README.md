@@ -11,6 +11,7 @@
 
 - 🌾 **Kalkulator Beras & Pangan**: Hitung porsi makan (2x/3x), konsumsi kg/orang/hari, estimasi karung (5kg, 10kg, 25kg) & total biaya.
 - 💧 **Kalkulator Air Galon**: Estimasi konsumsi liter/hari, jumlah galon 19L, dan durasi ketahanan 1 galon.
+- 🚰 **Kalkulator Air PAM / PDAM**: Hitung konsumsi m³ air bersih harian/bulanan, biaya pemakaian + biaya administrasi meteran.
 - ⚡ **Kalkulator Listrik PLN**: Hitung daya VA, kWh harian, estimasi tagihan/token bulanan + estimasi pajak PPJ (5%).
 - 🔥 **Gas LPG Dapur**: Estimasi kebutuhan tabung gas 3kg Melon / 5.5kg / 12kg Bright Gas.
 - 🚗 **BBM & Transportasi**: Hitung jarak tempuh (km/hari), efisiensi kendaraan (km/L), dan biaya BBM.

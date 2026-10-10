@@ -32,6 +32,7 @@ export const BudgetStore = {
     return getFromStorage(STORAGE_KEY_BUDGETS, {
       beras: { id: 'beras', name: 'Beras & Pangan', amount: 300000, category: 'Pokok', source: 'Kalkulator Beras' },
       air: { id: 'air', name: 'Air Galon Minum', amount: 80000, category: 'Pokok', source: 'Kalkulator Air' },
+      airpam: { id: 'airpam', name: 'Air PAM / PDAM', amount: 120000, category: 'Pokok', source: 'Kalkulator Air PAM' },
       listrik: { id: 'listrik', name: 'Listrik PLN', amount: 450000, category: 'Pokok', source: 'Kalkulator Listrik' },
       gas: { id: 'gas', name: 'Gas LPG Dapur', amount: 44000, category: 'Pokok', source: 'Kalkulator Gas' },
       transport: { id: 'transport', name: 'BBM & Transportasi', amount: 300000, category: 'Pokok', source: 'Kalkulator Transport' },

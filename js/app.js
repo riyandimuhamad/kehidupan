@@ -4,6 +4,7 @@
 
 import { BerasModule } from './modules/beras.js';
 import { AirModule } from './modules/air.js';
+import { AirPamModule } from './modules/airpam.js';
 import { ListrikModule } from './modules/listrik.js';
 import { GasModule } from './modules/gas.js';
 import { TransportModule } from './modules/transport.js';
@@ -26,6 +27,7 @@ class KehidupanApp {
     this.modules = {
       beras: BerasModule,
       air: AirModule,
+      airpam: AirPamModule,
       listrik: ListrikModule,
       gas: GasModule,
       transport: TransportModule,
@@ -101,37 +103,6 @@ class KehidupanApp {
           this.loadModule(moduleId);
         }
       }
-    });
-
-    // Mouse Drag-to-Scroll support for Nav Bar
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    this.navTabs.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.nav-btn')) return; // don't block click
-      isDown = true;
-      startX = e.pageX - this.navTabs.offsetLeft;
-      scrollLeft = this.navTabs.scrollLeft;
-      this.navTabs.style.cursor = 'grabbing';
-    });
-
-    this.navTabs.addEventListener('mouseleave', () => {
-      isDown = false;
-      this.navTabs.style.cursor = 'grab';
-    });
-
-    this.navTabs.addEventListener('mouseup', () => {
-      isDown = false;
-      this.navTabs.style.cursor = 'grab';
-    });
-
-    this.navTabs.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - this.navTabs.offsetLeft;
-      const walk = (x - startX) * 2;
-      this.navTabs.scrollLeft = scrollLeft - walk;
     });
 
     // Dynamic delete budget item & topup listener in table

@@ -22,7 +22,7 @@ export const SpreadsheetService = {
       timestamp: new Date().toISOString(),
       formattedDate: formatDate(new Date()),
       pemasukanBulanan: summary.income,
-      totalPengeluaran: summary.totalPengeluaran,
+      totalPengeluaran: summary.totalPengeluaranTotal,
       totalKebutuhanPokok: summary.totalPokok,
       totalTabungan: summary.totalTabungan,
       sisaUang: summary.sisaUang,
@@ -63,34 +63,69 @@ export const SpreadsheetService = {
   // Google Apps Script Template code to copy
   getAppsScriptTemplate: () => {
     return `// =======================================================
-// PASTE KODE INI DI GOOGLE SHEETS: Extension -> Apps Script
+// SKRIP GOOGLE APPS SCRIPT DATABASE - KEHIDUPAN SUITE
+// Pasang di Google Sheets: Menu Extensions -> Apps Script
 // =======================================================
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    // Header jika sheet masih kosong
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Tanggal", "Pemasukan", "Total Pengeluaran", "Total Pokok", "Total Tabungan", "Sisa Uang", "Detail Rincian"]);
-      sheet.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#6366f1").setFontColor("#ffffff");
+    // Sheet 1: Ringkasan Cashflow Bulanan
+    var sheetSummary = ss.getSheetByName("Ringkasan Cashflow") || ss.getActiveSheet();
+    sheetSummary.setName("Ringkasan Cashflow");
+    
+    if (sheetSummary.getLastRow() === 0) {
+      sheetSummary.appendRow(["Tanggal Sync", "Pemasukan", "Total Pengeluaran", "Total Pokok", "Total Tabungan", "Sisa Uang Net", "Rincian Pos Ringkas"]);
+      sheetSummary.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#6366f1").setFontColor("#ffffff");
     }
     
-    var detailText = data.detailBudgets.map(function(b) {
-      return b.nama + ": Rp " + b.jumlahBiaya;
-    }).join(" | ");
+    var detailText = data.detailBudgets ? data.detailBudgets.map(function(b) {
+      return b.nama + ": Rp " + Number(b.jumlahBiaya).toLocaleString('id-ID');
+    }).join(" | ") : "";
     
-    sheet.appendRow([
-      data.formattedDate,
-      data.pemasukanBulanan,
-      data.totalPengeluaran,
-      data.totalKebutuhanPokok,
-      data.totalTabungan,
-      data.sisaUang,
+    sheetSummary.appendRow([
+      data.formattedDate || new Date().toLocaleDateString('id-ID'),
+      data.pemasukanBulanan || 0,
+      data.totalPengeluaran || 0,
+      data.totalKebutuhanPokok || 0,
+      data.totalTabungan || 0,
+      data.sisaUang || 0,
       detailText
     ]);
     
-    return ContentService.createTextOutput(JSON.stringify({result: "success"}))
+    // Format mata uang Rupiah untuk kolom angka
+    var lastRow = sheetSummary.getLastRow();
+    if (lastRow > 1) {
+      sheetSummary.getRange(lastRow, 2, 1, 5).setNumberFormat('"Rp "#,##0');
+    }
+    
+    // Sheet 2: Detail Pos Anggaran (Breakdown Rinci)
+    var sheetDetail = ss.getSheetByName("Detail Pos Anggaran");
+    if (!sheetDetail) {
+      sheetDetail = ss.insertSheet("Detail Pos Anggaran");
+    }
+    if (sheetDetail.getLastRow() === 0) {
+      sheetDetail.appendRow(["Tanggal Sync", "ID Pos", "Nama Pos", "Kategori", "Jumlah Alokasi (Rp)", "Sumber"]);
+      sheetDetail.getRange(1, 1, 1, 6).setFontWeight("bold").setBackground("#10b981").setFontColor("#ffffff");
+    }
+    
+    if (data.detailBudgets && data.detailBudgets.length > 0) {
+      data.detailBudgets.forEach(function(item) {
+        sheetDetail.appendRow([
+          data.formattedDate || new Date().toLocaleDateString('id-ID'),
+          item.id,
+          item.nama,
+          item.kategori,
+          item.jumlahBiaya,
+          item.sumber
+        ]);
+        var dLastRow = sheetDetail.getLastRow();
+        sheetDetail.getRange(dLastRow, 5).setNumberFormat('"Rp "#,##0');
+      });
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({result: "success", message: "Data berhasil disimpan!"}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({result: "error", error: err.toString()}))
