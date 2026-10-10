@@ -132,13 +132,22 @@ class KehidupanApp {
       this.navTabs.scrollLeft = scrollLeft - walk;
     });
 
-    // Dynamic delete budget item listener in table
+    // Dynamic delete budget item & topup listener in table
     this.breakdownTable.addEventListener('click', (e) => {
       const delBtn = e.target.closest('.delete-budget-btn');
       if (delBtn) {
         const id = delBtn.getAttribute('data-id');
         if (id) {
           BudgetStore.removeBudgetItem(id);
+          this.calculateActiveModule();
+        }
+      }
+
+      const delTopupBtn = e.target.closest('.delete-topup-btn');
+      if (delTopupBtn) {
+        const id = delTopupBtn.getAttribute('data-id');
+        if (id) {
+          BudgetStore.removeExtraTopup(id);
           this.calculateActiveModule();
         }
       }

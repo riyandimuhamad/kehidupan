@@ -1,5 +1,5 @@
 /**
- * Modul Dashboard Keuangan & Budget Planner
+ * Modul Dashboard Keuangan & Budget Planner (Dengan Buffer Safety & Top-Up Dadakan)
  * Kehidupan App Suite
  */
 
@@ -13,7 +13,7 @@ export const DashboardModule = {
   icon: 'fa-chart-line',
   badge: 'Perencanaan Keuangan Rumah Tangga',
   title: 'Dashboard Keuangan & Alokasi Anggaran',
-  subtitle: 'Integrasikan hasil kalkulasi kebutuhan (Beras, Air, Listrik, Gas) dengan Pemasukan Bulanan & Sinkronisasi ke Google Sheets.',
+  subtitle: 'Integrasikan hasil kalkulasi kebutuhan dengan Pemasukan Bulanan, Dana Cadangan Buffer, Top-Up Dadakan & Google Sheets.',
 
   defaults: {},
 
@@ -30,17 +30,45 @@ export const DashboardModule = {
         </div>
         <div class="form-options">
           <button type="button" class="option-chip" data-target="monthly_income_input" data-val="3000000">Rp 3 Jt</button>
-          <button type="button" class="option-chip active" data-target="monthly_income_input" data-val="5000000">Rp 5 Jt</button>
+          <button type="button" class="option-chip active" data-target="monthly_income_input" data-val="6000000">Rp 6 Jt</button>
           <button type="button" class="option-chip" data-target="monthly_income_input" data-val="10000000">Rp 10 Jt</button>
-          <button type="button" class="option-chip" data-target="monthly_income_input" data-val="15000000">Rp 15 Jt</button>
         </div>
       </div>
 
-      <!-- Tambah Item Custom Manual -->
-      <div class="add-custom-budget-box" style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-top: 18px;">
-        <h4 style="font-size: 0.88rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main);"><i class="fa-plus fa-solid"></i> Tambah Pos Pengeluaran Lain</h4>
+      <!-- Buffer Safety Margin (% Risk Mitigation if items run out early) -->
+      <div class="form-group">
+        <label for="buffer_percent_input">Dana Cadangan Buffer <span class="unit">(Safety Margin % Jika Habis Awal)</span></label>
+        <div class="input-wrapper">
+          <i class="fa-shield-heart fa-solid input-icon"></i>
+          <input type="number" id="buffer_percent_input" class="form-control" min="0" max="50" step="5" value="${summary.bufferPercent}">
+        </div>
+        <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
+          *Menyisihkan <strong>${formatRupiah(summary.danaBufferSafety)}</strong> (${summary.bufferPercent}%) untuk mengantisipasi jika beras/BBM/gas habis di minggu ke-3.
+        </p>
+      </div>
+
+      <!-- Catat Top-Up Dadakan / Pengeluaran Lebih (Minggu 3 / Habis Awal) -->
+      <div class="add-custom-budget-box" style="background: rgba(245, 158, 11, 0.08); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(245, 158, 11, 0.25); margin-top: 18px;">
+        <h4 style="font-size: 0.88rem; font-weight: 700; margin-bottom: 6px; color: var(--accent-amber);">
+          <i class="fa-bolt-lightning fa-solid"></i> Catat Top-Up Dadakan (Kebutuhan Habis Awal)
+        </h4>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
+          Jika BBM/Beras/Galon habis di minggu ke-3, catat pengeluaran ekstra di sini:
+        </p>
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <input type="text" id="custom_name_input" class="form-control" placeholder="Nama Pos (misal: Transportasi)" style="padding-left: 12px; font-size: 0.85rem;">
+          <input type="text" id="topup_item_name" class="form-control" placeholder="Nama (misal: BBM Tambahan M3)" style="padding-left: 12px; font-size: 0.85rem;">
+          <input type="number" id="topup_item_amount" class="form-control" placeholder="Nominal (Rp)" style="padding-left: 12px; font-size: 0.85rem; width: 140px;">
+        </div>
+        <button type="button" id="addExtraTopupBtn" class="primary-btn" style="background: linear-gradient(135deg, var(--accent-amber), #d97706); width: 100%; padding: 8px 14px; font-size: 0.82rem; justify-content: center;">
+          <i class="fa-plus fa-solid"></i> Tambah Catatan Top-Up Dadakan
+        </button>
+      </div>
+
+      <!-- Tambah Item Custom Pos Manual -->
+      <div class="add-custom-budget-box" style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-top: 18px;">
+        <h4 style="font-size: 0.88rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main);"><i class="fa-plus fa-solid"></i> Tambah Pos Pengeluaran Manual</h4>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" id="custom_name_input" class="form-control" placeholder="Nama Pos (misal: Cicilan)" style="padding-left: 12px; font-size: 0.85rem;">
           <input type="number" id="custom_amount_input" class="form-control" placeholder="Biaya (Rp)" style="padding-left: 12px; font-size: 0.85rem; width: 140px;">
         </div>
         <div style="display: flex; gap: 8px;">
@@ -79,11 +107,18 @@ export const DashboardModule = {
       </div>
     `;
 
-    // Listeners for inputs
+    // Listeners for income & buffer
     const incomeInput = container.querySelector('#monthly_income_input');
     incomeInput.addEventListener('input', (e) => {
       const val = parseFloat(e.target.value) || 0;
       BudgetStore.setIncome(val);
+      onInputChange();
+    });
+
+    const bufferInput = container.querySelector('#buffer_percent_input');
+    bufferInput.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      BudgetStore.setBufferPercent(val);
       onInputChange();
     });
 
@@ -97,6 +132,20 @@ export const DashboardModule = {
         chip.classList.add('active');
         onInputChange();
       });
+    });
+
+    // Add Extra Top-Up listener
+    const addTopupBtn = container.querySelector('#addExtraTopupBtn');
+    addTopupBtn.addEventListener('click', () => {
+      const name = container.querySelector('#topup_item_name').value.trim();
+      const amount = parseFloat(container.querySelector('#topup_item_amount').value);
+
+      if (name && amount > 0) {
+        BudgetStore.addExtraTopup({ name, amount });
+        container.querySelector('#topup_item_name').value = '';
+        container.querySelector('#topup_item_amount').value = '';
+        onInputChange();
+      }
     });
 
     // Add Custom Budget listener
@@ -145,7 +194,6 @@ export const DashboardModule = {
     const summary = BudgetStore.getFinancialSummary();
 
     const isHealthy = summary.sisaUang >= 0;
-    const isPokokOver = summary.totalPokok > summary.targetPokok;
 
     const summaryCards = [
       {
@@ -156,23 +204,24 @@ export const DashboardModule = {
         type: 'emerald'
       },
       {
-        title: 'Total Pengeluaran Alokasi',
-        value: formatRupiah(summary.totalPengeluaran),
-        note: `${formatNumber(summary.persentasePengeluaran, 1)}% dari Pemasukan`,
+        title: 'Total Budget + Buffer Safety',
+        value: formatRupiah(summary.totalPengeluaranRencana),
+        note: `Termasuk Buffer Safety ${formatRupiah(summary.danaBufferSafety)} (${summary.bufferPercent}%)`,
         icon: 'fa-basket-shopping',
-        type: isPokokOver ? 'amber' : 'sky'
+        type: 'sky'
       },
       {
-        title: 'Sisa Uang Bulanan',
+        title: 'Sisa Uang Bulanan Net',
         value: formatRupiah(summary.sisaUang),
-        note: isHealthy ? '🟢 Cashflow Sehat & Positif' : '🔴 Peringatan: Defisit Anggaran',
+        note: isHealthy ? '🟢 Cashflow Sehat' : '🔴 Peringatan: Defisit Anggaran',
         icon: 'fa-piggy-bank',
         type: isHealthy ? 'emerald' : 'amber'
       }
     ];
 
-    const tableHeaders = ['Pos Anggaran', 'Kategori', 'Sumber / Kalkulator', 'Jumlah Alokasi (Rp)', 'Aksi'];
+    const tableHeaders = ['Pos Anggaran', 'Kategori', 'Sumber / Jenis', 'Jumlah Alokasi (Rp)', 'Aksi'];
     
+    // Primary Budget Rows
     const tableRows = summary.budgetsList.map(b => ({
       isCurrent: false,
       cells: [
@@ -184,20 +233,45 @@ export const DashboardModule = {
       ]
     }));
 
+    // Add Buffer Safety Net Row
+    if (summary.danaBufferSafety > 0) {
+      tableRows.push({
+        isCurrent: false,
+        cells: [
+          `<strong>🛡️ Buffer Cadangan Safety (${summary.bufferPercent}%)</strong>`,
+          `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">Safety Net</span>`,
+          `Cadangan Habis Awal`,
+          `<span class="highlight" style="color: var(--accent-amber);">${formatRupiah(summary.danaBufferSafety)}</span>`,
+          `-`
+        ]
+      });
+    }
+
+    // Add Extra Top-Up Rows (Habis awal & Beli Lagi)
+    summary.extraTopupsList.forEach(t => {
+      tableRows.push({
+        isCurrent: false,
+        cells: [
+          `<strong>⚡ ${t.name} (Top-Up Dadakan)</strong>`,
+          `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);">Top-Up Extra</span>`,
+          `Dicatat ${t.date}`,
+          `<span class="highlight" style="color: var(--accent-rose);">${formatRupiah(t.amount)}</span>`,
+          `<button type="button" class="sm-btn delete-topup-btn" data-id="${t.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3);"><i class="fa-trash fa-solid"></i> Hapus</button>`
+        ]
+      });
+    });
+
     return {
       summaryCards,
       tableHeaders,
       tableRows,
       chartData: {
-        labels: summary.budgetsList.map(b => b.name),
+        labels: ['Kebutuhan Pokok', 'Tabungan/Darurat', 'Buffer Safety Net', 'Top-Up Extra Dadakan'],
         datasets: [
           {
-            label: 'Alokasi Pengeluaran (Rp)',
-            data: summary.budgetsList.map(b => b.amount),
-            backgroundColor: [
-              '#6366f1', '#10b981', '#f59e0b', '#06b6d4', '#ec4899', '#8b5cf6'
-            ],
-            borderWidth: 1
+            label: 'Distribusi Anggaran & Pengeluaran',
+            data: [summary.totalPokok, summary.totalTabungan, summary.danaBufferSafety, summary.totalExtraTopups],
+            backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#f43f5e']
           }
         ]
       },

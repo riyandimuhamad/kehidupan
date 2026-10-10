@@ -1,26 +1,33 @@
 /**
  * Store Service for Managing Household Income, Saved Budget Allocations,
- * and Financial Overview Cashflow.
+ * Buffer Reserve, Extra Top-Ups, and Financial Overview Cashflow.
  */
 
 import { saveToStorage, getFromStorage } from '../utils/formatters.js';
 
 const STORAGE_KEY_INCOME = 'monthly_income';
 const STORAGE_KEY_BUDGETS = 'saved_budgets';
+const STORAGE_KEY_EXTRA_TOPUPS = 'extra_topups';
+const STORAGE_KEY_BUFFER_PERCENT = 'buffer_percent';
 const STORAGE_KEY_SHEET_URL = 'spreadsheet_webhook_url';
 
 export const BudgetStore = {
-  // Get Monthly Income
   getIncome: () => {
-    return getFromStorage(STORAGE_KEY_INCOME, 6000000); // Default Rp 6.000.000
+    return getFromStorage(STORAGE_KEY_INCOME, 6000000);
   },
 
-  // Set Monthly Income
   setIncome: (amount) => {
     saveToStorage(STORAGE_KEY_INCOME, amount);
   },
 
-  // Get Saved Budget Allocations
+  getBufferPercent: () => {
+    return getFromStorage(STORAGE_KEY_BUFFER_PERCENT, 10); // Default 10% safety buffer
+  },
+
+  setBufferPercent: (percent) => {
+    saveToStorage(STORAGE_KEY_BUFFER_PERCENT, percent);
+  },
+
   getBudgets: () => {
     return getFromStorage(STORAGE_KEY_BUDGETS, {
       beras: { id: 'beras', name: 'Beras & Pangan', amount: 300000, category: 'Pokok', source: 'Kalkulator Beras' },
@@ -29,7 +36,7 @@ export const BudgetStore = {
       gas: { id: 'gas', name: 'Gas LPG Dapur', amount: 44000, category: 'Pokok', source: 'Kalkulator Gas' },
       transport: { id: 'transport', name: 'BBM & Transportasi', amount: 300000, category: 'Pokok', source: 'Kalkulator Transport' },
       internet: { id: 'internet', name: 'Internet & Paket Data', amount: 275000, category: 'Pokok', source: 'Kalkulator Internet' },
-      sembako: { id: 'sembako', name: 'Sembako & Kebersihan', amount: 200000, category: 'Pokok', source: 'Kalkulator Sembako' },
+      sembako: { id: 'sembako', name: 'Sembako & Kebersihan', amount: 350000, category: 'Pokok', source: 'Kalkulator Sembako' },
       sewa: { id: 'sewa', name: 'Hunian & Tempat Tinggal', amount: 1500000, category: 'Pokok', source: 'Kalkulator Sewa' },
       sandang: { id: 'sandang', name: 'Sandang & Grooming', amount: 200000, category: 'Pokok', source: 'Kalkulator Sandang' },
       kesehatan: { id: 'kesehatan', name: 'Kesehatan & BPJS', amount: 350000, category: 'Pokok', source: 'Kalkulator Kesehatan' },
@@ -38,7 +45,6 @@ export const BudgetStore = {
     });
   },
 
-  // Save / Update Budget Item
   saveBudgetItem: (id, data) => {
     const current = BudgetStore.getBudgets();
     current[id] = {
@@ -50,7 +56,6 @@ export const BudgetStore = {
     return current;
   },
 
-  // Delete Budget Item
   removeBudgetItem: (id) => {
     const current = BudgetStore.getBudgets();
     delete current[id];
@@ -58,7 +63,30 @@ export const BudgetStore = {
     return current;
   },
 
-  // Spreadsheet Webhook URL
+  // Extra Top-Up Transactions (Habis awal & Beli Lagi)
+  getExtraTopups: () => {
+    return getFromStorage(STORAGE_KEY_EXTRA_TOPUPS, []);
+  },
+
+  addExtraTopup: (topup) => {
+    const current = BudgetStore.getExtraTopups();
+    const newTopup = {
+      id: 'topup_' + Date.now(),
+      date: new Date().toLocaleDateString('id-ID'),
+      ...topup
+    };
+    const updated = [newTopup, ...current];
+    saveToStorage(STORAGE_KEY_EXTRA_TOPUPS, updated);
+    return updated;
+  },
+
+  removeExtraTopup: (id) => {
+    const current = BudgetStore.getExtraTopups();
+    const updated = current.filter(t => t.id !== id);
+    saveToStorage(STORAGE_KEY_EXTRA_TOPUPS, updated);
+    return updated;
+  },
+
   getSpreadsheetUrl: () => {
     return getFromStorage(STORAGE_KEY_SHEET_URL, '');
   },
@@ -67,10 +95,11 @@ export const BudgetStore = {
     saveToStorage(STORAGE_KEY_SHEET_URL, url);
   },
 
-  // Calculate Overall Financial Overview
   getFinancialSummary: () => {
     const income = BudgetStore.getIncome();
     const budgets = BudgetStore.getBudgets();
+    const bufferPercent = BudgetStore.getBufferPercent();
+    const extraTopups = BudgetStore.getExtraTopups();
 
     let totalPokok = 0;
     let totalTabungan = 0;
@@ -83,29 +112,36 @@ export const BudgetStore = {
       } else if (b.category === 'Lainnya') {
         totalLainnya += amt;
       } else {
-        totalPokok += amt; // Default Pokok / Living
+        totalPokok += amt;
       }
     });
 
-    const totalPengeluaran = totalPokok + totalTabungan + totalLainnya;
-    const sisaUang = income - totalPengeluaran;
-    const persentasePengeluaran = income > 0 ? Math.min(100, (totalPengeluaran / income) * 100) : 0;
+    // Calculate Buffer Reserve (Safety Net for items running out early)
+    const danaBufferSafety = (totalPokok * bufferPercent) / 100;
 
-    // Ideal Allocation Standard
-    const targetPokok = income * 0.50;
-    const targetTabungan = income * 0.20;
+    // Calculate Actual Extra Top-Ups (Beli lagi di minggu ke-3)
+    const totalExtraTopups = extraTopups.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+
+    const totalPengeluaranRencana = totalPokok + totalTabungan + totalLainnya + danaBufferSafety;
+    const totalPengeluaranTotal = totalPengeluaranRencana + totalExtraTopups;
+
+    const sisaUang = income - totalPengeluaranTotal;
+    const persentasePengeluaran = income > 0 ? Math.min(100, (totalPengeluaranTotal / income) * 100) : 0;
 
     return {
       income,
+      bufferPercent,
+      danaBufferSafety,
+      totalExtraTopups,
       totalPokok,
       totalTabungan,
       totalLainnya,
-      totalPengeluaran,
+      totalPengeluaranRencana,
+      totalPengeluaranTotal,
       sisaUang,
       persentasePengeluaran,
-      targetPokok,
-      targetTabungan,
-      budgetsList: Object.values(budgets)
+      budgetsList: Object.values(budgets),
+      extraTopupsList: extraTopups
     };
   }
 };
