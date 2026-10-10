@@ -240,15 +240,18 @@ class KehidupanApp {
     const textColor = isDark ? '#94a3b8' : '#475569';
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
+    const firstDataset = chartData?.datasets?.[0];
+    const isMultiColorBar = firstDataset?.backgroundColor && Array.isArray(firstDataset.backgroundColor) && firstDataset.backgroundColor.length > 1;
+
     this.chartInstance = new Chart(this.analysisChartCtx, {
-      type: 'bar',
+      type: chartData.type || 'bar',
       data: chartData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
+            display: !isMultiColorBar,
             labels: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } }
           },
           tooltip: {
@@ -256,16 +259,37 @@ class KehidupanApp {
             titleColor: isDark ? '#ffffff' : '#000000',
             bodyColor: isDark ? '#94a3b8' : '#333333',
             borderColor: 'rgba(99,102,241,0.3)',
-            borderWidth: 1
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(context.parsed.y);
+                }
+                return label;
+              }
+            }
           }
         },
         scales: {
           x: {
-            ticks: { color: textColor, font: { family: 'Plus Jakarta Sans' } },
+            ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } },
             grid: { color: gridColor }
           },
           y: {
-            ticks: { color: textColor, font: { family: 'Plus Jakarta Sans' } },
+            ticks: {
+              color: textColor,
+              font: { family: 'Plus Jakarta Sans' },
+              callback: function(value) {
+                if (value >= 1000000) {
+                  return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + ' Jt';
+                }
+                return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+              }
+            },
             grid: { color: gridColor }
           }
         }
