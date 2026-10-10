@@ -1,145 +1,327 @@
 /**
- * Modul Kalkulator Internet & Paket Data
+ * Modul Kalkulator Internet & Paket Data (Multi-HP & WiFi Rumah)
  * Kehidupan App Suite
  */
 
-import { formatRupiah, formatNumber } from '../utils/formatters.js';
+import { formatRupiah, formatNumber, saveToStorage, getFromStorage } from '../utils/formatters.js';
 import { BudgetStore } from '../services/budgetStore.js';
+
+const STORAGE_KEY_INTERNET_SETTINGS = 'internet_settings';
+const STORAGE_KEY_HP_LIST = 'hp_list';
+
+const DEFAULT_SETTINGS = {
+  enable_wifi: true,
+  enable_hp: true,
+  provider_wifi: 'IndiHome / Biznet',
+  biaya_wifi: 275000
+};
+
+const DEFAULT_HP_LIST = [
+  {
+    id: 'hp_1710000000001',
+    nama: 'HP Utama / Ayah',
+    provider: 'Telkomsel / by.U',
+    nominal: 100000
+  },
+  {
+    id: 'hp_1710000000002',
+    nama: 'HP Ibu',
+    provider: 'Indosat IM3 / Tri (3)',
+    nominal: 75000
+  }
+];
 
 export const InternetModule = {
   id: 'internet',
   name: 'Internet & Data',
   icon: 'fa-wifi',
-  badge: 'Module Komunikasi',
-  title: 'Kalkulator Internet & Paket Data',
-  subtitle: 'Hitung estimasi pengeluaran langganan WiFi rumah dan paket data seluler bulanan keluarga.',
+  badge: 'Module Komunikasi & Data',
+  title: 'Kalkulator Internet & Paket Data HP Keluarga',
+  subtitle: 'Hitung pengeluaran bulanan langganan WiFi Rumah dan/atau paket data seluler multi-HP keluarga secara fleksibel.',
 
-  defaults: {
-    tipe_layanan: 'wifi',
-    paket_wifi: 275000,
-    jumlah_hp: 2,
-    harga_paket_data: 75000
+  defaults: {},
+
+  getSettings: () => {
+    return getFromStorage(STORAGE_KEY_INTERNET_SETTINGS, DEFAULT_SETTINGS);
+  },
+
+  saveSettings: (settings) => {
+    saveToStorage(STORAGE_KEY_INTERNET_SETTINGS, settings);
+  },
+
+  getHpList: () => {
+    return getFromStorage(STORAGE_KEY_HP_LIST, DEFAULT_HP_LIST);
+  },
+
+  saveHpList: (hpList) => {
+    saveToStorage(STORAGE_KEY_HP_LIST, hpList);
   },
 
   renderForm: (container, onInputChange) => {
+    const settings = InternetModule.getSettings();
+    const hpList = InternetModule.getHpList();
+
+    const renderHpItem = (hp, index) => {
+      return `
+        <div class="card hp-item-card" data-hpid="${hp.id}" style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-mobile-screen-button fa-solid" style="color: var(--accent-sky); font-size: 1rem;"></i>
+              <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Nomor / HP #${index + 1}: ${hp.nama || 'Tanpa Nama'}</span>
+            </div>
+            <button type="button" class="sm-btn delete-hp-btn" data-hpid="${hp.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 2px 8px; font-size: 0.75rem;">
+              <i class="fa-trash fa-solid"></i> Hapus
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.74rem;">Label / Pemilik HP</label>
+              <input type="text" class="form-control hp-input-nama" data-hpid="${hp.id}" value="${hp.nama}" placeholder="Contoh: HP Ayah" style="font-size: 0.8rem; padding: 6px 10px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.74rem;">Provider / Kartu</label>
+              <select class="form-control hp-input-provider" data-hpid="${hp.id}" style="font-size: 0.8rem; padding: 6px 10px;">
+                <option value="Telkomsel / by.U" ${hp.provider === 'Telkomsel / by.U' || hp.provider === 'Telkomsel' || hp.provider === 'By.U' ? 'selected' : ''}>Telkomsel / by.U</option>
+                <option value="Indosat IM3 / Tri (3)" ${hp.provider === 'Indosat IM3 / Tri (3)' || hp.provider === 'Indosat' || hp.provider === 'Tri (3)' ? 'selected' : ''}>Indosat IM3 / Tri (3)</option>
+                <option value="XL / Axis / Smartfren" ${hp.provider === 'XL / Axis / Smartfren' || hp.provider === 'XL Axiata' || hp.provider === 'Smartfren' ? 'selected' : ''}>XL / Axis / Smartfren</option>
+                <option value="Lainnya" ${hp.provider === 'Lainnya' ? 'selected' : ''}>Lainnya / Provider Lain</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.74rem;">Nominal Paket Data per Bulan <span style="color: var(--text-muted);">(Rp/Bulan)</span></label>
+            <input type="number" class="form-control hp-input-nominal" data-hpid="${hp.id}" value="${hp.nominal}" step="5000" placeholder="Ketik biaya paket data (misal: 75000)" style="font-size: 0.8rem; padding: 6px 10px;">
+          </div>
+        </div>
+      `;
+    };
+
     container.innerHTML = `
-      <div class="form-group">
-        <label for="paket_wifi">Biaya Langganan WiFi Rumah <span class="unit">(Rupiah/Bulan)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-house-signal fa-solid input-icon"></i>
-          <input type="number" id="paket_wifi" class="form-control" step="10000" value="275000">
-        </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="paket_wifi" data-val="0">Tanpa WiFi (Rp 0)</button>
-          <button type="button" class="option-chip active" data-target="paket_wifi" data-val="275000">IndiHome/Iconnet (Rp 275k)</button>
-          <button type="button" class="option-chip" data-target="paket_wifi" data-val="385000">Biznet/FirstMedia (Rp 385k)</button>
+      <!-- Mode Selection: WiFi Rumah & Paket Data HP Toggles -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+        <label class="toggle-card ${settings.enable_wifi ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_wifi ? 'var(--primary)' : 'var(--border-color)'}; background: ${settings.enable_wifi ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-wifi fa-solid" style="color: var(--primary); font-size: 1.1rem;"></i>
+            <div>
+              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">WiFi Rumah</strong>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">IndiHome, Biznet, dll</span>
+            </div>
+          </div>
+          <input type="checkbox" id="toggleWifi" ${settings.enable_wifi ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+        </label>
+
+        <label class="toggle-card ${settings.enable_hp ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_hp ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${settings.enable_hp ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-mobile-screen fa-solid" style="color: var(--accent-emerald); font-size: 1.1rem;"></i>
+            <div>
+              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Paket Data HP</strong>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">Multi-Nomor HP</span>
+            </div>
+          </div>
+          <input type="checkbox" id="toggleHp" ${settings.enable_hp ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent-emerald); cursor: pointer;">
+        </label>
+      </div>
+
+      <!-- Section 1: WiFi Rumah (If ON) -->
+      <div id="wifiSection" style="display: ${settings.enable_wifi ? 'block' : 'none'}; background: rgba(99, 102, 241, 0.05); padding: 14px; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.25); margin-bottom: 16px;">
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-house-signal fa-solid"></i> Langganan WiFi Rumah / Fixed Broadband
+        </h4>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="provider_wifi" style="font-size: 0.76rem;">Nama Provider WiFi</label>
+            <input type="text" id="provider_wifi" class="form-control" placeholder="IndiHome / Biznet / Iconnet" value="${settings.provider_wifi || ''}" style="font-size: 0.8rem; padding: 6px 10px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="biaya_wifi" style="font-size: 0.76rem;">Biaya Langganan <span class="unit">(Rp/Bulan)</span></label>
+            <input type="number" id="biaya_wifi" class="form-control" step="10000" placeholder="Ketik tagihan bulanan" value="${settings.biaya_wifi}" style="font-size: 0.8rem; padding: 6px 10px;">
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="jumlah_hp">Jumlah HP / Nomor Seluler Aktiv</label>
-        <div class="input-wrapper">
-          <i class="fa-mobile-screen-button fa-solid input-icon"></i>
-          <input type="number" id="jumlah_hp" class="form-control" min="0" max="20" value="2">
-        </div>
-      </div>
+      <!-- Section 2: Paket Data HP Seluler (If ON) -->
+      <div id="hpSection" style="display: ${settings.enable_hp ? 'block' : 'none'}; margin-bottom: 16px;">
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--accent-emerald); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-sim-card fa-solid"></i> Rincian Paket Data Seluler (${hpList.length} HP / Nomor)
+        </h4>
 
-      <div class="form-group">
-        <label for="harga_paket_data">Rata-rata Paket Data per HP <span class="unit">(Rupiah/Bulan)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-sim-card fa-solid input-icon"></i>
-          <input type="number" id="harga_paket_data" class="form-control" step="5000" value="75000">
+        <div id="hpListContainer">
+          ${hpList.map((hp, idx) => renderHpItem(hp, idx)).join('')}
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="harga_paket_data" data-val="50000">Hemat (Rp 50.000)</button>
-          <button type="button" class="option-chip active" data-target="harga_paket_data" data-val="75000">Standar (Rp 75.000)</button>
-          <button type="button" class="option-chip" data-target="harga_paket_data" data-val="125000">Kuota Besar (Rp 125.000)</button>
-        </div>
-      </div>
 
-      <!-- Action Sync to Budget Dashboard Button -->
-      <div style="margin-top: 20px; text-align: center;">
-        <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
-          <i class="fa-bookmark fa-solid"></i> Simpan ke Dashboard Budget Bulanan
+        <button type="button" id="addHpBtn" class="outline-btn" style="width: 100%; justify-content: center; padding: 8px; font-size: 0.82rem;">
+          <i class="fa-plus fa-solid"></i> Tambah Nomor HP / Paket Data Baru
         </button>
-        <span id="saveNotice" style="font-size: 0.76rem; color: var(--accent-emerald); display: block; margin-top: 6px;"></span>
+      </div>
+
+      <!-- Save Button -->
+      <div style="margin-top: 14px;">
+        <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669); padding: 10px;">
+          <i class="fa-bookmark fa-solid"></i> Simpan Total Ke Dashboard Budget Bulanan
+        </button>
+        <span id="saveNotice" style="font-size: 0.76rem; color: var(--accent-emerald); text-align: center; display: block; margin-top: 6px;"></span>
       </div>
     `;
 
-    const inputs = container.querySelectorAll('input');
-    inputs.forEach(input => input.addEventListener('input', () => onInputChange()));
+    // Toggle Checkboxes Listeners
+    const toggleWifi = container.querySelector('#toggleWifi');
+    const toggleHp = container.querySelector('#toggleHp');
 
-    const chips = container.querySelectorAll('.option-chip');
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        const targetId = chip.getAttribute('data-target');
-        const val = chip.getAttribute('data-val');
-        const targetInput = container.querySelector(`#${targetId}`);
-        if (targetInput) {
-          targetInput.value = val;
-          container.querySelectorAll(`.option-chip[data-target="${targetId}"]`).forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          onInputChange();
-        }
-      });
+    toggleWifi.addEventListener('change', () => {
+      const currentS = InternetModule.getSettings();
+      currentS.enable_wifi = toggleWifi.checked;
+      InternetModule.saveSettings(currentS);
+      InternetModule.renderForm(container, onInputChange);
+      onInputChange();
     });
 
+    toggleHp.addEventListener('change', () => {
+      const currentS = InternetModule.getSettings();
+      currentS.enable_hp = toggleHp.checked;
+      InternetModule.saveSettings(currentS);
+      InternetModule.renderForm(container, onInputChange);
+      onInputChange();
+    });
+
+    // Bind real-time input listeners
+    const bindInputs = () => {
+      const currentS = InternetModule.getSettings();
+
+      currentS.provider_wifi = container.querySelector('#provider_wifi')?.value.trim() || '';
+      currentS.biaya_wifi = parseFloat(container.querySelector('#biaya_wifi')?.value || 0);
+
+      InternetModule.saveSettings(currentS);
+
+      // Collect HP items
+      const allHpCards = container.querySelectorAll('.hp-item-card');
+      const updatedHpList = [];
+
+      allHpCards.forEach(card => {
+        const id = card.getAttribute('data-hpid');
+        const nama = card.querySelector('.hp-input-nama')?.value.trim() || '';
+        const provider = card.querySelector('.hp-input-provider')?.value || 'Telkomsel';
+        const nominal = parseFloat(card.querySelector('.hp-input-nominal')?.value || 0);
+
+        updatedHpList.push({
+          id,
+          nama,
+          provider,
+          nominal
+        });
+      });
+
+      InternetModule.saveHpList(updatedHpList);
+      onInputChange();
+    };
+
+    container.querySelectorAll('input, select').forEach(elem => {
+      elem.addEventListener('input', bindInputs);
+    });
+
+    // Delete HP Listener
+    container.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('.delete-hp-btn');
+      if (delBtn) {
+        const hpid = delBtn.getAttribute('data-hpid');
+        const currentHp = InternetModule.getHpList();
+        if (currentHp.length <= 1) {
+          alert('Minimal harus ada 1 nomor HP di dalam daftar paket data.');
+          return;
+        }
+        const updated = currentHp.filter(h => h.id !== hpid);
+        InternetModule.saveHpList(updated);
+        InternetModule.renderForm(container, onInputChange);
+        onInputChange();
+      }
+    });
+
+    // Add HP Listener
+    const addHpBtn = container.querySelector('#addHpBtn');
+    if (addHpBtn) {
+      addHpBtn.addEventListener('click', () => {
+        const currentHp = InternetModule.getHpList();
+        const newHp = {
+          id: 'hp_' + Date.now(),
+          nama: `HP Tambahan #${currentHp.length + 1}`,
+          provider: 'Telkomsel',
+          nominal: 50000
+        };
+
+        const updated = [...currentHp, newHp];
+        InternetModule.saveHpList(updated);
+        InternetModule.renderForm(container, onInputChange);
+        onInputChange();
+      });
+    }
+
+    // Save to Budget Dashboard Listener
     const saveBtn = container.querySelector('#saveToBudgetBtn');
     const notice = container.querySelector('#saveNotice');
 
     saveBtn.addEventListener('click', () => {
-      const currentInputs = InternetModule.getFormInputs(container);
-      const res = InternetModule.calculate(currentInputs);
-      const monthlyCost = res.total_biaya;
+      const currentS = InternetModule.getSettings();
+      const currentHp = InternetModule.getHpList();
+      const calcResult = InternetModule.calculate({ settings: currentS, hpList: currentHp });
 
       BudgetStore.saveBudgetItem('internet', {
         id: 'internet',
         name: 'Internet & Paket Data',
-        amount: monthlyCost,
+        amount: calcResult.total_biaya,
         category: 'Pokok',
-        source: `WiFi + ${currentInputs.jumlah_hp} HP`
+        source: `Kalkulator Internet (${currentS.enable_wifi ? 'WiFi' : ''}${currentS.enable_wifi && currentS.enable_hp ? ' + ' : ''}${currentS.enable_hp ? currentHp.length + ' HP' : ''})`
       });
 
-      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
+      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Total Est. ${formatRupiah(calcResult.total_biaya)} telah disinkronkan ke Dashboard Keuangan.`;
       setTimeout(() => notice.innerHTML = '', 4000);
     });
   },
 
-  getFormInputs: (container) => {
+  getFormInputs: () => {
     return {
-      paket_wifi: parseFloat(container.querySelector('#paket_wifi')?.value || 0),
-      jumlah_hp: parseInt(container.querySelector('#jumlah_hp')?.value || 0, 10),
-      harga_paket_data: parseFloat(container.querySelector('#harga_paket_data')?.value || 0)
+      settings: InternetModule.getSettings(),
+      hpList: InternetModule.getHpList()
     };
   },
 
   calculate: (inputs) => {
-    const { paket_wifi, jumlah_hp, harga_paket_data } = inputs;
+    const s = inputs?.settings || InternetModule.getSettings();
+    const hpList = inputs?.hpList || InternetModule.getHpList();
 
-    const total_paket_data = jumlah_hp * harga_paket_data;
-    const total_biaya = paket_wifi + total_paket_data;
+    const total_wifi = s.enable_wifi ? (s.biaya_wifi || 0) : 0;
+    
+    let total_hp_data = 0;
+    if (s.enable_hp) {
+      hpList.forEach(hp => {
+        total_hp_data += (hp.nominal || 0);
+      });
+    }
+
+    const total_biaya = total_wifi + total_hp_data;
 
     const summaryCards = [
       {
         title: 'WiFi Rumah',
-        value: formatRupiah(paket_wifi),
-        note: `Langganan Bulanan`,
+        value: s.enable_wifi ? formatRupiah(total_wifi) : 'Non-Aktif',
+        note: s.enable_wifi ? (s.provider_wifi || 'Fixed Broadband') : 'Mode WiFi Dimatikan',
         icon: 'fa-wifi',
-        type: 'emerald'
+        type: s.enable_wifi ? 'emerald' : 'sky'
       },
       {
         title: 'Total Paket Data Seluler',
-        value: formatRupiah(total_paket_data),
-        note: `Untuk ${jumlah_hp} HP (@ ${formatRupiah(harga_paket_data)})`,
+        value: s.enable_hp ? formatRupiah(total_hp_data) : 'Non-Aktif',
+        note: s.enable_hp ? `${hpList.length} Nomor HP Active` : 'Mode HP Dimatikan',
         icon: 'fa-mobile-screen',
-        type: 'sky'
+        type: s.enable_hp ? 'amber' : 'sky'
       },
       {
         title: 'Total Biaya Komunikasi',
         value: formatRupiah(total_biaya),
         note: `Pengeluaran Bulanan`,
         icon: 'fa-money-bill-wave',
-        type: 'amber'
+        type: 'emerald'
       }
     ];
 
@@ -150,21 +332,61 @@ export const InternetModule = {
       { label: '12 Bulan (1 Tahun)', d: 12 }
     ];
 
-    const tableHeaders = ['Periode', 'Biaya WiFi (Rp)', 'Biaya Paket Data (Rp)', 'Total Biaya (Rp)'];
-    const tableRows = periods.map(p => {
-      const wifi = paket_wifi * p.d;
-      const data = total_paket_data * p.d;
-      const cost = wifi + data;
-      return {
-        isCurrent: p.d === 1,
+    const tableHeaders = ['Komponen / Nomor', 'Provider / Kategori', 'Alokasi Bulanan (Rp)', 'Total Proyeksi (1 Thn)'];
+    const tableRows = [];
+
+    if (s.enable_wifi) {
+      tableRows.push({
+        isCurrent: false,
         cells: [
-          `<strong>${p.label}</strong>`,
-          formatRupiah(wifi),
-          formatRupiah(data),
-          `<span class="highlight">${formatRupiah(cost)}</span>`
+          `<strong>WiFi Rumah</strong>`,
+          `${s.provider_wifi || 'Fixed Broadband'}`,
+          `${formatRupiah(total_wifi)}`,
+          `${formatRupiah(total_wifi * 12)}`
         ]
-      };
+      });
+    }
+
+    if (s.enable_hp) {
+      hpList.forEach(hp => {
+        tableRows.push({
+          isCurrent: false,
+          cells: [
+            `<strong>${hp.nama || 'HP'}</strong>`,
+            `<span class="badge" style="font-size:0.68rem;">${hp.provider || 'Seluler'}</span>`,
+            `${formatRupiah(hp.nominal)}`,
+            `${formatRupiah((hp.nominal || 0) * 12)}`
+          ]
+        });
+      });
+    }
+
+    // Total Row
+    tableRows.push({
+      isCurrent: true,
+      cells: [
+        `<strong>TOTAL INTERNET & DATA</strong>`,
+        `<strong>-</strong>`,
+        `<strong class="highlight" style="font-size: 1rem; color: var(--accent-emerald);">${formatRupiah(total_biaya)}</strong>`,
+        `<strong class="highlight">${formatRupiah(total_biaya * 12)}</strong>`
+      ]
     });
+
+    const chartLabels = [];
+    const chartDataValues = [];
+    const chartColors = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+
+    if (s.enable_wifi) {
+      chartLabels.push(`WiFi (${s.provider_wifi || 'Rumah'})`);
+      chartDataValues.push(Math.round(total_wifi));
+    }
+
+    if (s.enable_hp) {
+      hpList.forEach(hp => {
+        chartLabels.push(hp.nama || 'HP');
+        chartDataValues.push(Math.round(hp.nominal || 0));
+      });
+    }
 
     return {
       total_biaya,
@@ -172,17 +394,17 @@ export const InternetModule = {
       tableHeaders,
       tableRows,
       chartData: {
-        labels: ['WiFi Rumah', 'Paket Data HP'],
+        labels: chartLabels,
         datasets: [
           {
-            label: 'Komposisi Biaya Internet',
-            data: [paket_wifi, total_paket_data],
-            backgroundColor: ['#6366f1', '#06b6d4']
+            label: 'Alokasi Biaya Internet (Rp/Bulan)',
+            data: chartDataValues,
+            backgroundColor: chartColors.slice(0, chartLabels.length)
           }
         ]
       },
       quickStats: {
-        totalQty: `WiFi + ${jumlah_hp} HP`,
+        totalQty: `${s.enable_wifi ? 'WiFi' : ''}${s.enable_wifi && s.enable_hp ? ' + ' : ''}${s.enable_hp ? hpList.length + ' HP' : ''}`,
         totalCost: formatRupiah(total_biaya)
       }
     };
