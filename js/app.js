@@ -10,6 +10,9 @@ import { TransportModule } from './modules/transport.js';
 import { InternetModule } from './modules/internet.js';
 import { SembakoModule } from './modules/sembako.js';
 import { SewaModule } from './modules/sewa.js';
+import { SandangModule } from './modules/sandang.js';
+import { KesehatanModule } from './modules/kesehatan.js';
+import { PendidikanModule } from './modules/pendidikan.js';
 import { DashboardModule } from './modules/dashboard.js';
 
 import { BudgetStore } from './services/budgetStore.js';
@@ -28,6 +31,9 @@ class KehidupanApp {
       internet: InternetModule,
       sembako: SembakoModule,
       sewa: SewaModule,
+      sandang: SandangModule,
+      kesehatan: KesehatanModule,
+      pendidikan: PendidikanModule,
       dashboard: DashboardModule
     };
 

@@ -12,7 +12,7 @@ const STORAGE_KEY_SHEET_URL = 'spreadsheet_webhook_url';
 export const BudgetStore = {
   // Get Monthly Income
   getIncome: () => {
-    return getFromStorage(STORAGE_KEY_INCOME, 5000000); // Default Rp 5.000.000
+    return getFromStorage(STORAGE_KEY_INCOME, 6000000); // Default Rp 6.000.000
   },
 
   // Set Monthly Income
@@ -31,6 +31,9 @@ export const BudgetStore = {
       internet: { id: 'internet', name: 'Internet & Paket Data', amount: 275000, category: 'Pokok', source: 'Kalkulator Internet' },
       sembako: { id: 'sembako', name: 'Sembako & Kebersihan', amount: 200000, category: 'Pokok', source: 'Kalkulator Sembako' },
       sewa: { id: 'sewa', name: 'Hunian & Tempat Tinggal', amount: 1500000, category: 'Pokok', source: 'Kalkulator Sewa' },
+      sandang: { id: 'sandang', name: 'Sandang & Grooming', amount: 200000, category: 'Pokok', source: 'Kalkulator Sandang' },
+      kesehatan: { id: 'kesehatan', name: 'Kesehatan & BPJS', amount: 350000, category: 'Pokok', source: 'Kalkulator Kesehatan' },
+      pendidikan: { id: 'pendidikan', name: 'Pendidikan & Anak', amount: 680000, category: 'Pokok', source: 'Kalkulator Pendidikan' },
       tabungan: { id: 'tabungan', name: 'Tabungan & Dana Darurat', amount: 1000000, category: 'Tabungan', source: 'Alokasi Mandiri' }
     });
   },
