@@ -1,0 +1,13 @@
+{
+  "name": "kehidupan-app",
+  "version": "1.0.0",
+  "description": "Kalkulator & Manajemen Kebutuhan Rumah Tangga (Beras, Air, Listrik, Gas)",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve -l 3000 .",
+    "start": "npx -y serve -l 3000 ."
+  },
+  "keywords": ["calculator", "beras", "rumah-tangga", "kehidupan"],
+  "author": "Antigravity",
+  "license": "MIT"
+}

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kehidupan - Kalkulator & Manajemen Kebutuhan Rumah Tangga</title>
+  <meta name="description" content="Aplikasi praktis untuk menghitung kebutuhan beras, air galon, listrik, gas, transport, internet, sembako, sewa hunian, dan manajemen anggaran keuangan terintegrasi Google Sheets.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark-mode">
+  <div class="app-container">
+    
+    <!-- Sidebar / Navigation Header -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="brand-icon">
+          <i class="fa-solid fa-leaf"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Kehidupan<span class="dot">.</span></h1>
+          <p>Financial & Essentials</p>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" id="navTabs">
+        <button class="nav-btn active" data-module="beras">
+          <i class="fa-solid fa-bowl-rice"></i>
+          <span>Beras</span>
+        </button>
+        <button class="nav-btn" data-module="air">
+          <i class="fa-solid fa-bottle-water"></i>
+          <span>Air</span>
+        </button>
+        <button class="nav-btn" data-module="listrik">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Listrik</span>
+        </button>
+        <button class="nav-btn" data-module="gas">
+          <i class="fa-solid fa-fire-burner"></i>
+          <span>Gas LPG</span>
+        </button>
+        <button class="nav-btn" data-module="transport">
+          <i class="fa-solid fa-car"></i>
+          <span>Transport</span>
+        </button>
+        <button class="nav-btn" data-module="internet">
+          <i class="fa-solid fa-wifi"></i>
+          <span>Internet</span>
+        </button>
+        <button class="nav-btn" data-module="sembako">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span>Sembako</span>
+        </button>
+        <button class="nav-btn" data-module="sewa">
+          <i class="fa-solid fa-house-user"></i>
+          <span>Hunian</span>
+        </button>
+        <button class="nav-btn dashboard-btn" data-module="dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button id="sheetsModalBtn" class="secondary-btn sheets-btn" title="Integrasi Google Sheets API">
+          <i class="fa-solid fa-file-excel"></i>
+          <span>Google Sheets</span>
+        </button>
+        <button id="themeToggleBtn" class="icon-btn" title="Ganti Tema">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+        <button id="historyBtn" class="secondary-btn">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Riwayat</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- Hero Banner -->
+      <section class="hero-banner">
+        <div class="hero-text">
+          <span class="badge" id="moduleBadge"><i class="fa-solid fa-seedling"></i> Module Pangan Utama</span>
+          <h2 id="moduleTitle">Kalkulator Kebutuhan Beras</h2>
+          <p id="moduleSubtitle">Hitung estimasi konsumsi beras harian, mingguan, hingga tahunan beserta estimasi paket pembelian yang efisien.</p>
+        </div>
+        <div class="hero-stats" id="quickStatsSummary">
+          <div class="mini-stat-card">
+            <span class="stat-label">Total Konsumsi</span>
+            <span class="stat-value" id="quickTotalQty">0 kg</span>
+          </div>
+          <div class="mini-stat-card primary">
+            <span class="stat-label">Total Biaya / Sisa</span>
+            <span class="stat-value" id="quickTotalCost">Rp 0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calculator Grid Layout -->
+      <div class="calculator-grid">
+
+        <!-- Form Card (Left Column) -->
+        <div class="card form-card">
+          <div class="card-header">
+            <h3><i class="fa-sliders fa-solid"></i> Parameter Perhitungan</h3>
+            <span class="sub-text">Isi data di bawah untuk estimasi akurat</span>
+          </div>
+          <div class="card-body">
+            <form id="calculatorForm">
+              <!-- Dynamic Form Content Injected by Active Module JS -->
+              <div id="dynamicFormFields"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Result Overview (Right Column) -->
+        <div class="results-column">
+          <!-- Summary Cards -->
+          <div class="summary-cards-grid" id="summaryCardsGrid">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Interactive Visualization Card -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3><i class="fa-chart-pie fa-solid"></i> Analisis & Distribusi</h3>
+              <div class="chart-controls">
+                <button class="sm-btn active" data-chart-type="period">Periode</button>
+                <button class="sm-btn" data-chart-type="packaging">Rekomendasi Beli</button>
+              </div>
+            </div>
+            <div class="card-body chart-body">
+              <canvas id="analysisChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Detailed Breakdown Table Section -->
+      <section class="card table-card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran</h3>
+            <p class="sub-text">Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan</p>
+          </div>
+          <div class="table-actions">
+            <button class="outline-btn" id="exportCsvBtn">
+              <i class="fa-file-csv fa-solid"></i> Ekspor CSV
+            </button>
+            <button class="outline-btn" id="printBtn">
+              <i class="fa-print fa-solid"></i> Cetak / PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="table-wrapper">
+            <table class="data-table" id="breakdownTable">
+              <thead>
+                <!-- Injected dynamically -->
+              </thead>
+              <tbody>
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Extensibility Callout / Add New Module Banner -->
+      <section class="extensibility-banner">
+        <div class="extensibility-content">
+          <div class="ext-icon">
+            <i class="fa-solid fa-cubes-stacked"></i>
+          </div>
+          <div class="ext-text">
+            <h4>Arsitektur Terintegrasi & Extensible</h4>
+            <p>Hasil kalkulasi dari setiap modul (Beras, Air, Listrik, Gas, Transportasi, Internet, Sembako, Hunian) dapat disimpan sebagai <strong>Pos Anggaran Bulanan</strong> dan disinkronkan secara otomatis ke <strong>Google Sheets Spreadsheet</strong> via Apps Script API.</p>
+          </div>
+        </div>
+        <button class="secondary-btn" id="addModuleModalBtn">
+          <i class="fa-plus fa-solid"></i> Pelajari Arsitektur Modul
+        </button>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 <strong>Kehidupan App</strong> &bull; Perencanaan Kebutuhan & Keuangan Rumah Tangga Indonesia</p>
+    </footer>
+
+  </div>
+
+  <!-- Modal History -->
+  <div class="modal-overlay" id="historyModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-clock-rotate-left fa-solid"></i> Riwayat Perhitungan Saved</h3>
+        <button class="modal-close" id="closeHistoryModal">&times;</button>
+      </div>
+      <div class="modal-body" id="historyListContainer">
+        <!-- Injected JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="danger-btn" id="clearHistoryBtn">Hapus Semua Riwayat</button>
+        <button class="secondary-btn" id="closeHistoryModalBtn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Google Sheets Script Instructions -->
+  <div class="modal-overlay" id="sheetsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-file-excel fa-solid"></i> Panduan Hubungkan Google Sheets</h3>
+        <button class="modal-close" id="closeSheetsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; margin-bottom: 10px;">Anda dapat menjadikan <strong>Google Sheets</strong> sebagai database gratis tanpa server backend!</p>
+        <ol style="font-size: 0.85rem; padding-left: 20px; line-height: 1.6; color: var(--text-muted);">
+          <li>Buka Google Sheets baru di <a href="https://sheets.new" target="_blank" style="color: var(--primary);">sheets.new</a></li>
+          <li>Klik menu <strong>Extensions &rarr; Apps Script</strong></li>
+          <li>Hapus kode bawaan dan salin (paste) skrip di bawah ini:</li>
+        </ol>
+
+        <div class="code-preview" style="max-height: 180px;">
+          <pre><code id="appsScriptCodeSnippet"></code></pre>
+        </div>
+
+        <ol start="4" style="font-size: 0.85rem; padding-left: 20px; line-height: 1.6; color: var(--text-muted);">
+          <li>Klik <strong>Deploy &rarr; New deployment</strong></li>
+          <li>Pilih type <strong>Web App</strong>, ubah <em>Who has access</em> menjadi <strong>Anyone</strong>.</li>
+          <li>Salin <strong>Web App URL</strong> yang dihasilkan ke form di Dashboard Keuangan.</li>
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="copyScriptBtn"><i class="fa-copy fa-solid"></i> Salin Skrip Apps Script</button>
+        <button class="secondary-btn" id="closeSheetsModalBtn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Add Module Info -->
+  <div class="modal-overlay" id="addModuleModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-puzzle-piece fa-solid"></i> Pengembangan Modul Kehidupan</h3>
+        <button class="modal-close" id="closeAddModuleModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Aplikasi ini dibangun menggunakan arsitektur <strong>Extensible JS Module</strong>.</p>
+        <div class="code-preview">
+          <pre><code>// Contoh struktur modul baru (js/modules/custom.js)
+export const CustomModule = {
+  id: 'custom',
+  name: 'Kebutuhan Custom',
+  icon: 'fa-box',
+  renderForm: () => { ... },
+  calculate: (inputs) => { ... }
+};</code></pre>
+        </div>
+        <p>Anda dapat menambahkan modul baru di folder <code>js/modules/</code> tanpa mengubah logika inti aplikasi.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="closeAddModuleModalBtn">Mengerti</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Entry Point -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
