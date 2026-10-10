@@ -162,44 +162,66 @@ body {
   width: 100%;
 }
 
-/* Nav Tabs */
-.nav-tabs {
+.nav-tabs-container {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-input);
-  padding: 6px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  align-items: flex-start;
+  gap: 12px;
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  padding-bottom: 4px;
+  cursor: grab;
+  user-select: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.nav-tabs::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+.nav-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-input);
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.group-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  letter-spacing: 0.5px;
+  padding-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.group-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 9px 16px;
+  gap: 6px;
+  padding: 7px 12px;
   border: none;
   background: transparent;
   color: var(--text-muted);
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: var(--transition);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.nav-btn span {
   white-space: nowrap;
 }
 
@@ -209,7 +231,7 @@ body {
 }
 
 body.dark-mode .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .nav-btn.active {
@@ -218,16 +240,20 @@ body.dark-mode .nav-btn:hover {
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
-/* Dashboard Special Button Style */
-.nav-btn.dashboard-btn {
-  color: var(--accent-emerald);
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+/* Dashboard Group Special Style */
+.nav-group.dashboard-group {
+  background: rgba(16, 185, 129, 0.06);
+  border-color: rgba(16, 185, 129, 0.25);
   margin-left: auto;
 }
 
+.nav-btn.dashboard-btn {
+  color: var(--accent-emerald);
+  font-weight: 700;
+}
+
 .nav-btn.dashboard-btn:hover {
-  background: rgba(16, 185, 129, 0.18);
+  background: rgba(16, 185, 129, 0.15);
 }
 
 .nav-btn.dashboard-btn.active {

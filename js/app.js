@@ -101,6 +101,37 @@ class KehidupanApp {
       }
     });
 
+    // Mouse Drag-to-Scroll support for Nav Bar
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    this.navTabs.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.nav-btn')) return; // don't block click
+      isDown = true;
+      startX = e.pageX - this.navTabs.offsetLeft;
+      scrollLeft = this.navTabs.scrollLeft;
+      this.navTabs.style.cursor = 'grabbing';
+    });
+
+    this.navTabs.addEventListener('mouseleave', () => {
+      isDown = false;
+      this.navTabs.style.cursor = 'grab';
+    });
+
+    this.navTabs.addEventListener('mouseup', () => {
+      isDown = false;
+      this.navTabs.style.cursor = 'grab';
+    });
+
+    this.navTabs.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - this.navTabs.offsetLeft;
+      const walk = (x - startX) * 2;
+      this.navTabs.scrollLeft = scrollLeft - walk;
+    });
+
     // Dynamic delete budget item listener in table
     this.breakdownTable.addEventListener('click', (e) => {
       const delBtn = e.target.closest('.delete-budget-btn');

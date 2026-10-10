@@ -51,57 +51,57 @@
         </div>
       </div>
 
-      <!-- Bottom Row: Dedicated Module Tabs -->
+      <!-- Bottom Row: Categorized Navigation Groups -->
       <div class="header-nav">
-        <nav class="nav-tabs" id="navTabs">
-          <button class="nav-btn active" data-module="beras">
-            <i class="fa-solid fa-bowl-rice"></i>
-            <span>Beras</span>
-          </button>
-          <button class="nav-btn" data-module="air">
-            <i class="fa-solid fa-bottle-water"></i>
-            <span>Air Galon</span>
-          </button>
-          <button class="nav-btn" data-module="listrik">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Listrik</span>
-          </button>
-          <button class="nav-btn" data-module="gas">
-            <i class="fa-solid fa-fire-burner"></i>
-            <span>Gas LPG</span>
-          </button>
-          <button class="nav-btn" data-module="transport">
-            <i class="fa-solid fa-car"></i>
-            <span>Transport</span>
-          </button>
-          <button class="nav-btn" data-module="internet">
-            <i class="fa-solid fa-wifi"></i>
-            <span>Internet</span>
-          </button>
-          <button class="nav-btn" data-module="sembako">
-            <i class="fa-solid fa-basket-shopping"></i>
-            <span>Sembako</span>
-          </button>
-          <button class="nav-btn" data-module="sewa">
-            <i class="fa-solid fa-house-user"></i>
-            <span>Hunian</span>
-          </button>
-          <button class="nav-btn" data-module="sandang">
-            <i class="fa-solid fa-shirt"></i>
-            <span>Sandang</span>
-          </button>
-          <button class="nav-btn" data-module="kesehatan">
-            <i class="fa-solid fa-heart-pulse"></i>
-            <span>Kesehatan</span>
-          </button>
-          <button class="nav-btn" data-module="pendidikan">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <span>Pendidikan</span>
-          </button>
-          <button class="nav-btn dashboard-btn" data-module="dashboard">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Dashboard Keuangan</span>
-          </button>
+        <nav class="nav-tabs-container" id="navTabs">
+          
+          <!-- Category 1: Pangan -->
+          <div class="nav-group">
+            <span class="group-label"><i class="fa-solid fa-utensils"></i> Pangan</span>
+            <div class="group-btns">
+              <button class="nav-btn active" data-module="beras"><i class="fa-solid fa-bowl-rice"></i> Beras</button>
+              <button class="nav-btn" data-module="air"><i class="fa-solid fa-bottle-water"></i> Air Galon</button>
+              <button class="nav-btn" data-module="gas"><i class="fa-solid fa-fire-burner"></i> Gas LPG</button>
+              <button class="nav-btn" data-module="sembako"><i class="fa-solid fa-basket-shopping"></i> Sembako</button>
+            </div>
+          </div>
+
+          <!-- Category 2: Papan -->
+          <div class="nav-group">
+            <span class="group-label"><i class="fa-solid fa-house"></i> Papan & Utilitas</span>
+            <div class="group-btns">
+              <button class="nav-btn" data-module="sewa"><i class="fa-solid fa-house-user"></i> Hunian</button>
+              <button class="nav-btn" data-module="listrik"><i class="fa-solid fa-bolt"></i> Listrik</button>
+            </div>
+          </div>
+
+          <!-- Category 3: Sandang & Sehat -->
+          <div class="nav-group">
+            <span class="group-label"><i class="fa-solid fa-shirt"></i> Sandang & Edukasi</span>
+            <div class="group-btns">
+              <button class="nav-btn" data-module="sandang"><i class="fa-solid fa-shirt"></i> Sandang</button>
+              <button class="nav-btn" data-module="kesehatan"><i class="fa-solid fa-heart-pulse"></i> Kesehatan</button>
+              <button class="nav-btn" data-module="pendidikan"><i class="fa-solid fa-graduation-cap"></i> Pendidikan</button>
+            </div>
+          </div>
+
+          <!-- Category 4: Digital & Transport -->
+          <div class="nav-group">
+            <span class="group-label"><i class="fa-solid fa-car"></i> Mobilitas & Data</span>
+            <div class="group-btns">
+              <button class="nav-btn" data-module="transport"><i class="fa-solid fa-car"></i> Transport</button>
+              <button class="nav-btn" data-module="internet"><i class="fa-solid fa-wifi"></i> Internet</button>
+            </div>
+          </div>
+
+          <!-- Category 5: Dashboard -->
+          <div class="nav-group dashboard-group">
+            <span class="group-label"><i class="fa-solid fa-chart-pie"></i> Ikhtisar</span>
+            <div class="group-btns">
+              <button class="nav-btn dashboard-btn" data-module="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard Keuangan</button>
+            </div>
+          </div>
+
         </nav>
       </div>
     </header>
