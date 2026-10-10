@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kehidupan - Kalkulator & Manajemen Kebutuhan Rumah Tangga</title>
-  <meta name="description" content="Aplikasi praktis untuk menghitung kebutuhan beras, air galon, listrik, gas, transport, internet, sembako, sewa hunian, sandang, kesehatan, pendidikan, dan manajemen anggaran keuangan terintegrasi Google Sheets.">
+  <meta name="description" content="Aplikasi praktis untuk menghitung kebutuhan beras, air galon, listrik, gas, transport, internet, sembako, sewa hunian, sandang, kesehatan, pendidikan, budget harian, dan manajemen anggaran keuangan terintegrasi Google Sheets.">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,14 +55,15 @@
       <div class="header-nav">
         <nav class="nav-tabs-container" id="navTabs">
           
-          <!-- Category 1: Pangan -->
+          <!-- Category 1: Pangan & Harian -->
           <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-utensils"></i> Pangan</span>
+            <span class="group-label"><i class="fa-solid fa-utensils"></i> Pangan & Harian</span>
             <div class="group-btns">
               <button class="nav-btn active" data-module="beras"><i class="fa-solid fa-bowl-rice"></i> Beras</button>
               <button class="nav-btn" data-module="air"><i class="fa-solid fa-bottle-water"></i> Air Galon</button>
               <button class="nav-btn" data-module="gas"><i class="fa-solid fa-fire-burner"></i> Gas LPG</button>
               <button class="nav-btn" data-module="sembako"><i class="fa-solid fa-basket-shopping"></i> Sembako</button>
+              <button class="nav-btn" data-module="harian"><i class="fa-solid fa-wallet"></i> Budget Harian</button>
             </div>
           </div>
 
@@ -208,7 +209,7 @@
           </div>
           <div class="ext-text">
             <h4>Arsitektur Terintegrasi & Extensible</h4>
-            <p>Hasil kalkulasi dari setiap modul (Beras, Air, Listrik, Gas, Transportasi, Internet, Sembako, Hunian, Sandang, Kesehatan, Pendidikan) dapat disimpan sebagai <strong>Pos Anggaran Bulanan</strong> dan disinkronkan secara otomatis ke <strong>Google Sheets Spreadsheet</strong> via Apps Script API.</p>
+            <p>Hasil kalkulasi dari setiap modul (Beras, Air, Listrik, Gas, Transportasi, Internet, Sembako, Hunian, Sandang, Kesehatan, Pendidikan, Budget Harian) dapat disimpan sebagai <strong>Pos Anggaran Bulanan</strong> dan disinkronkan secara otomatis ke <strong>Google Sheets Spreadsheet</strong> via Apps Script API.</p>
           </div>
         </div>
         <button class="secondary-btn" id="addModuleModalBtn">

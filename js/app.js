@@ -13,6 +13,7 @@ import { SewaModule } from './modules/sewa.js';
 import { SandangModule } from './modules/sandang.js';
 import { KesehatanModule } from './modules/kesehatan.js';
 import { PendidikanModule } from './modules/pendidikan.js';
+import { HarianModule } from './modules/harian.js';
 import { DashboardModule } from './modules/dashboard.js';
 
 import { BudgetStore } from './services/budgetStore.js';
@@ -34,6 +35,7 @@ class KehidupanApp {
       sandang: SandangModule,
       kesehatan: KesehatanModule,
       pendidikan: PendidikanModule,
+      harian: HarianModule,
       dashboard: DashboardModule
     };
 
