@@ -1,11 +1,11 @@
 /**
- * Modul Kalkulator Pendidikan & Kebutuhan Anak (Multi-Anak Dinamis)
+ * Modul Kalkulator Pendidikan & Kebutuhan Anak (Multi-Anak Dinamis & Realistis)
  * Kehidupan App Suite
  * 
  * Mendukung perhitungan spesifik kebutuhan tiap anak sesuai usia & jenjang:
  * - Balita (Nutrisi, Popok, Daycare)
- * - PAUD / TK, SD, SMP, SMA (SPP, Uang Saku, Transport, Tugas Kelompok, Les)
- * - Kuliah (UKT, Kos, Praktikum, Transport)
+ * - PAUD / TK, SD, SMP, SMA (SPP, Uang Saku Harian x Hari Aktif, Transport, Tugas Kelompok/Praktikum, Les)
+ * - Kuliah (UKT, Kos/Transport, Praktikum, Uang Saku)
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -50,7 +50,7 @@ export const PendidikanModule = {
   icon: 'fa-graduation-cap',
   badge: 'Module Edukasi & Keluarga',
   title: 'Kalkulator Pendidikan & Kebutuhan Anak',
-  subtitle: 'Hitung pengeluaran realistis setiap anak secara fleksibel (SPP, uang saku harian, ongkos transport, tugas kelompok/praktikum, hingga les dan kebutuhan balita).',
+  subtitle: 'Hitung pengeluaran realistis setiap anak secara fleksibel (SPP, uang saku harian, ongkos transport, tugas kelompok/praktikum, les, hingga kebutuhan balita).',
 
   defaults: {},
 
@@ -64,13 +64,13 @@ export const PendidikanModule = {
 
   getJenjangLabel: (jenjang) => {
     switch (jenjang) {
-      case 'balita': return 'Balita (0-5 th)';
+      case 'balita': return 'Balita (0-5 Thn)';
       case 'tk': return 'PAUD / TK';
-      case 'sd': return 'SD';
+      case 'sd': return 'SD (Sekolah Dasar)';
       case 'smp': return 'SMP';
       case 'sma': return 'SMA / SMK';
-      case 'kuliah': return 'Kuliah / PT';
-      default: return 'Lainnya';
+      case 'kuliah': return 'Kuliah / Perguruan Tinggi';
+      default: return 'Lainnya / Kursus';
     }
   },
 
@@ -78,124 +78,185 @@ export const PendidikanModule = {
     const children = PendidikanModule.getChildren();
 
     const renderChildFormItem = (child, index) => {
-      const uangSakuBulan = (child.uang_saku_hari || 0) * (child.hari_aktif || 0);
+      const sakuHari = child.uang_saku_hari || 0;
+      const hariAktif = child.hari_aktif || 0;
+      const uangSakuBulan = sakuHari * hariAktif;
       const subtotalChild = (child.spp_bulan || 0) + uangSakuBulan + (child.transport_bulan || 0) + 
                             (child.tugas_kelompok_bulan || 0) + (child.les_kursus_bulan || 0) + 
                             (child.kebutuhan_lain || 0);
 
       const jenjangLabel = PendidikanModule.getJenjangLabel(child.jenjang);
+      const isBalita = child.jenjang === 'balita';
 
       return `
-        <div class="card child-item-card" data-cid="${child.id}" style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 14px;">
+        <div class="card child-item-card" data-cid="${child.id}" style="background: var(--bg-card); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 16px; box-shadow: var(--shadow-sm);">
+          
           <!-- Header Kartu Anak (Clean Text Header Tanpa Icon Depan) -->
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
             <div>
-              <span style="font-weight: 700; font-size: 0.88rem; color: var(--text-main);">
-                Anak #${index + 1}: ${child.nama || 'Tanpa Nama'} <span style="font-size: 0.74rem; font-weight: 600; color: var(--primary); margin-left: 4px;">(${jenjangLabel} - ${child.usia || 0} Thn)</span>
+              <span class="c-title-display" style="font-weight: 700; font-size: 0.92rem; color: var(--text-main); display: block;">
+                Anak #${index + 1}: ${child.nama || 'Tanpa Nama'}
+              </span>
+              <span class="c-meta-display" style="font-size: 0.74rem; color: var(--text-muted);">
+                ${jenjangLabel} &bull; ${child.usia || 0} Tahun
               </span>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 0.76rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16,185,129,0.12); padding: 2px 8px; border-radius: 6px;">
+              <span class="c-subtotal-badge" style="font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); padding: 4px 10px; border-radius: 8px;">
                 ${formatRupiah(subtotalChild)}/bln
               </span>
-              <button type="button" class="sm-btn delete-child-btn" data-cid="${child.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 2px 8px; font-size: 0.75rem;">
-                <i class="fa-trash fa-solid"></i> Hapus
+              <button type="button" class="sm-btn delete-child-btn" data-cid="${child.id}" title="Hapus profil anak ini" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 4px 8px; font-size: 0.75rem;">
+                <i class="fa-trash fa-solid"></i>
               </button>
             </div>
           </div>
 
-          <!-- Baris 1: Nama, Usia, Jenjang, Kelas -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr 1.5fr; gap: 8px; margin-bottom: 10px;">
+          <!-- Section 1: Data Diri & Jenjang Pendidikan (2 Kolom Lapang) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Nama / Panggilan</label>
-              <input type="text" class="form-control c-input-nama" data-cid="${child.id}" value="${child.nama}" placeholder="Contoh: Kakak / Rian" style="font-size: 0.8rem; padding: 6px 10px;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Nama / Panggilan</label>
+              <div class="input-wrapper">
+                <i class="fa-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="text" class="form-control c-input-nama" data-cid="${child.id}" value="${child.nama}" placeholder="Contoh: Kakak / Rian" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
             </div>
+
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Usia (Thn)</label>
-              <input type="number" class="form-control c-input-usia" data-cid="${child.id}" value="${child.usia}" min="0" max="35" style="font-size: 0.8rem; padding: 6px 10px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Tingkat / Jenjang</label>
-              <select class="form-control c-input-jenjang" data-cid="${child.id}" style="font-size: 0.8rem; padding: 6px 10px;">
-                <option value="balita" ${child.jenjang === 'balita' ? 'selected' : ''}>Balita (0-5 th)</option>
-                <option value="tk" ${child.jenjang === 'tk' ? 'selected' : ''}>PAUD / TK</option>
-                <option value="sd" ${child.jenjang === 'sd' ? 'selected' : ''}>SD</option>
-                <option value="smp" ${child.jenjang === 'smp' ? 'selected' : ''}>SMP</option>
-                <option value="sma" ${child.jenjang === 'sma' ? 'selected' : ''}>SMA / SMK</option>
-                <option value="kuliah" ${child.jenjang === 'kuliah' ? 'selected' : ''}>Kuliah / PT</option>
-                <option value="lainnya" ${child.jenjang === 'lainnya' ? 'selected' : ''}>Lainnya</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Kelas / Tingkat</label>
-              <input type="text" class="form-control c-input-kelas" data-cid="${child.id}" value="${child.kelas}" placeholder="Contoh: Kelas 12 / Sem 3" style="font-size: 0.8rem; padding: 6px 10px;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Usia <span class="unit">(Tahun)</span></label>
+              <div class="input-wrapper">
+                <i class="fa-cake-candles fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-usia" data-cid="${child.id}" value="${child.usia}" min="0" max="35" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
             </div>
           </div>
 
-          <!-- Baris 2: SPP/UKT Bulanan, Uang Saku Harian & Hari Aktif Sekolah -->
-          <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">SPP / UKT Bulanan <span class="unit">(Rp/Bulan)</span></label>
-              <input type="number" class="form-control c-input-spp" data-cid="${child.id}" value="${child.spp_bulan}" step="25000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Jenjang Pendidikan</label>
+              <div class="input-wrapper">
+                <i class="fa-graduation-cap fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <select class="form-control c-input-jenjang" data-cid="${child.id}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+                  <option value="balita" ${child.jenjang === 'balita' ? 'selected' : ''}>Balita (0-5 Thn)</option>
+                  <option value="tk" ${child.jenjang === 'tk' ? 'selected' : ''}>PAUD / TK</option>
+                  <option value="sd" ${child.jenjang === 'sd' ? 'selected' : ''}>SD</option>
+                  <option value="smp" ${child.jenjang === 'smp' ? 'selected' : ''}>SMP</option>
+                  <option value="sma" ${child.jenjang === 'sma' ? 'selected' : ''}>SMA / SMK</option>
+                  <option value="kuliah" ${child.jenjang === 'kuliah' ? 'selected' : ''}>Kuliah / PT</option>
+                  <option value="lainnya" ${child.jenjang === 'lainnya' ? 'selected' : ''}>Lainnya</option>
+                </select>
+              </div>
             </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Uang Saku / Jajan <span class="unit">(Rp/Hari)</span></label>
-              <input type="number" class="form-control c-input-saku" data-cid="${child.id}" value="${child.uang_saku_hari}" step="2000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Hari Aktif <span class="unit">(Hari/Bln)</span></label>
-              <input type="number" class="form-control c-input-hari" data-cid="${child.id}" value="${child.hari_aktif}" min="0" max="31" style="font-size: 0.8rem; padding: 6px 10px;">
-            </div>
-          </div>
-          <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">
-            *Estimasi Uang Saku Bulanan: <strong>${formatRupiah(uangSakuBulan)}</strong> (${child.hari_aktif} hari x ${formatRupiah(child.uang_saku_hari)})
-          </div>
 
-          <!-- Baris 3: Transportasi Anak & Tugas Kelompok / Praktikum -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Transportasi / Ongkos / Bensin Anak <span class="unit">(Rp/Bulan)</span></label>
-              <input type="number" class="form-control c-input-transport" data-cid="${child.id}" value="${child.transport_bulan}" step="10000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Tugas, Kerja Kelompok & Praktikum <span class="unit">(Rp/Bulan)</span></label>
-              <input type="number" class="form-control c-input-tugas" data-cid="${child.id}" value="${child.tugas_kelompok_bulan}" step="10000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Kelas / Tingkat</label>
+              <div class="input-wrapper">
+                <i class="fa-chalkboard-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="text" class="form-control c-input-kelas" data-cid="${child.id}" value="${child.kelas}" placeholder="Contoh: 3 SMA / Sem 4" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
             </div>
           </div>
 
-          <!-- Baris 4: Les / Bimbel & Kebutuhan Balita / Ekstra -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">Les, Bimbel & Ekskul <span class="unit">(Rp/Bulan)</span></label>
-              <input type="number" class="form-control c-input-les" data-cid="${child.id}" value="${child.les_kursus_bulan}" step="25000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
+          <!-- Section 2: SPP / UKT Bulanan & Uang Saku (Kalkulasi Dinamis Nyata) -->
+          <div style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">SPP / UKT Bulanan <span class="unit">(Rp/Bulan)</span></label>
+                <div class="input-wrapper">
+                  <i class="fa-receipt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                  <input type="number" class="form-control c-input-spp" data-cid="${child.id}" value="${child.spp_bulan}" step="25000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Hari Aktif Belajar <span class="unit">(Hari/Bln)</span></label>
+                <div class="input-wrapper">
+                  <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                  <input type="number" class="form-control c-input-hari" data-cid="${child.id}" value="${child.hari_aktif}" min="0" max="31" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+                </div>
+              </div>
             </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.74rem;">${child.jenjang === 'balita' ? 'Susu, Popok & Nutrisi Balita' : 'Kebutuhan Buku & Ekstra'} <span class="unit">(Rp/Bulan)</span></label>
-              <input type="number" class="form-control c-input-lain" data-cid="${child.id}" value="${child.kebutuhan_lain}" step="25000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
+
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Uang Saku & Jajan Harian <span class="unit">(Rp/Hari)</span></label>
+              <div class="input-wrapper">
+                <i class="fa-wallet fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-saku" data-cid="${child.id}" value="${child.uang_saku_hari}" step="2000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
+            </div>
+
+            <!-- Perhitungan Dinamis Uang Saku Real-Time (Otomatis Berubah Saat Input Diketik) -->
+            <div class="c-saku-calc-box" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(99, 102, 241, 0.08); border-radius: var(--radius-sm); border: 1px dashed rgba(99, 102, 241, 0.3);">
+              <span style="font-size: 0.73rem; color: var(--text-muted);">
+                Estimasi Uang Saku Bulanan <span class="c-saku-formula" style="font-size: 0.68rem; color: var(--text-muted);">(${hariAktif} hari x ${formatRupiah(sakuHari)})</span>:
+              </span>
+              <strong class="c-saku-total-display" style="font-size: 0.82rem; color: var(--primary);">
+                ${formatRupiah(uangSakuBulan)}
+              </strong>
             </div>
           </div>
+
+          <!-- Section 3: Transportasi & Tugas Kelompok / Praktikum (2 Kolom) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Transport / Bensin <span class="unit">(Rp/Bulan)</span></label>
+              <div class="input-wrapper">
+                <i class="fa-bus fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-transport" data-cid="${child.id}" value="${child.transport_bulan}" step="10000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Tugas & Praktikum <span class="unit">(Rp/Bulan)</span></label>
+              <div class="input-wrapper">
+                <i class="fa-book-open fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-tugas" data-cid="${child.id}" value="${child.tugas_kelompok_bulan}" step="10000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Les / Bimbel & Kebutuhan Balita / Ekstra (2 Kolom) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Les, Bimbel & Ekskul <span class="unit">(Rp/Bulan)</span></label>
+              <div class="input-wrapper">
+                <i class="fa-chalkboard fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-les" data-cid="${child.id}" value="${child.les_kursus_bulan}" step="25000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="c-extra-label" style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">
+                ${isBalita ? 'Susu & Popok Balita' : 'Buku & Ekstra'} <span class="unit">(Rp/Bulan)</span>
+              </label>
+              <div class="input-wrapper">
+                <i class="c-extra-icon fa-solid ${isBalita ? 'fa-baby' : 'fa-pen-ruler'} input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+                <input type="number" class="form-control c-input-lain" data-cid="${child.id}" value="${child.kebutuhan_lain}" step="25000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              </div>
+            </div>
+          </div>
+
         </div>
       `;
     };
 
     container.innerHTML = `
-      <!-- Section Header (Clean Text Header Tanpa Icon Depan) -->
-      <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-        <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--primary); margin: 0;">
-          Daftar Rincian Kebutuhan Tiap Anak (${children.length} Anak)
+      <!-- Section Header (Clean Header Tanpa Icon Depan) -->
+      <div style="margin-bottom: 14px;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 0 0 4px 0;">
+          Daftar Kebutuhan Tiap Anak (${children.length} Anak)
         </h4>
-        <span style="font-size: 0.74rem; color: var(--text-muted);">
-          Kebutuhan disesuaikan per anak (usia & jenjang)
-        </span>
+        <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">
+          Rincian biaya spesifik per anak berdasarkan usia, jenjang, dan kebutuhan operasional.
+        </p>
       </div>
 
-      <!-- Container List Anak -->
+      <!-- Container List Kartu Anak -->
       <div id="childrenListContainer">
         ${children.map((c, idx) => renderChildFormItem(c, idx)).join('')}
       </div>
 
       <!-- Tombol Tambah Anak Baru -->
-      <button type="button" id="addChildBtn" class="outline-btn" style="width: 100%; justify-content: center; padding: 8px; font-size: 0.82rem; margin-bottom: 16px;">
+      <button type="button" id="addChildBtn" class="outline-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 0.84rem; margin-bottom: 16px; border-style: dashed;">
         <i class="fa-plus fa-solid"></i> Tambah Profil Anak Baru
       </button>
 
@@ -208,7 +269,7 @@ export const PendidikanModule = {
       </div>
     `;
 
-    // Dynamic Input Listener with State Persistence
+    // Real-Time Dynamic Input Listener (100% Responsif & Live-Update di Form)
     const attachChildInputListeners = () => {
       container.querySelectorAll('.child-item-card').forEach(card => {
         const cid = card.getAttribute('data-cid');
@@ -219,34 +280,79 @@ export const PendidikanModule = {
             const childIdx = currentChildren.findIndex(c => c.id === cid);
             if (childIdx === -1) return;
 
-            const namaInput = card.querySelector('.c-input-nama')?.value;
-            const usiaInput = parseInt(card.querySelector('.c-input-usia')?.value || 0, 10);
-            const jenjangInput = card.querySelector('.c-input-jenjang')?.value;
-            const kelasInput = card.querySelector('.c-input-kelas')?.value;
-            const sppInput = parseFloat(card.querySelector('.c-input-spp')?.value || 0);
-            const sakuInput = parseFloat(card.querySelector('.c-input-saku')?.value || 0);
-            const hariInput = parseInt(card.querySelector('.c-input-hari')?.value || 0, 10);
-            const transportInput = parseFloat(card.querySelector('.c-input-transport')?.value || 0);
-            const tugasInput = parseFloat(card.querySelector('.c-input-tugas')?.value || 0);
-            const lesInput = parseFloat(card.querySelector('.c-input-les')?.value || 0);
-            const lainInput = parseFloat(card.querySelector('.c-input-lain')?.value || 0);
+            // Ambil seluruh nilai terupdate dari DOM kartu saat ini
+            const namaVal = card.querySelector('.c-input-nama')?.value || '';
+            const usiaVal = parseInt(card.querySelector('.c-input-usia')?.value || 0, 10);
+            const jenjangVal = card.querySelector('.c-input-jenjang')?.value || 'sd';
+            const kelasVal = card.querySelector('.c-input-kelas')?.value || '';
+            const sppVal = parseFloat(card.querySelector('.c-input-spp')?.value || 0);
+            const sakuHariVal = parseFloat(card.querySelector('.c-input-saku')?.value || 0);
+            const hariVal = parseInt(card.querySelector('.c-input-hari')?.value || 0, 10);
+            const transportVal = parseFloat(card.querySelector('.c-input-transport')?.value || 0);
+            const tugasVal = parseFloat(card.querySelector('.c-input-tugas')?.value || 0);
+            const lesVal = parseFloat(card.querySelector('.c-input-les')?.value || 0);
+            const lainVal = parseFloat(card.querySelector('.c-input-lain')?.value || 0);
 
+            // Perhitungan Dinamis Real-Time
+            const uangSakuBulanDinamis = sakuHariVal * hariVal;
+            const subtotalChildDinamis = sppVal + uangSakuBulanDinamis + transportVal + tugasVal + lesVal + lainVal;
+            const jenjangLabel = PendidikanModule.getJenjangLabel(jenjangVal);
+            const isBalita = jenjangVal === 'balita';
+
+            // 1. Update Teks Uang Saku Real-Time di DOM
+            const formulaElem = card.querySelector('.c-saku-formula');
+            if (formulaElem) {
+              formulaElem.textContent = `(${hariVal} hari x ${formatRupiah(sakuHariVal)})`;
+            }
+            const sakuDisplayElem = card.querySelector('.c-saku-total-display');
+            if (sakuDisplayElem) {
+              sakuDisplayElem.textContent = formatRupiah(uangSakuBulanDinamis);
+            }
+
+            // 2. Update Badge Subtotal di Header Kartu Real-Time
+            const subtotalBadge = card.querySelector('.c-subtotal-badge');
+            if (subtotalBadge) {
+              subtotalBadge.textContent = `${formatRupiah(subtotalChildDinamis)}/bln`;
+            }
+
+            // 3. Update Header Info Kartu Real-Time
+            const titleDisplay = card.querySelector('.c-title-display');
+            if (titleDisplay) {
+              titleDisplay.textContent = `Anak #${childIdx + 1}: ${namaVal || 'Tanpa Nama'}`;
+            }
+            const metaDisplay = card.querySelector('.c-meta-display');
+            if (metaDisplay) {
+              metaDisplay.textContent = `${jenjangLabel} • ${usiaVal} Tahun`;
+            }
+
+            // 4. Update Label & Icon Kebutuhan Balita vs Sekolah
+            const extraLabel = card.querySelector('.c-extra-label');
+            if (extraLabel) {
+              extraLabel.innerHTML = `${isBalita ? 'Susu & Popok Balita' : 'Buku & Ekstra'} <span class="unit">(Rp/Bulan)</span>`;
+            }
+            const extraIcon = card.querySelector('.c-extra-icon');
+            if (extraIcon) {
+              extraIcon.className = `c-extra-icon fa-solid ${isBalita ? 'fa-baby' : 'fa-pen-ruler'} input-icon`;
+            }
+
+            // 5. Simpan ke LocalStorage State
             currentChildren[childIdx] = {
               ...currentChildren[childIdx],
-              nama: namaInput,
-              usia: usiaInput,
-              jenjang: jenjangInput,
-              kelas: kelasInput,
-              spp_bulan: sppInput,
-              uang_saku_hari: sakuInput,
-              hari_aktif: hariInput,
-              transport_bulan: transportInput,
-              tugas_kelompok_bulan: tugasInput,
-              les_kursus_bulan: lesInput,
-              kebutuhan_lain: lainInput
+              nama: namaVal,
+              usia: usiaVal,
+              jenjang: jenjangVal,
+              kelas: kelasVal,
+              spp_bulan: sppVal,
+              uang_saku_hari: sakuHariVal,
+              hari_aktif: hariVal,
+              transport_bulan: transportVal,
+              tugas_kelompok_bulan: tugasVal,
+              les_kursus_bulan: lesVal,
+              kebutuhan_lain: lainVal
             };
-
             PendidikanModule.saveChildren(currentChildren);
+
+            // 6. Trigger Perhitungan Global (Summary Card, Tabel, Grafik)
             onInputChange();
           });
         });
@@ -280,15 +386,15 @@ export const PendidikanModule = {
         const newChild = {
           id: `child_${Date.now()}`,
           nama: `Anak ke-${nextNum}`,
-          usia: 10,
+          usia: 7,
           jenjang: 'sd',
-          kelas: 'SD Kelas 4',
+          kelas: 'Kelas 1 SD',
           spp_bulan: 200000,
           uang_saku_hari: 10000,
           hari_aktif: 22,
           transport_bulan: 100000,
           tugas_kelompok_bulan: 50000,
-          les_kursus_bulan: 150000,
+          les_kursus_bulan: 100000,
           kebutuhan_lain: 0
         };
 
@@ -372,7 +478,7 @@ export const PendidikanModule = {
       {
         title: 'Total SPP & UKT',
         value: formatRupiah(grandTotalSPP),
-        note: `${children.length} Anak (SPP/UKT Bulanan)`,
+        note: `${children.length} Anak (SPP Bulanan)`,
         icon: 'fa-school',
         type: 'emerald'
       },
@@ -393,7 +499,7 @@ export const PendidikanModule = {
       {
         title: 'Grand Total Biaya Anak',
         value: formatRupiah(total_biaya),
-        note: `Total Pengeluaran Anak per Bulan`,
+        note: `Total Pengeluaran Seluruh Anak`,
         icon: 'fa-children',
         type: 'rose'
       }
