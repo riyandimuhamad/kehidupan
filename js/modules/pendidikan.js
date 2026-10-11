@@ -557,31 +557,44 @@ export const PendidikanModule = {
       ]
     });
 
-    // Proyeksi Semester & Tahunan
-    tableRows.push({
-      isCurrent: false,
-      cells: [
-        `<em>Proyeksi 1 Semester (6 Bln)</em>`,
-        `-`,
-        `-`,
-        `-`,
-        `-`,
-        `-`,
-        `<em>${formatRupiah(total_biaya * 6)}</em>`
+    // Proyeksi Jangka Panjang (Semester & Tahun Ajaran) Dipisahkan dengan Kolom Khusus
+    const totalOperasionalSemuaAnak = grandTotalTransport + grandTotalTugas + grandTotalLes + grandTotalLain;
+    const secondaryTable = {
+      title: 'Proyeksi Anggaran Semester & Tahun Ajaran',
+      subtitle: 'Akumulasi estimasi anggaran seluruh anak berdasarkan durasi masa studi.',
+      headers: [
+        'Periode Proyeksi',
+        'Durasi Waktu',
+        'Akumulasi SPP / UKT',
+        'Akumulasi Uang Saku',
+        'Transport, Tugas & Les',
+        'Total Proyeksi Anggaran'
+      ],
+      rows: [
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>Proyeksi 1 Semester</strong>`,
+            `6 Bulan (1 Semester)`,
+            formatRupiah(grandTotalSPP * 6),
+            formatRupiah(grandTotalUangSaku * 6),
+            formatRupiah(totalOperasionalSemuaAnak * 6),
+            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya * 6)}</strong>`
+          ]
+        },
+        {
+          isCurrent: true,
+          cells: [
+            `<strong>Proyeksi 1 Tahun Ajaran</strong>`,
+            `12 Bulan (Penuh / 2 Sem)`,
+            formatRupiah(grandTotalSPP * 12),
+            formatRupiah(grandTotalUangSaku * 12),
+            formatRupiah(totalOperasionalSemuaAnak * 12),
+            `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.98rem;">${formatRupiah(total_biaya * 12)}</strong>`
+          ]
+        }
       ]
-    });
-    tableRows.push({
-      isCurrent: false,
-      cells: [
-        `<em>Proyeksi 1 Tahun Ajaran (12 Bln)</em>`,
-        `-`,
-        `-`,
-        `-`,
-        `-`,
-        `-`,
-        `<strong style="color:var(--primary);">${formatRupiah(total_biaya * 12)}</strong>`
-      ]
-    });
+    };
 
     // Chart Data per Anak
     const chartLabels = childCalculations.map(c => `${c.nama || 'Anak'} (${PendidikanModule.getJenjangLabel(c.jenjang)})`);
@@ -593,6 +606,7 @@ export const PendidikanModule = {
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable,
       chartData: {
         labels: chartLabels,
         datasets: [

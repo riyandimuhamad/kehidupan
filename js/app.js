@@ -191,7 +191,7 @@ class KehidupanApp {
     this.renderSummaryCards(result.summaryCards);
 
     // Render Breakdown Table
-    this.renderTable(result.tableHeaders, result.tableRows);
+    this.renderTable(result.tableHeaders, result.tableRows, result.secondaryTable);
 
     // Render Chart
     if (result.chartData && this.analysisChartCtx) {
@@ -219,7 +219,7 @@ class KehidupanApp {
     `).join('');
   }
 
-  renderTable(headers, rows) {
+  renderTable(headers, rows, secondaryTable = null) {
     const theadHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
     const tbodyHTML = rows.map(r => `
       <tr class="${r.isCurrent ? 'current-row' : ''}">
@@ -229,6 +229,47 @@ class KehidupanApp {
 
     this.breakdownTable.querySelector('thead').innerHTML = theadHTML;
     this.breakdownTable.querySelector('tbody').innerHTML = tbodyHTML;
+
+    // Handle secondary projection table if provided
+    let secContainer = document.getElementById('secondaryTableContainer');
+    if (!secContainer) {
+      secContainer = document.createElement('div');
+      secContainer.id = 'secondaryTableContainer';
+      this.breakdownTable.closest('.table-wrapper')?.after(secContainer);
+    }
+
+    if (secondaryTable) {
+      secContainer.style.display = 'block';
+      secContainer.innerHTML = `
+        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border-color);">
+          <div style="margin-bottom: 12px;">
+            <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--primary); margin: 0 0 4px 0;">
+              ${secondaryTable.title}
+            </h4>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">
+              ${secondaryTable.subtitle}
+            </p>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>${secondaryTable.headers.map(h => `<th>${h}</th>`).join('')}</tr>
+              </thead>
+              <tbody>
+                ${secondaryTable.rows.map(r => `
+                  <tr class="${r.isCurrent ? 'current-row' : ''}">
+                    ${r.cells.map(c => `<td>${c}</td>`).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } else {
+      secContainer.style.display = 'none';
+      secContainer.innerHTML = '';
+    }
   }
 
   renderChart(chartData) {
@@ -425,6 +466,15 @@ class KehidupanApp {
       const cleanCells = row.cells.map(c => `"${c.replace(/<[^>]*>?/gm, '')}"`);
       csvContent += cleanCells.join(",") + "\n";
     });
+
+    if (result.secondaryTable) {
+      csvContent += `\n"${result.secondaryTable.title}"\n`;
+      csvContent += result.secondaryTable.headers.map(h => `"${h}"`).join(",") + "\n";
+      result.secondaryTable.rows.forEach(row => {
+        const cleanCells = row.cells.map(c => `"${c.replace(/<[^>]*>?/gm, '')}"`);
+        csvContent += cleanCells.join(",") + "\n";
+      });
+    }
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
