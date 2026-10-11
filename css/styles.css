@@ -740,6 +740,28 @@ body.dark-mode .nav-btn:hover {
   background: var(--bg-input);
 }
 
+.data-table tbody tr.current-row,
+.data-table tbody tr.current-row td {
+  background: var(--bg-input);
+  font-weight: 700;
+}
+
+.data-table tbody tr.current-row td {
+  border-top: 1.5px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.data-table tbody tr.current-row:hover,
+.data-table tbody tr.current-row:hover td {
+  background: var(--bg-input);
+  filter: brightness(0.97);
+}
+
+body.dark-mode .data-table tbody tr.current-row:hover,
+body.dark-mode .data-table tbody tr.current-row:hover td {
+  filter: brightness(1.12);
+}
+
 .data-table td.highlight {
   font-weight: 700;
   color: var(--accent-emerald);
