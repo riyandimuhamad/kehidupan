@@ -78,13 +78,11 @@ export const TransportModule = {
 
     const renderVehicleFormItem = (v, index) => {
       const isMobil = v.jenis === 'mobil';
-      const icon = isMobil ? 'fa-car' : 'fa-motorcycle';
 
       return `
         <div class="card vehicle-item-card" data-vid="${v.id}" style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <i class="${icon} fa-solid" style="color: var(--primary); font-size: 1rem;"></i>
+            <div>
               <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Kendaraan #${index + 1}: ${v.nama || 'Tanpa Nama'}</span>
             </div>
             <button type="button" class="sm-btn delete-vehicle-btn" data-vid="${v.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 2px 8px; font-size: 0.75rem;">
@@ -163,23 +161,17 @@ export const TransportModule = {
       <!-- Mode Selection: Kendaraan Pribadi vs Transportasi Umum Toggles -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
         <label class="toggle-card ${settings.enable_pribadi ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_pribadi ? 'var(--primary)' : 'var(--border-color)'}; background: ${settings.enable_pribadi ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fa-car-side fa-solid" style="color: var(--primary); font-size: 1.1rem;"></i>
-            <div>
-              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Kendaraan Pribadi</strong>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">Mobil & Motor</span>
-            </div>
+          <div>
+            <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Kendaraan Pribadi</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Mobil & Motor</span>
           </div>
           <input type="checkbox" id="togglePribadi" ${settings.enable_pribadi ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
         </label>
 
         <label class="toggle-card ${settings.enable_umum ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_umum ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${settings.enable_umum ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fa-bus fa-solid" style="color: var(--accent-emerald); font-size: 1.1rem;"></i>
-            <div>
-              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Transport Umum</strong>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">KRL, Busway, Ojol</span>
-            </div>
+          <div>
+            <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Transport Umum</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">KRL, Busway, Ojol</span>
           </div>
           <input type="checkbox" id="toggleUmum" ${settings.enable_umum ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent-emerald); cursor: pointer;">
         </label>
@@ -187,8 +179,8 @@ export const TransportModule = {
 
       <!-- Section 1: Kendaraan Pribadi (If ON) -->
       <div id="pribadiSection" style="display: ${settings.enable_pribadi ? 'block' : 'none'}; margin-bottom: 16px;">
-        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
-          <i class="fa-car fa-solid"></i> Rincian Kendaraan Pribadi (${vehicles.length})
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--primary);">
+          Rincian Kendaraan Pribadi (${vehicles.length})
         </h4>
 
         <div id="vehiclesListContainer">
@@ -202,8 +194,8 @@ export const TransportModule = {
 
       <!-- Section 2: Transportasi Umum (If ON) -->
       <div id="umumSection" style="display: ${settings.enable_umum ? 'block' : 'none'}; background: rgba(16, 185, 129, 0.05); padding: 14px; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.25); margin-bottom: 16px;">
-        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--accent-emerald); display: flex; align-items: center; gap: 6px;">
-          <i class="fa-bus fa-solid"></i> Transportasi Publik / Umum (KRL, Bus, Ojol)
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--accent-emerald);">
+          Transportasi Publik / Umum (KRL, Bus, Ojol)
         </h4>
 
         <div class="form-group">

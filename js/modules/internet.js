@@ -65,8 +65,7 @@ export const InternetModule = {
       return `
         <div class="card hp-item-card" data-hpid="${hp.id}" style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 10px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <i class="fa-mobile-screen-button fa-solid" style="color: var(--accent-sky); font-size: 1rem;"></i>
+            <div>
               <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Nomor / HP #${index + 1}: ${hp.nama || 'Tanpa Nama'}</span>
             </div>
             <button type="button" class="sm-btn delete-hp-btn" data-hpid="${hp.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 2px 8px; font-size: 0.75rem;">
@@ -102,23 +101,17 @@ export const InternetModule = {
       <!-- Mode Selection: WiFi Rumah & Paket Data HP Toggles -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
         <label class="toggle-card ${settings.enable_wifi ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_wifi ? 'var(--primary)' : 'var(--border-color)'}; background: ${settings.enable_wifi ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fa-wifi fa-solid" style="color: var(--primary); font-size: 1.1rem;"></i>
-            <div>
-              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">WiFi Rumah</strong>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">IndiHome, Biznet, dll</span>
-            </div>
+          <div>
+            <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">WiFi Rumah</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">IndiHome, Biznet, dll</span>
           </div>
           <input type="checkbox" id="toggleWifi" ${settings.enable_wifi ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
         </label>
 
         <label class="toggle-card ${settings.enable_hp ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid ${settings.enable_hp ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${settings.enable_hp ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-input)'}; cursor: pointer;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="fa-mobile-screen fa-solid" style="color: var(--accent-emerald); font-size: 1.1rem;"></i>
-            <div>
-              <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Paket Data HP</strong>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">Multi-Nomor HP</span>
-            </div>
+          <div>
+            <strong style="font-size: 0.82rem; display: block; color: var(--text-main);">Paket Data HP</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Multi-Nomor HP</span>
           </div>
           <input type="checkbox" id="toggleHp" ${settings.enable_hp ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent-emerald); cursor: pointer;">
         </label>
@@ -126,8 +119,8 @@ export const InternetModule = {
 
       <!-- Section 1: WiFi Rumah (If ON) -->
       <div id="wifiSection" style="display: ${settings.enable_wifi ? 'block' : 'none'}; background: rgba(99, 102, 241, 0.05); padding: 14px; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.25); margin-bottom: 16px;">
-        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
-          <i class="fa-house-signal fa-solid"></i> Langganan WiFi Rumah / Fixed Broadband
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--primary);">
+          Langganan WiFi Rumah / Fixed Broadband
         </h4>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -144,8 +137,8 @@ export const InternetModule = {
 
       <!-- Section 2: Paket Data HP Seluler (If ON) -->
       <div id="hpSection" style="display: ${settings.enable_hp ? 'block' : 'none'}; margin-bottom: 16px;">
-        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--accent-emerald); display: flex; align-items: center; gap: 6px;">
-          <i class="fa-sim-card fa-solid"></i> Rincian Paket Data Seluler (${hpList.length} HP / Nomor)
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--accent-emerald);">
+          Rincian Paket Data Seluler (${hpList.length} HP / Nomor)
         </h4>
 
         <div id="hpListContainer">

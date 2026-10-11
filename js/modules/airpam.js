@@ -226,7 +226,10 @@ export const AirPamModule = {
               ((orang * liter_per_hari * 90 / 1000) * tarif_per_m3) + (3 * admin_fee),
               ((orang * liter_per_hari * 365 / 1000) * tarif_per_m3) + (12 * admin_fee)
             ],
-            backgroundColor: '#0EA5E9'
+            backgroundColor: 'rgba(99, 102, 241, 0.65)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: 8
           }
         ]
       },

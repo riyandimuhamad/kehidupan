@@ -240,6 +240,61 @@ class KehidupanApp {
     const textColor = isDark ? '#94a3b8' : '#475569';
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
+    // Color conversion helper for unified design consistency
+    const colorToRgba = (color, alpha = 0.65) => {
+      if (!color) return `rgba(99, 102, 241, ${alpha})`;
+      if (color.startsWith('rgba')) {
+        return color.replace(/[\d\.]+\)$/g, `${alpha})`);
+      }
+      if (color.startsWith('rgb(')) {
+        return color.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
+      }
+      if (color.startsWith('#')) {
+        let hex = color.slice(1);
+        if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+        const num = parseInt(hex, 16);
+        const r = (num >> 16) & 255;
+        const g = (num >> 8) & 255;
+        const b = num & 255;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+      return color;
+    };
+
+    const colorToSolid = (color) => {
+      if (!color) return '#6366f1';
+      if (color.startsWith('rgba(')) {
+        const parts = color.replace('rgba(', '').replace(')', '').split(',').map(s => s.trim());
+        return `rgb(${parts[0]}, ${parts[1]}, ${parts[2]})`;
+      }
+      return color;
+    };
+
+    const DEFAULT_PRIMARY = '#6366f1';
+
+    // Standardize Dataset Styling for All Charts
+    if (chartData && chartData.datasets) {
+      chartData.datasets.forEach(ds => {
+        ds.borderRadius = 8;
+        ds.borderSkipped = false;
+        ds.borderWidth = 2;
+        ds.maxBarThickness = 48;
+        ds.barPercentage = 0.7;
+        ds.categoryPercentage = 0.8;
+
+        if (Array.isArray(ds.backgroundColor)) {
+          // Multi-color dataset
+          ds.borderColor = ds.backgroundColor.map(c => colorToSolid(c));
+          ds.backgroundColor = ds.backgroundColor.map(c => colorToRgba(c, 0.65));
+        } else {
+          // Single-color dataset
+          const baseColor = ds.borderColor || ds.backgroundColor || DEFAULT_PRIMARY;
+          ds.borderColor = colorToSolid(baseColor);
+          ds.backgroundColor = colorToRgba(baseColor, 0.65);
+        }
+      });
+    }
+
     const firstDataset = chartData?.datasets?.[0];
     const isMultiColorBar = firstDataset?.backgroundColor && Array.isArray(firstDataset.backgroundColor) && firstDataset.backgroundColor.length > 1;
 

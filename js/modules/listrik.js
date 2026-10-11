@@ -193,9 +193,10 @@ export const ListrikModule = {
           {
             label: 'Estimasi Tagihan Listrik (Rp)',
             data: [7, 30, 90, 365].map(d => kwh_per_hari * d * tarif_per_kwh * 1.05),
-            backgroundColor: 'rgba(245, 158, 11, 0.6)',
-            borderColor: '#f59e0b',
-            borderWidth: 2
+            backgroundColor: 'rgba(99, 102, 241, 0.65)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: 8
           }
         ]
       },

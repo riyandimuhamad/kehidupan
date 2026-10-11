@@ -201,11 +201,12 @@ export const GasModule = {
         labels: ['7 Hari', '30 Hari', '90 Hari', '365 Hari'],
         datasets: [
           {
-            label: 'Estimasi Kebutuhan Tabung LPG',
-            data: [7, 30, 90, 365].map(d => Math.ceil((intensitas_masak * d) / jam_per_tabung)),
-            backgroundColor: 'rgba(244, 63, 94, 0.6)',
-            borderColor: '#f43f5e',
-            borderWidth: 2
+            label: 'Biaya Gas LPG (Rp)',
+            data: [7, 30, 90, 365].map(d => Math.ceil((intensitas_masak * d) / jam_per_tabung) * harga_per_tabung),
+            backgroundColor: 'rgba(99, 102, 241, 0.65)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: 8
           }
         ]
       },

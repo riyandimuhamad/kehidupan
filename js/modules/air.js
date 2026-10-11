@@ -197,11 +197,12 @@ export const AirModule = {
         labels: ['7 Hari', '30 Hari', '90 Hari', '365 Hari'],
         datasets: [
           {
-            label: 'Estimasi Pembelian Galon',
-            data: [7, 30, 90, 365].map(d => Math.ceil((orang * liter_per_hari * d) / 19)),
-            backgroundColor: 'rgba(6, 182, 212, 0.6)',
-            borderColor: '#06b6d4',
-            borderWidth: 2
+            label: 'Biaya Air Galon (Rp)',
+            data: [7, 30, 90, 365].map(d => Math.ceil((orang * liter_per_hari * d) / 19) * harga_per_galon),
+            backgroundColor: 'rgba(99, 102, 241, 0.65)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: 8
           }
         ]
       },

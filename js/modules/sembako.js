@@ -31,7 +31,7 @@ export const SembakoModule = {
       <!-- Section 1: Sembako Utama Dapur -->
       <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;">
         <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 10px;">
-          <i class="fa-solid fa-bottle-droplet"></i> 1. Sembako & Bahan Pokok Dapur
+          1. Sembako & Bahan Pokok Dapur
         </h4>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -97,7 +97,7 @@ export const SembakoModule = {
       <!-- Section 2: Lauk Pauk & Protein -->
       <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;">
         <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-amber); margin-bottom: 10px;">
-          <i class="fa-solid fa-drumstick-bite"></i> 2. Lauk Pauk & Protein (Daging / Ayam / Ikan / Sayur)
+          2. Lauk Pauk & Protein (Daging / Ayam / Ikan / Sayur)
         </h4>
 
         <div class="form-group" style="margin-bottom: 12px;">
@@ -117,7 +117,7 @@ export const SembakoModule = {
       <!-- Section 3: Sanitasi & Kebersihan -->
       <div style="margin-bottom: 16px;">
         <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-sky); margin-bottom: 10px;">
-          <i class="fa-solid fa-pump-soap"></i> 3. Perlengkapan Mandi & Cuci
+          3. Perlengkapan Mandi & Cuci
         </h4>
 
         <div class="form-group" style="margin-bottom: 12px;">
