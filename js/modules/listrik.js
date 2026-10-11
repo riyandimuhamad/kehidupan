@@ -1,10 +1,44 @@
 /**
  * Modul Kalkulator Kebutuhan Listrik PLN
  * Kehidupan App Suite
+ * 
+ * Mendukung 2 Sistem Resmi Listrik PLN di Indonesia:
+ * 1. Prabayar (Listrik Pintar / Token) - Bebas biaya beban / rekening minimum, perhitungan token bersih & biaya admin top-up.
+ * 2. Pascabayar (Tagihan Bulanan Meteran) - Dikenakan ketentuan Rekening Minimum PLN (40 jam nyala) & biaya admin tagihan.
  */
 
-import { formatRupiah, formatNumber } from '../utils/formatters.js';
+import { formatRupiah, formatNumber, saveToStorage, getFromStorage } from '../utils/formatters.js';
 import { BudgetStore } from '../services/budgetStore.js';
+
+const STORAGE_KEY_LISTRIK = 'listrik_data';
+
+// Tarif Tenaga Listrik (TTL) Rumah Tangga Resmi PLN (Permen ESDM)
+const TARIF_PLN_MAP = {
+  '450': 415,
+  '900_sub': 605,
+  '900_rtm': 1352,
+  '1300': 1444.70,
+  '2200': 1444.70,
+  '3500': 1699.53,
+  '5500': 1699.53,
+  '6600': 1699.53
+};
+
+const DAYA_LABELS = {
+  '450': '450 VA (R-1 Subsidi)',
+  '900_sub': '900 VA (R-1 Subsidi)',
+  '900_rtm': '900 VA (R-1 Non-Subsidi)',
+  '1300': '1.300 VA (R-1 Non-Subsidi)',
+  '2200': '2.200 VA (R-1 Non-Subsidi)',
+  '3500': '3.500 VA (R-2 Non-Subsidi)',
+  '5500': '5.500 VA (R-2 Non-Subsidi)',
+  '6600': '6.600 VA (R-3 Non-Subsidi)'
+};
+
+const getNumericVa = (val) => {
+  if (val === '900_sub' || val === '900_rtm') return 900;
+  return parseInt(val, 10) || 1300;
+};
 
 export const ListrikModule = {
   id: 'listrik',
@@ -12,79 +46,273 @@ export const ListrikModule = {
   icon: 'fa-bolt',
   badge: 'Module Energi',
   title: 'Kalkulator Estimasi Listrik PLN',
-  subtitle: 'Hitung estimasi pengeluaran token listrik atau tagihan bulanan berdasarkan daya terpasang dan pemakaian harian (kWh).',
+  subtitle: 'Kalkulasi akurat sistem Prabayar (Token Listrik Pintar) & Pascabayar (Tagihan Bulanan) sesuai regulasi tarif dan ketentuan Rekening Minimum PLN.',
 
   defaults: {
-    daya_va: 1300,
+    sistem_listrik: 'prabayar', // 'prabayar' | 'pascabayar'
+    daya_va: '1300',
     kwh_per_hari: 10,
     tarif_per_kwh: 1444.70,
+    ppj_persen: 5, // Pajak Penerangan Jalan (3% - 10%, rata-rata 5%)
+    admin_per_transaksi: 2500, // Biaya admin bank/top-up token atau loket tagihan
+    nominal_token_pilihan: 200000, // Pilihan nominal token favorit (50k, 100k, 200k, 500k, 1jt)
     hari: 30
   },
 
+  getData: () => {
+    return getFromStorage(STORAGE_KEY_LISTRIK, { ...ListrikModule.defaults });
+  },
+
+  saveData: (data) => {
+    saveToStorage(STORAGE_KEY_LISTRIK, data);
+  },
+
   renderForm: (container, onInputChange) => {
+    const data = ListrikModule.getData();
+
+    const isPrabayar = data.sistem_listrik === 'prabayar';
+    const isPascabayar = data.sistem_listrik === 'pascabayar';
+
     container.innerHTML = `
-      <div class="form-group">
-        <label for="daya_va">Daya Listrik Terpasang <span class="unit">(VA)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-bolt-lightning fa-solid input-icon"></i>
-          <select id="daya_va" class="form-control">
-            <option value="900">900 VA (Subsidi / Non-Subsidi)</option>
-            <option value="1300" selected>1.300 VA (R-1/TR Standard)</option>
-            <option value="2200">2.200 VA (R-1/TR)</option>
-            <option value="3500">3.500 VA (R-2/TR)</option>
-            <option value="5500">5.500 VA (R-2/TR)</option>
-          </select>
+      <!-- Section Header -->
+      <div style="margin-bottom: 14px;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 0 0 4px 0;">
+          Pengaturan Sistem & Konsumsi Listrik PLN
+        </h4>
+        <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">
+          Pilih sistem meteran listrik rumah tangga (Prabayar Token atau Tagihan Pascabayar).
+        </p>
+      </div>
+
+      <!-- Section 1: Pilihan Sistem Listrik Utama (Prabayar vs Pascabayar) -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 6px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Sistem Meteran Listrik PLN</span>
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" class="sistem-chip option-chip ${isPrabayar ? 'active' : ''}" data-val="prabayar" style="justify-content: center; font-size: 0.78rem; padding: 9px 8px;">
+              <i class="fa-bolt-lightning fa-solid" style="margin-right: 6px; color: var(--accent-amber);"></i> Prabayar (Token / Listrik Pintar)
+            </button>
+            <button type="button" class="sistem-chip option-chip ${isPascabayar ? 'active' : ''}" data-val="pascabayar" style="justify-content: center; font-size: 0.78rem; padding: 9px 8px;">
+              <i class="fa-file-invoice-dollar fa-solid" style="margin-right: 6px; color: var(--accent-sky);"></i> Pascabayar (Tagihan Bulanan)
+            </button>
+          </div>
+          <input type="hidden" id="sistem_listrik" value="${data.sistem_listrik}">
+        </div>
+
+        <!-- Info Card Sistem Terpilih -->
+        <div id="systemInfoBox" style="margin-top: 10px; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.74rem; line-height: 1.45; background: ${isPrabayar ? 'rgba(245, 158, 11, 0.08)' : 'rgba(6, 182, 212, 0.08)'}; border-left: 3px solid ${isPrabayar ? 'var(--accent-amber)' : 'var(--accent-sky)'}; color: var(--text-main);">
+          ${isPrabayar 
+            ? '<strong>Prabayar (Token):</strong> Beli saldo stroom di awal. Bebas biaya beban / rekening minimum bulanan. Dikenakan Pajak Penerangan Jalan (PPJ) dan admin pembelian token.'
+            : '<strong>Pascabayar (Meteran Bulanan):</strong> Pemakaian dicatat akhir bulan & ditagih tgl 1-20. Dikenakan ketentuan <em>Rekening Minimum PLN (40 jam nyala)</em> jika pemakaian rendah.'}
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="kwh_per_hari">Estimasi Pemakaian per Hari <span class="unit">(kWh)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-plug fa-solid input-icon"></i>
-          <input type="number" id="kwh_per_hari" class="form-control" step="0.5" value="10">
+      <!-- Section 2: Daya Listrik & Tarif PLN -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Golongan Daya & Tarif PLN
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="kwh_per_hari" data-val="5">Hemat (5 kWh)</button>
-          <button type="button" class="option-chip active" data-target="kwh_per_hari" data-val="10">Sedang (10 kWh)</button>
-          <button type="button" class="option-chip" data-target="kwh_per_hari" data-val="20">Banyak + AC (20 kWh)</button>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Daya Terpasang</span> <span class="unit">(VA)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-bolt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <select id="daya_va" class="form-control" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+                <option value="450" ${data.daya_va === '450' ? 'selected' : ''}>450 VA (R-1 Subsidi - Rp 415/kWh)</option>
+                <option value="900_sub" ${data.daya_va === '900_sub' ? 'selected' : ''}>900 VA (R-1 Subsidi - Rp 605/kWh)</option>
+                <option value="900_rtm" ${data.daya_va === '900_rtm' ? 'selected' : ''}>900 VA (R-1 Non-Subsidi - Rp 1.352/kWh)</option>
+                <option value="1300" ${data.daya_va === '1300' ? 'selected' : ''}>1.300 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
+                <option value="2200" ${data.daya_va === '2200' ? 'selected' : ''}>2.200 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
+                <option value="3500" ${data.daya_va === '3500' ? 'selected' : ''}>3.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
+                <option value="5500" ${data.daya_va === '5500' ? 'selected' : ''}>5.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
+                <option value="6600" ${data.daya_va === '6600' ? 'selected' : ''}>6.600 VA (R-3 Non-Subsidi - Rp 1.699,53/kWh)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Tarif per kWh</span> <span class="unit">(Rp/kWh)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="tarif_per_kwh" class="form-control" step="1" value="${data.tarif_per_kwh}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tarif otomatis terisi sesuai daya yang dipilih berdasarkan ketetapan resmi tarif listrik ESDM/PLN terbaru.</p>
+      </div>
+
+      <!-- Section 3: Konsumsi Listrik Harian -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Estimasi Pemakaian Listrik
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Konsumsi Harian</span> <span class="unit">(kWh)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-plug fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="kwh_per_hari" class="form-control" step="0.5" min="0.1" value="${data.kwh_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Lama Waktu</span> <span class="unit">(Hari)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-options" style="margin-bottom: 4px;">
+          <button type="button" class="option-chip ${data.kwh_per_hari === 5 ? 'active' : ''}" data-target="kwh_per_hari" data-val="5">Hemat (5 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 10 ? 'active' : ''}" data-target="kwh_per_hari" data-val="10">Sedang (10 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 18 ? 'active' : ''}" data-target="kwh_per_hari" data-val="18">1 AC (18 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 28 ? 'active' : ''}" data-target="kwh_per_hari" data-val="28">Multi AC (28 kWh)</button>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tip: 1 AC 1/2 PK menyala 8 jam ± 3-4 kWh; kulkas 24 jam ± 1-1.5 kWh; dispenser ± 1.5 kWh/hari.</p>
+      </div>
+
+      <!-- Section 4: Pajak Daerah (PPJ) & Biaya Administrasi -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Pajak Penerangan Jalan (PPJ) & Admin
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Pajak PPJ</span> <span class="unit">(%)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-percent fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="ppj_persen" class="form-control" step="0.5" min="0" max="15" value="${data.ppj_persen}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Biaya Admin</span> <span class="unit">(Rp)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-receipt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="admin_per_transaksi" class="form-control" step="500" value="${data.admin_per_transaksi}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-options" style="margin-bottom: 4px;">
+          <button type="button" class="option-chip ${data.ppj_persen === 3 ? 'active' : ''}" data-target="ppj_persen" data-val="3">DKI Jakarta (3%)</button>
+          <button type="button" class="option-chip ${data.ppj_persen === 5 ? 'active' : ''}" data-target="ppj_persen" data-val="5">Jabar / Banten (5%)</button>
+          <button type="button" class="option-chip ${data.ppj_persen === 7 ? 'active' : ''}" data-target="ppj_persen" data-val="7">Jateng / DIY (7%)</button>
+          <button type="button" class="option-chip ${data.ppj_persen === 10 ? 'active' : ''}" data-target="ppj_persen" data-val="10">Jatim / Lainnya (10%)</button>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="tarif_per_kwh">Tarif PLN per kWh <span class="unit">(Rp)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-tag fa-solid input-icon"></i>
-          <input type="number" id="tarif_per_kwh" class="form-control" step="10" value="1444.70">
+      <!-- Section 5A: Khusus Prabayar (Pilihan Denominasi Token) -->
+      <div id="prabayarConfigSection" class="card" style="display: ${isPrabayar ? 'block' : 'none'}; margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Pilihan Denominasi Token Prabayar
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="tarif_per_kwh" data-val="1352">R1 900VA (Rp 1.352)</button>
-          <button type="button" class="option-chip active" data-target="tarif_per_kwh" data-val="1444.70">R1 1300VA (Rp 1.444,7)</button>
-          <button type="button" class="option-chip" data-target="tarif_per_kwh" data-val="1700">Non-Subsidi (Rp 1.700)</button>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Denominasi Beli Token Favorit</span> <span class="unit">(Rp)</span>
+          </label>
+          <div class="form-options" style="margin-bottom: 6px;">
+            <button type="button" class="token-chip option-chip ${data.nominal_token_pilihan === 50000 ? 'active' : ''}" data-target="nominal_token_pilihan" data-val="50000">Rp 50.000</button>
+            <button type="button" class="token-chip option-chip ${data.nominal_token_pilihan === 100000 ? 'active' : ''}" data-target="nominal_token_pilihan" data-val="100000">Rp 100.000</button>
+            <button type="button" class="token-chip option-chip ${data.nominal_token_pilihan === 200000 ? 'active' : ''}" data-target="nominal_token_pilihan" data-val="200000">Rp 200.000</button>
+            <button type="button" class="token-chip option-chip ${data.nominal_token_pilihan === 500000 ? 'active' : ''}" data-target="nominal_token_pilihan" data-val="500000">Rp 500.000</button>
+            <button type="button" class="token-chip option-chip ${data.nominal_token_pilihan === 1000000 ? 'active' : ''}" data-target="nominal_token_pilihan" data-val="1000000">Rp 1.000.000</button>
+          </div>
+          <input type="hidden" id="nominal_token_pilihan" value="${data.nominal_token_pilihan}">
+          <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Digunakan untuk menyimulasikan frekuensi top-up token dan total biaya admin per bulan.</p>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="hari">Lama Waktu <span class="unit">(Hari)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-calendar-days fa-solid input-icon"></i>
-          <input type="number" id="hari" class="form-control" min="1" max="365" value="30">
+      <!-- Section 5B: Khusus Pascabayar (Info Rekening Minimum PLN) -->
+      <div id="pascabayarConfigSection" class="card" style="display: ${isPascabayar ? 'block' : 'none'}; margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Ketentuan Rekening Minimum (RM) PLN
+        </div>
+        <div id="rmExplanationText" style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.5;">
+          Perhitungan Rekening Minimum PLN = <strong>40 jam nyala × Daya (kVA) × Tarif/kWh</strong>. Jika pemakaian riil di bawah angka tersebut, tagihan bulanan tetap dikenakan tarif minimum RM.
         </div>
       </div>
 
-      <!-- Action Sync to Budget Dashboard Button -->
-      <div style="margin-top: 20px; text-align: center;">
-        <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
-          <i class="fa-bookmark fa-solid"></i> Simpan ke Dashboard Budget Bulanan
+      <!-- Action Button: Simpan ke Budget Dashboard -->
+      <div style="margin-top: 18px; text-align: center;">
+        <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669); padding: 11px;">
+          <i class="fa-bookmark fa-solid" style="margin-right: 6px;"></i> Simpan ke Dashboard Budget Bulanan
         </button>
         <span id="saveNotice" style="font-size: 0.76rem; color: var(--accent-emerald); display: block; margin-top: 6px;"></span>
       </div>
     `;
 
+    // Event Listeners for Inputs & Selects
     const inputs = container.querySelectorAll('input, select');
-    inputs.forEach(input => input.addEventListener('input', () => onInputChange()));
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        ListrikModule.saveFormData(container);
+        onInputChange();
+      });
+    });
 
-    const chips = container.querySelectorAll('.option-chip');
-    chips.forEach(chip => {
+    // Daya VA Dropdown change: auto update tarif_per_kwh
+    const dayaSelect = container.querySelector('#daya_va');
+    const tarifInput = container.querySelector('#tarif_per_kwh');
+    dayaSelect.addEventListener('change', () => {
+      const selectedVal = dayaSelect.value;
+      if (TARIF_PLN_MAP[selectedVal] !== undefined) {
+        tarifInput.value = TARIF_PLN_MAP[selectedVal];
+      }
+      ListrikModule.saveFormData(container);
+      onInputChange();
+    });
+
+    // Sistem Chips (Prabayar vs Pascabayar)
+    const sistemChips = container.querySelectorAll('.sistem-chip');
+    sistemChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.getAttribute('data-val');
+        container.querySelector('#sistem_listrik').value = val;
+        sistemChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        // Toggle UI Sections
+        const isPra = val === 'prabayar';
+        container.querySelector('#prabayarConfigSection').style.display = isPra ? 'block' : 'none';
+        container.querySelector('#pascabayarConfigSection').style.display = isPra ? 'none' : 'block';
+
+        const infoBox = container.querySelector('#systemInfoBox');
+        if (infoBox) {
+          infoBox.style.background = isPra ? 'rgba(245, 158, 11, 0.08)' : 'rgba(6, 182, 212, 0.08)';
+          infoBox.style.borderLeftColor = isPra ? 'var(--accent-amber)' : 'var(--accent-sky)';
+          infoBox.innerHTML = isPra 
+            ? '<strong>Prabayar (Token):</strong> Beli saldo stroom di awal. Bebas biaya beban / rekening minimum bulanan. Dikenakan Pajak Penerangan Jalan (PPJ) dan admin pembelian token.'
+            : '<strong>Pascabayar (Meteran Bulanan):</strong> Pemakaian dicatat akhir bulan & ditagih tgl 1-20. Dikenakan ketentuan <em>Rekening Minimum PLN (40 jam nyala)</em> jika pemakaian rendah.';
+        }
+
+        ListrikModule.saveFormData(container);
+        onInputChange();
+      });
+    });
+
+    // General Option Chips (kwh_per_hari, ppj_persen, nominal_token_pilihan)
+    const optionChips = container.querySelectorAll('.option-chip:not(.sistem-chip)');
+    optionChips.forEach(chip => {
       chip.addEventListener('click', () => {
         const targetId = chip.getAttribute('data-target');
         const val = chip.getAttribute('data-val');
@@ -93,72 +321,147 @@ export const ListrikModule = {
           targetInput.value = val;
           container.querySelectorAll(`.option-chip[data-target="${targetId}"]`).forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
+          ListrikModule.saveFormData(container);
           onInputChange();
         }
       });
     });
 
+    // Save to Budget Dashboard Button
     const saveBtn = container.querySelector('#saveToBudgetBtn');
     const notice = container.querySelector('#saveNotice');
 
     saveBtn.addEventListener('click', () => {
       const currentInputs = ListrikModule.getFormInputs(container);
-      const monthlyKwh = currentInputs.kwh_per_hari * 30;
-      const monthlyCost = monthlyKwh * currentInputs.tarif_per_kwh * 1.05;
+      const monthlyRes = ListrikModule.calculateMonthly(currentInputs);
+
+      const sistemLabel = currentInputs.sistem_listrik === 'prabayar' ? 'Prabayar (Token)' : 'Pascabayar';
+      const dayaLabel = DAYA_LABELS[currentInputs.daya_va] || `${currentInputs.daya_va} VA`;
 
       BudgetStore.saveBudgetItem('listrik', {
         id: 'listrik',
-        name: 'Listrik PLN',
-        amount: monthlyCost,
+        name: `Listrik PLN (${sistemLabel})`,
+        amount: monthlyRes.total_biaya,
         category: 'Pokok',
-        source: `Kalkulator Listrik (${currentInputs.daya_va} VA)`
+        source: `Kalkulator Listrik (${dayaLabel})`
       });
 
-      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
-      setTimeout(() => notice.innerHTML = '', 4000);
+      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyRes.total_biaya)} (${sistemLabel}) telah disinkronkan ke Dashboard Keuangan.`;
+      setTimeout(() => notice.innerHTML = '', 4500);
     });
+  },
+
+  saveFormData: (container) => {
+    const data = ListrikModule.getFormInputs(container);
+    ListrikModule.saveData(data);
   },
 
   getFormInputs: (container) => {
     return {
-      daya_va: parseInt(container.querySelector('#daya_va')?.value || 1300, 10),
+      sistem_listrik: container.querySelector('#sistem_listrik')?.value || 'prabayar',
+      daya_va: container.querySelector('#daya_va')?.value || '1300',
       kwh_per_hari: parseFloat(container.querySelector('#kwh_per_hari')?.value || 10),
       tarif_per_kwh: parseFloat(container.querySelector('#tarif_per_kwh')?.value || 1444.70),
+      ppj_persen: parseFloat(container.querySelector('#ppj_persen')?.value || 5),
+      admin_per_transaksi: parseFloat(container.querySelector('#admin_per_transaksi')?.value || 2500),
+      nominal_token_pilihan: parseFloat(container.querySelector('#nominal_token_pilihan')?.value || 200000),
       hari: parseInt(container.querySelector('#hari')?.value || 30, 10)
     };
   },
 
+  // Helper calculation for 1 month (30 days) to sync to BudgetStore
+  calculateMonthly: (inputs) => {
+    const monthInputs = { ...inputs, hari: 30 };
+    const res = ListrikModule.calculate(monthInputs);
+    return {
+      total_biaya: res.internalTotalBiaya || 0
+    };
+  },
+
   calculate: (inputs) => {
-    const { kwh_per_hari, tarif_per_kwh, hari } = inputs;
+    const s = { ...ListrikModule.defaults, ...inputs };
+    const { sistem_listrik, daya_va, kwh_per_hari, tarif_per_kwh, ppj_persen, admin_per_transaksi, nominal_token_pilihan, hari } = s;
 
-    const total_kwh = kwh_per_hari * hari;
-    const total_biaya = total_kwh * tarif_per_kwh;
-    const total_biaya_dengan_pajak = total_biaya * 1.05;
+    const numericVa = getNumericVa(daya_va);
+    const kwh_total = kwh_per_hari * hari;
+    const daya_label = DAYA_LABELS[daya_va] || `${daya_va} VA`;
 
+    // 1. Perhitungan Dasar Berdasarkan Sistem
+    let biaya_energi_riil = kwh_total * tarif_per_kwh;
+    let biaya_energi_tagihan = biaya_energi_riil;
+    let isKenaRekeningMinimum = false;
+    let kwh_min = 0;
+    let rm_rupiah = 0;
+    let total_admin = 0;
+    let frekuensi_token = 1;
+
+    if (sistem_listrik === 'pascabayar') {
+      // Ketentuan Rekening Minimum (RM) PLN = 40 jam nyala * kVA terpasang
+      // Untuk periode custom: dihitung proporsional terhadap 30 hari
+      kwh_min = 40 * (numericVa / 1000) * (hari / 30);
+      rm_rupiah = kwh_min * tarif_per_kwh;
+
+      if (kwh_total < kwh_min) {
+        isKenaRekeningMinimum = true;
+        biaya_energi_tagihan = rm_rupiah;
+      } else {
+        biaya_energi_tagihan = biaya_energi_riil;
+      }
+
+      // Biaya admin tagihan pascabayar per tagihan bulanan
+      total_admin = (hari / 30) * admin_per_transaksi;
+    } else {
+      // Prabayar: Bebas biaya beban / RM
+      biaya_energi_tagihan = biaya_energi_riil;
+
+      // Estimasi pembelian token & admin
+      const biayaEnergiPlusPajak = biaya_energi_tagihan * (1 + (ppj_persen / 100));
+      frekuensi_token = Math.max(1, Math.ceil(biayaEnergiPlusPajak / (nominal_token_pilihan || 200000)));
+      total_admin = frekuensi_token * admin_per_transaksi;
+    }
+
+    const biaya_ppj = biaya_energi_tagihan * (ppj_persen / 100);
+    const total_biaya_akhir = biaya_energi_tagihan + biaya_ppj + total_admin;
+
+    // Summary Cards (4 Cards)
     const summaryCards = [
       {
         title: 'Total Konsumsi Listrik',
-        value: `${formatNumber(total_kwh, 1)} kWh`,
-        note: `Rata-rata ${formatNumber(kwh_per_hari, 1)} kWh/hari`,
+        value: `${formatNumber(kwh_total, 1)} kWh`,
+        note: `Rata-rata ${formatNumber(kwh_per_hari, 1)} kWh/hari (${formatNumber(numericVa, 0)} VA)`,
         icon: 'fa-bolt',
         type: 'emerald'
       },
       {
-        title: 'Estimasi Biaya Token/Tagihan',
-        value: formatRupiah(total_biaya_dengan_pajak),
-        note: `Termasuk Est. Pajak PPJ (5%)`,
+        title: sistem_listrik === 'pascabayar' 
+          ? (isKenaRekeningMinimum ? 'Biaya Rek. Minimum (RM)' : 'Biaya Pemakaian Riil')
+          : 'Biaya Energi Murni',
+        value: formatRupiah(biaya_energi_tagihan),
+        note: sistem_listrik === 'pascabayar'
+          ? (isKenaRekeningMinimum ? `Kena Min. 40 Jam (${formatNumber(kwh_min, 1)} kWh)` : `Normal di atas Rek. Min (${formatNumber(kwh_min, 1)} kWh)`)
+          : `${formatNumber(kwh_total, 1)} kWh × ${formatRupiah(tarif_per_kwh)}`,
+        icon: sistem_listrik === 'pascabayar' ? 'fa-file-invoice' : 'fa-plug-circle-bolt',
+        type: isKenaRekeningMinimum ? 'amber' : 'sky'
+      },
+      {
+        title: 'Pajak PPJ & Biaya Admin',
+        value: formatRupiah(biaya_ppj + total_admin),
+        note: `PPJ ${ppj_persen}% (${formatRupiah(biaya_ppj)}) + Admin (${formatRupiah(total_admin)})`,
         icon: 'fa-receipt',
         type: 'amber'
       },
       {
-        title: 'Rekomendasi Beli Token',
-        value: formatRupiah(Math.ceil(total_biaya_dengan_pajak / 50000) * 50000),
-        note: `Pilihan Denom Token PLN`,
-        icon: 'fa-wallet',
-        type: 'sky'
+        title: sistem_listrik === 'prabayar' ? 'Estimasi Biaya Token' : 'Total Tagihan Pascabayar',
+        value: formatRupiah(total_biaya_akhir),
+        note: sistem_listrik === 'prabayar'
+          ? `Saran: ~${frekuensi_token}x Token ${formatRupiah(nominal_token_pilihan)}`
+          : `Jatuh tempo setiap tgl 20`,
+        icon: sistem_listrik === 'prabayar' ? 'fa-wallet' : 'fa-money-bill-wave',
+        type: 'emerald'
       }
     ];
 
+    // Table Setup
     const periods = [
       { label: '7 Hari', d: 7 },
       { label: '30 Hari (1 Bulan)', d: 30 },
@@ -167,42 +470,156 @@ export const ListrikModule = {
       { label: `Custom (${hari} Hari)`, d: hari, isCurrent: true }
     ];
 
-    const tableHeaders = ['Periode', 'Total Pemakaian (kWh)', 'Estimasi Tagihan (Rp)', 'Termasuk Est. PPJ 5% (Rp)'];
+    const colEnergiLabel = sistem_listrik === 'pascabayar' ? 'Biaya Pemakaian / RM (Rp)' : 'Biaya Energi Token (Rp)';
+    const colAdminLabel = sistem_listrik === 'pascabayar' ? 'Biaya Admin Tagihan' : 'Biaya Admin Top-Up';
+    const colTotalLabel = sistem_listrik === 'pascabayar' ? 'Total Tagihan PLN (Rp)' : 'Total Pengeluaran Token (Rp)';
+
+    const tableHeaders = ['Periode', 'Konsumsi Listrik (kWh)', colEnergiLabel, `Pajak PPJ (${ppj_persen}%)`, colAdminLabel, colTotalLabel];
+
     const tableRows = periods.map(p => {
-      const kwh = kwh_per_hari * p.d;
-      const cost = kwh * tarif_per_kwh;
-      const costTax = cost * 1.05;
+      const pKwh = kwh_per_hari * p.d;
+      let pEnergi = 0;
+      let pAdmin = 0;
+
+      if (sistem_listrik === 'pascabayar') {
+        const pKwhMin = 40 * (numericVa / 1000) * (p.d / 30);
+        const pRm = pKwhMin * tarif_per_kwh;
+        pEnergi = pKwh < pKwhMin ? pRm : (pKwh * tarif_per_kwh);
+        pAdmin = (p.d / 30) * admin_per_transaksi;
+      } else {
+        pEnergi = pKwh * tarif_per_kwh;
+        const pEnergiPlusPajak = pEnergi * (1 + (ppj_persen / 100));
+        const pFrek = Math.max(1, Math.ceil(pEnergiPlusPajak / (nominal_token_pilihan || 200000)));
+        pAdmin = pFrek * admin_per_transaksi;
+      }
+
+      const pPpj = pEnergi * (ppj_persen / 100);
+      const pTotal = pEnergi + pPpj + pAdmin;
+
       return {
         isCurrent: p.isCurrent || false,
         cells: [
           `<strong>${p.label}</strong>`,
-          `${formatNumber(kwh, 1)} kWh`,
-          formatRupiah(cost),
-          `<span class="highlight">${formatRupiah(costTax)}</span>`
+          `${formatNumber(pKwh, 1)} kWh`,
+          formatRupiah(pEnergi),
+          formatRupiah(pPpj),
+          formatRupiah(pAdmin),
+          `<span class="highlight">${formatRupiah(pTotal)}</span>`
         ]
       };
     });
 
+    // Secondary Table: Proyeksi Jangka Panjang (Semester & 1 Tahun Penuh)
+    const kwh_1bln = kwh_per_hari * 30;
+    let energi_1bln = 0;
+    let admin_1bln = 0;
+
+    if (sistem_listrik === 'pascabayar') {
+      const kwhMin30 = 40 * (numericVa / 1000);
+      energi_1bln = kwh_1bln < kwhMin30 ? (kwhMin30 * tarif_per_kwh) : (kwh_1bln * tarif_per_kwh);
+      admin_1bln = admin_per_transaksi;
+    } else {
+      energi_1bln = kwh_1bln * tarif_per_kwh;
+      const frek30 = Math.max(1, Math.ceil((energi_1bln * (1 + ppj_persen / 100)) / (nominal_token_pilihan || 200000)));
+      admin_1bln = frek30 * admin_per_transaksi;
+    }
+
+    const ppj_1bln = energi_1bln * (ppj_persen / 100);
+    const cost_1bln = energi_1bln + ppj_1bln + admin_1bln;
+
+    const secondaryTable = {
+      title: 'Proyeksi Pengeluaran Listrik Jangka Panjang',
+      subtitle: `Akumulasi biaya listrik (${sistem_listrik === 'prabayar' ? 'Prabayar / Token' : 'Pascabayar / Tagihan'} - ${daya_label}) untuk perencanaan keuangan.`,
+      headers: [
+        'Periode Proyeksi',
+        'Durasi Waktu',
+        'Total Konsumsi (kWh)',
+        colEnergiLabel,
+        'Pajak PPJ & Admin',
+        'Total Proyeksi Listrik'
+      ],
+      rows: [
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>Proyeksi 1 Semester</strong>`,
+            `6 Bulan (Semester)`,
+            `${formatNumber(kwh_1bln * 6, 1)} kWh`,
+            formatRupiah(energi_1bln * 6),
+            formatRupiah((ppj_1bln + admin_1bln) * 6),
+            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(cost_1bln * 6)}</strong>`
+          ]
+        },
+        {
+          isCurrent: true,
+          cells: [
+            `<strong>Proyeksi 1 Tahun Penuh</strong>`,
+            `12 Bulan (1 Tahun Penuh)`,
+            `${formatNumber(kwh_1bln * 12, 1)} kWh`,
+            formatRupiah(energi_1bln * 12),
+            formatRupiah((ppj_1bln + admin_1bln) * 12),
+            `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.98rem;">${formatRupiah(cost_1bln * 12)}</strong>`
+          ]
+        }
+      ]
+    };
+
+    // Chart Data Multi-Periode & Komposisi
+    const chartLabels = ['7 Hari', '30 Hari', '90 Hari', '365 Hari'];
+    const chartDurations = [7, 30, 90, 365];
+
+    const chartEnergi = chartDurations.map(d => {
+      const dKwh = kwh_per_hari * d;
+      if (sistem_listrik === 'pascabayar') {
+        const dMin = 40 * (numericVa / 1000) * (d / 30);
+        return dKwh < dMin ? (dMin * tarif_per_kwh) : (dKwh * tarif_per_kwh);
+      }
+      return dKwh * tarif_per_kwh;
+    });
+
+    const chartPajakAdmin = chartDurations.map((d, idx) => {
+      const e = chartEnergi[idx];
+      const p = e * (ppj_persen / 100);
+      let a = 0;
+      if (sistem_listrik === 'pascabayar') {
+        a = (d / 30) * admin_per_transaksi;
+      } else {
+        const frek = Math.max(1, Math.ceil((e + p) / (nominal_token_pilihan || 200000)));
+        a = frek * admin_per_transaksi;
+      }
+      return p + a;
+    });
+
     return {
+      internalTotalBiaya: total_biaya_akhir,
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable,
       chartData: {
-        labels: ['7 Hari', '30 Hari', '90 Hari', '365 Hari'],
+        labels: chartLabels,
         datasets: [
           {
-            label: 'Estimasi Tagihan Listrik (Rp)',
-            data: [7, 30, 90, 365].map(d => kwh_per_hari * d * tarif_per_kwh * 1.05),
-            backgroundColor: 'rgba(99, 102, 241, 0.65)',
+            label: 'Biaya Energi Listrik (Rp)',
+            data: chartEnergi,
+            backgroundColor: 'rgba(99, 102, 241, 0.75)',
             borderColor: '#6366f1',
-            borderWidth: 2,
-            borderRadius: 8
+            borderWidth: 1.5,
+            borderRadius: 6
+          },
+          {
+            label: 'Pajak PPJ & Biaya Admin (Rp)',
+            data: chartPajakAdmin,
+            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+            borderColor: '#f59e0b',
+            borderWidth: 1.5,
+            borderRadius: 6
           }
         ]
       },
       quickStats: {
-        totalQty: `${formatNumber(total_kwh, 1)} kWh`,
-        totalCost: formatRupiah(total_biaya_dengan_pajak)
+        totalQty: `${formatNumber(kwh_total, 1)} kWh`,
+        totalCost: formatRupiah(total_biaya_akhir)
       }
     };
   }
