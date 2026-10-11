@@ -80,8 +80,8 @@ export const SandangModule = {
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Jumlah Anggota Keluarga</span> <span class="unit">(Jiwa)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Jumlah Jiwa</span> <span class="unit">(Orang)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-users fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -90,8 +90,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Preset Gaya Hidup</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Gaya Hidup</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-wand-magic-sparkles fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -114,8 +114,8 @@ export const SandangModule = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Pakaian & Underwear</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Baju & Pakaian</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-shirt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -124,8 +124,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Sepatu, Sandal & Tas</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Sepatu & Tas</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-shoe-prints fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -135,8 +135,8 @@ export const SandangModule = {
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-            <span>Dana Busana Hari Raya / Musiman</span> <span class="unit">(Rp/Bln)</span>
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Busana Hari Raya / Acara</span> <span class="unit">(Rp/Bln)</span>
           </label>
           <div class="input-wrapper">
             <i class="fa-gift fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -152,8 +152,8 @@ export const SandangModule = {
         </div>
 
         <div class="form-group" style="margin-bottom: 8px;">
-          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-            <span>Metode Pencucian Utama</span>
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Metode Cuci Utama</span>
           </label>
           <div class="input-wrapper">
             <i class="fa-jug-detergent fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -167,8 +167,8 @@ export const SandangModule = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Deterjen & Softener</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Deterjen & Pewangi</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-soap fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -177,8 +177,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Jasa Laundry Kiloan</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Laundry Kiloan</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-boxes-packing fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -188,8 +188,8 @@ export const SandangModule = {
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-            <span>Cuci Sepatu / Dry Cleaning</span> <span class="unit">(Rp/Bln)</span>
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Cuci Sepatu / Dry Clean</span> <span class="unit">(Rp/Bln)</span>
           </label>
           <div class="input-wrapper">
             <i class="fa-sparkles fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -206,8 +206,8 @@ export const SandangModule = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Perlengkapan Mandi</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Sabun & Sampo</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-pump-soap fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -216,8 +216,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Sanitasi & Pembalut</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Pembalut & Sanitasi</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-shield-heart fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -235,7 +235,7 @@ export const SandangModule = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
               <span>Skincare & Sunscreen</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
@@ -245,8 +245,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Make-up & Kosmetik</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Make-up & Bedak</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-wand-magic fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -264,8 +264,8 @@ export const SandangModule = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Potong Rambut & Salon</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Potong Rambut</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-scissors fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -274,8 +274,8 @@ export const SandangModule = {
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
-              <span>Parfum & Styling Rambut</span> <span class="unit">(Rp/Bln)</span>
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Parfum & Pomade</span> <span class="unit">(Rp/Bln)</span>
             </label>
             <div class="input-wrapper">
               <i class="fa-spray-can-sparkles fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
