@@ -102,10 +102,10 @@ export const PendidikanModule = {
               </span>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="c-subtotal-badge" style="font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); padding: 4px 10px; border-radius: 8px;">
+              <span class="c-subtotal-badge" style="display: inline-flex; align-items: center; justify-content: center; height: 30px; padding: 0 10px; font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; box-sizing: border-box; line-height: 1;">
                 ${formatRupiah(subtotalChild)}/bln
               </span>
-              <button type="button" class="sm-btn delete-child-btn" data-cid="${child.id}" title="Hapus profil anak ini" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); padding: 4px 8px; font-size: 0.75rem;">
+              <button type="button" class="sm-btn delete-child-btn" data-cid="${child.id}" title="Hapus profil anak ini" style="display: inline-flex; align-items: center; justify-content: center; height: 30px; width: 30px; min-width: 30px; padding: 0; font-size: 0.82rem; color: var(--accent-rose); background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3); border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: all 0.2s ease;">
                 <i class="fa-trash fa-solid"></i>
               </button>
             </div>
@@ -114,7 +114,9 @@ export const PendidikanModule = {
           <!-- Section 1: Data Diri & Jenjang Pendidikan (2 Kolom Lapang) -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Nama / Panggilan</label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Nama / Panggilan</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="text" class="form-control c-input-nama" data-cid="${child.id}" value="${child.nama}" placeholder="Contoh: Kakak / Rian" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -122,7 +124,9 @@ export const PendidikanModule = {
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Usia <span class="unit">(Tahun)</span></label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Usia</span> <span class="unit">(Tahun)</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-cake-candles fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="number" class="form-control c-input-usia" data-cid="${child.id}" value="${child.usia}" min="0" max="35" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -132,7 +136,9 @@ export const PendidikanModule = {
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Jenjang Pendidikan</label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Jenjang</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-graduation-cap fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <select class="form-control c-input-jenjang" data-cid="${child.id}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -148,7 +154,9 @@ export const PendidikanModule = {
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Kelas / Tingkat</label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Kelas / Tingkat</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-chalkboard-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="text" class="form-control c-input-kelas" data-cid="${child.id}" value="${child.kelas}" placeholder="Contoh: 3 SMA / Sem 4" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -160,7 +168,9 @@ export const PendidikanModule = {
           <div style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 12px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
               <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">SPP / UKT Bulanan <span class="unit">(Rp/Bulan)</span></label>
+                <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                  <span>SPP / UKT</span> <span class="unit">(Rp/Bln)</span>
+                </label>
                 <div class="input-wrapper">
                   <i class="fa-receipt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                   <input type="number" class="form-control c-input-spp" data-cid="${child.id}" value="${child.spp_bulan}" step="25000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -168,7 +178,9 @@ export const PendidikanModule = {
               </div>
 
               <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Hari Aktif Belajar <span class="unit">(Hari/Bln)</span></label>
+                <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                  <span>Hari Aktif</span> <span class="unit">(Hari/Bln)</span>
+                </label>
                 <div class="input-wrapper">
                   <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                   <input type="number" class="form-control c-input-hari" data-cid="${child.id}" value="${child.hari_aktif}" min="0" max="31" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -177,7 +189,9 @@ export const PendidikanModule = {
             </div>
 
             <div class="form-group" style="margin-bottom: 8px;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Uang Saku & Jajan Harian <span class="unit">(Rp/Hari)</span></label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Uang Saku & Jajan</span> <span class="unit">(Rp/Hari)</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-wallet fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="number" class="form-control c-input-saku" data-cid="${child.id}" value="${child.uang_saku_hari}" step="2000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -198,7 +212,9 @@ export const PendidikanModule = {
           <!-- Section 3: Transportasi & Tugas Kelompok / Praktikum (2 Kolom) -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Transport / Bensin <span class="unit">(Rp/Bulan)</span></label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Transport / Bensin</span> <span class="unit">(Rp/Bln)</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-bus fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="number" class="form-control c-input-transport" data-cid="${child.id}" value="${child.transport_bulan}" step="10000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -206,7 +222,9 @@ export const PendidikanModule = {
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Tugas & Praktikum <span class="unit">(Rp/Bulan)</span></label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Tugas & Praktikum</span> <span class="unit">(Rp/Bln)</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-book-open fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="number" class="form-control c-input-tugas" data-cid="${child.id}" value="${child.tugas_kelompok_bulan}" step="10000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -217,7 +235,9 @@ export const PendidikanModule = {
           <!-- Section 4: Les / Bimbel & Kebutuhan Balita / Ekstra (2 Kolom) -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">Les, Bimbel & Ekskul <span class="unit">(Rp/Bulan)</span></label>
+              <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span>Les & Ekskul</span> <span class="unit">(Rp/Bln)</span>
+              </label>
               <div class="input-wrapper">
                 <i class="fa-chalkboard fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
                 <input type="number" class="form-control c-input-les" data-cid="${child.id}" value="${child.les_kursus_bulan}" step="25000" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
@@ -225,8 +245,8 @@ export const PendidikanModule = {
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label class="c-extra-label" style="font-size: 0.76rem; font-weight: 600; margin-bottom: 4px;">
-                ${isBalita ? 'Susu & Popok Balita' : 'Buku & Ekstra'} <span class="unit">(Rp/Bulan)</span>
+              <label class="c-extra-label" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px;">
+                <span class="c-extra-title">${isBalita ? 'Susu & Popok' : 'Buku & Ekstra'}</span> <span class="unit">(Rp/Bln)</span>
               </label>
               <div class="input-wrapper">
                 <i class="c-extra-icon fa-solid ${isBalita ? 'fa-baby' : 'fa-pen-ruler'} input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -328,7 +348,7 @@ export const PendidikanModule = {
             // 4. Update Label & Icon Kebutuhan Balita vs Sekolah
             const extraLabel = card.querySelector('.c-extra-label');
             if (extraLabel) {
-              extraLabel.innerHTML = `${isBalita ? 'Susu & Popok Balita' : 'Buku & Ekstra'} <span class="unit">(Rp/Bulan)</span>`;
+              extraLabel.innerHTML = `<span class="c-extra-title">${isBalita ? 'Susu & Popok' : 'Buku & Ekstra'}</span> <span class="unit">(Rp/Bln)</span>`;
             }
             const extraIcon = card.querySelector('.c-extra-icon');
             if (extraIcon) {
