@@ -46,9 +46,9 @@ class KehidupanApp {
     this.history = getFromStorage('history', []);
 
     this.initElements();
+    this.initTheme();
     this.bindEvents();
     this.loadModule(this.activeModuleId);
-    this.initTheme();
   }
 
   initElements() {
@@ -238,7 +238,8 @@ class KehidupanApp {
 
     const isDark = document.body.classList.contains('dark-mode');
     const textColor = isDark ? '#94a3b8' : '#475569';
-    const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+    const axisBorderColor = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
 
     // Color conversion helper for unified design consistency
     const colorToRgba = (color, alpha = 0.65) => {
@@ -332,7 +333,14 @@ class KehidupanApp {
         scales: {
           x: {
             ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } },
-            grid: { color: gridColor }
+            grid: {
+              color: gridColor,
+              drawOnChartArea: true
+            },
+            border: {
+              display: true,
+              color: axisBorderColor
+            }
           },
           y: {
             ticks: {
@@ -345,7 +353,14 @@ class KehidupanApp {
                 return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
               }
             },
-            grid: { color: gridColor }
+            grid: {
+              color: gridColor,
+              drawOnChartArea: true
+            },
+            border: {
+              display: true,
+              color: axisBorderColor
+            }
           }
         }
       }
