@@ -79,14 +79,16 @@ body.light-mode {
   padding: 0;
 }
 
-body {
+html, body {
   font-family: var(--font-body);
   background-color: var(--bg-main);
   color: var(--text-main);
   line-height: 1.6;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Layout Architecture */
@@ -306,11 +308,14 @@ body.dark-mode .nav-btn:hover {
   color: #ffffff;
 }
 
-/* Dashboard Group Special Style */
+/* Dashboard Group Special Style (Paling Atas) */
 .nav-group.dashboard-group {
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--border-color);
+  margin-top: 0;
+  margin-bottom: 6px;
+  padding-top: 0;
+  padding-bottom: 12px;
+  border-top: none;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .nav-btn.dashboard-btn {
@@ -372,10 +377,10 @@ body.dark-mode .nav-btn:hover {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-main);
-  overflow-x: hidden;
+  position: relative;
 }
 
-/* App Topbar */
+/* App Topbar - Sticky / Fixed at Top */
 .app-topbar {
   display: flex;
   align-items: center;
