@@ -15,6 +15,9 @@ import { SandangModule } from './modules/sandang.js';
 import { KesehatanModule } from './modules/kesehatan.js';
 import { PendidikanModule } from './modules/pendidikan.js';
 import { HarianModule } from './modules/harian.js';
+import { HiburanModule } from './modules/hiburan.js';
+import { InvestasiModule } from './modules/investasi.js';
+import { PajakModule } from './modules/pajak.js';
 import { DashboardModule } from './modules/dashboard.js';
 
 import { BudgetStore } from './services/budgetStore.js';
@@ -38,6 +41,9 @@ class KehidupanApp {
       kesehatan: KesehatanModule,
       pendidikan: PendidikanModule,
       harian: HarianModule,
+      hiburan: HiburanModule,
+      investasi: InvestasiModule,
+      pajak: PajakModule,
       dashboard: DashboardModule
     };
 
@@ -339,72 +345,80 @@ class KehidupanApp {
 
     const firstDataset = chartData?.datasets?.[0];
     const isMultiColorBar = firstDataset?.backgroundColor && Array.isArray(firstDataset.backgroundColor) && firstDataset.backgroundColor.length > 1;
+    const isRadial = chartData?.type === 'doughnut' || chartData?.type === 'pie';
 
-    this.chartInstance = new Chart(this.analysisChartCtx, {
-      type: chartData.type || 'bar',
-      data: chartData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: !isMultiColorBar,
-            labels: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } }
-          },
-          tooltip: {
-            backgroundColor: isDark ? '#172033' : '#ffffff',
-            titleColor: isDark ? '#ffffff' : '#000000',
-            bodyColor: isDark ? '#94a3b8' : '#333333',
-            borderColor: 'rgba(99,102,241,0.3)',
-            borderWidth: 1,
-            callbacks: {
-              label: function(context) {
-                let label = context.dataset.label || '';
-                if (label) {
-                  label += ': ';
-                }
-                if (context.parsed.y !== null) {
-                  label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(context.parsed.y);
-                }
-                return label;
-              }
-            }
-          }
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: isRadial ? true : !isMultiColorBar,
+          position: isRadial ? 'bottom' : 'top',
+          labels: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' }, boxWidth: 14 }
         },
-        scales: {
-          x: {
-            ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } },
-            grid: {
-              color: gridColor,
-              drawOnChartArea: true
-            },
-            border: {
-              display: true,
-              color: axisBorderColor
-            }
-          },
-          y: {
-            ticks: {
-              color: textColor,
-              font: { family: 'Plus Jakarta Sans' },
-              callback: function(value) {
-                if (value >= 1000000) {
-                  return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + ' Jt';
-                }
-                return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+        tooltip: {
+          backgroundColor: isDark ? '#172033' : '#ffffff',
+          titleColor: isDark ? '#ffffff' : '#000000',
+          bodyColor: isDark ? '#94a3b8' : '#333333',
+          borderColor: 'rgba(99,102,241,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            label: function(context) {
+              let label = context.label || context.dataset.label || '';
+              if (label) {
+                label += ': ';
               }
-            },
-            grid: {
-              color: gridColor,
-              drawOnChartArea: true
-            },
-            border: {
-              display: true,
-              color: axisBorderColor
+              const val = (context.parsed?.y !== undefined && context.parsed?.y !== null) ? context.parsed.y : context.parsed;
+              if (val !== null && val !== undefined) {
+                label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+              }
+              return label;
             }
           }
         }
       }
+    };
+
+    if (!isRadial) {
+      chartOptions.scales = {
+        x: {
+          ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } },
+          grid: {
+            color: gridColor,
+            drawOnChartArea: true
+          },
+          border: {
+            display: true,
+            color: axisBorderColor
+          }
+        },
+        y: {
+          ticks: {
+            color: textColor,
+            font: { family: 'Plus Jakarta Sans' },
+            callback: function(value) {
+              if (value >= 1000000) {
+                return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + ' Jt';
+              }
+              return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+            }
+          },
+          grid: {
+            color: gridColor,
+            drawOnChartArea: true
+          },
+          border: {
+            display: true,
+            color: axisBorderColor
+          }
+        }
+      };
+    }
+
+    this.chartInstance = new Chart(this.analysisChartCtx, {
+      type: chartData.type || 'bar',
+      data: chartData,
+      options: chartOptions
     });
   }
 
