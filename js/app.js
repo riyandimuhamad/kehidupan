@@ -300,7 +300,7 @@ class KehidupanApp {
     if (secondaryTable) {
       secContainer.style.display = 'block';
       secContainer.innerHTML = `
-        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border-color);">
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 2px solid var(--border-color);">
           <div style="margin-bottom: 12px;">
             <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--primary); margin: 0 0 4px 0;">
               ${secondaryTable.title}

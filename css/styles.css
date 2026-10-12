@@ -315,7 +315,7 @@ body.dark-mode .nav-btn:hover {
   padding-top: 0;
   padding-bottom: 12px;
   border-top: none;
-  border-bottom: 1px dashed var(--border-color);
+  border-bottom: 2px solid var(--border-color);
 }
 
 .nav-btn.dashboard-btn {
@@ -1196,7 +1196,7 @@ body.dark-mode .data-table tbody tr.current-row:hover td {
 /* Extensibility Banner - Theme Aware */
 .extensibility-banner {
   background: var(--ext-banner-bg);
-  border: 1px dashed var(--border-highlight);
+  border: 1.5px solid var(--border-highlight);
   border-radius: var(--radius-lg);
   padding: 24px 30px;
   display: flex;
