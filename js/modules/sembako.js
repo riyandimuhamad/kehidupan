@@ -1,69 +1,117 @@
 /**
- * Modul Kalkulator Sembako & Kebersihan Mandi/Cuci
+ * Modul Kalkulator Sembako & Kebutuhan Dapur Rumah Tangga
  * Kehidupan App Suite
+ * 
+ * Parameter Realistis & Masuk Akal:
+ * 1. Ukuran Keluarga: Jumlah anggota keluarga yang mempengaruhi kuantitas sembako & lauk.
+ * 2. Bahan Pokok Dapur: Minyak goreng, gula pasir, teh/kopi/susu, telur ayam, mie instan & bumbu dapur.
+ * 3. Distribusi Protein Lauk Pauk: Ayam, ikan, tahu/tempe, daging sapi/olahan dengan proporsi realistis.
+ * 4. Perlengkapan Sanitasi Rumah: Sabun mandi, detergen baju, cairan pencuci piring, dan pembersih lantai.
+ * 5. Cadangan & Waste Factor: Alokasi 5-10% untuk bahan makanan basah/segar yang rentan susut/rusak.
+ * 6. Faktor Fluktuasi Musiman: Pilihan penyesuaian harga saat Peak Season (Ramadan/Lebaran/Nataru).
  */
 
-import { formatRupiah, formatNumber } from '../utils/formatters.js';
+import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
 import { BudgetStore } from '../services/budgetStore.js';
+
+const STORAGE_KEY_SEMBAKO = 'kehidupan_sembako_data';
+
+const DEFAULT_SEMBAKO_DATA = {
+  jumlah_anggota: 4,
+  minyak_liter: 4,
+  harga_minyak: 17500,
+  gula_kg: 2,
+  harga_gula: 18000,
+  kopi_teh_susu: 50000,
+  telur_kg: 3,
+  harga_telur: 28500,
+  mie_instan: 45000,
+  bumbu_dapur: 85000,
+  budget_lauk: 600000,
+  profil_protein: 'seimbang', // 'seimbang', 'hemat_nabati', 'tinggi_hewani'
+  paket_sanitasi: 175000,
+  waste_factor: 5,            // 0, 5, 10 persen
+  kondisi_musim: 0            // 0 (Normal), 15 (Peak Season +15%), 25 (Paceklik/Inflasi +25%)
+};
 
 export const SembakoModule = {
   id: 'sembako',
   name: 'Sembako & Kebersihan',
   icon: 'fa-basket-shopping',
   badge: 'Module Dapur & Sanitasi',
-  title: 'Kalkulator Sembako & Kebersihan Dapur',
-  subtitle: 'Hitung kebutuhan rincian Sembako (Minyak, Gula, Telur, Bumbu), Lauk Pauk (Ayam/Daging/Ikan), serta Perlengkapan Mandi & Cuci.',
+  title: 'Kalkulator Sembako & Kebutuhan Dapur',
+  subtitle: 'Estimasi belanja sembako pokok, lauk pauk segar, bumbu dapur, dan perlengkapan sanitasi kebersihan rumah.',
 
-  defaults: {
-    minyak_liter: 3,
-    harga_minyak: 17000,
-    gula_kg: 2,
-    harga_gula: 17500,
-    telur_kg: 2,
-    harga_telur: 28000,
-    bumbu_dapur: 100000,
-    lauk_pauk: 450000,
-    paket_kebersihan: 150000
+  defaults: DEFAULT_SEMBAKO_DATA,
+
+  getData: () => {
+    return getFromStorage(STORAGE_KEY_SEMBAKO, { ...DEFAULT_SEMBAKO_DATA });
+  },
+
+  saveData: (data) => {
+    saveToStorage(STORAGE_KEY_SEMBAKO, data);
   },
 
   renderForm: (container, onInputChange) => {
+    const data = SembakoModule.getData();
+
     container.innerHTML = `
-      <!-- Section 1: Sembako Utama Dapur -->
-      <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;">
-        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 10px;">
-          1. Sembako & Bahan Pokok Dapur
-        </h4>
+      <!-- Section 1: Anggota Keluarga & Dinamika Musiman -->
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Ukuran Keluarga & Kondisi Pasar
+          </span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="jumlah_anggota">Jumlah Anggota Keluarga <span class="unit">(Jiwa)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-users fa-solid input-icon"></i>
+            <input type="number" id="jumlah_anggota" class="form-control" min="1" max="25" value="${data.jumlah_anggota}">
+          </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.jumlah_anggota === 1 ? 'active' : ''}" data-target="jumlah_anggota" data-val="1">1 Orang (Kos)</button>
+            <button type="button" class="option-chip ${data.jumlah_anggota === 2 ? 'active' : ''}" data-target="jumlah_anggota" data-val="2">2 Orang</button>
+            <button type="button" class="option-chip ${data.jumlah_anggota === 4 ? 'active' : ''}" data-target="jumlah_anggota" data-val="4">Keluarga (4)</button>
+            <button type="button" class="option-chip ${data.jumlah_anggota === 6 ? 'active' : ''}" data-target="jumlah_anggota" data-val="6">Besar (6)</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="kondisi_musim">Faktor Musim & Fluktuasi Harga</label>
+          <div class="input-wrapper">
+            <i class="fa-arrow-trend-up fa-solid input-icon"></i>
+            <select id="kondisi_musim" class="form-control">
+              <option value="0" ${data.kondisi_musim === 0 ? 'selected' : ''}>Normal / Reguler (Harga Stabil)</option>
+              <option value="15" ${data.kondisi_musim === 15 ? 'selected' : ''}>Peak Season: Ramadan / Lebaran / Nataru (+15%)</option>
+              <option value="25" ${data.kondisi_musim === 25 ? 'selected' : ''}>Lonjakan Tinggi / Musim Paceklik Pangan (+25%)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Bahan Pokok Kering & Bumbu Dapur -->
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Sembako Pokok Dapur (Dry Goods)
+          </span>
+        </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="minyak_liter">Minyak Goreng <span class="unit">(Liter)</span></label>
             <div class="input-wrapper">
               <i class="fa-bottle-droplet fa-solid input-icon"></i>
-              <input type="number" id="minyak_liter" class="form-control" step="1" value="3">
+              <input type="number" id="minyak_liter" class="form-control" step="0.5" min="0" value="${data.minyak_liter}">
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="harga_minyak">Harga Minyak <span class="unit">(Rp/L)</span></label>
             <div class="input-wrapper">
               <i class="fa-tag fa-solid input-icon"></i>
-              <input type="number" id="harga_minyak" class="form-control" step="500" value="17000">
-            </div>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="gula_kg">Gula Pasir <span class="unit">(Kg)</span></label>
-            <div class="input-wrapper">
-              <i class="fa-cubes-stacked fa-solid input-icon"></i>
-              <input type="number" id="gula_kg" class="form-control" step="0.5" value="2">
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="harga_gula">Harga Gula <span class="unit">(Rp/Kg)</span></label>
-            <div class="input-wrapper">
-              <i class="fa-tag fa-solid input-icon"></i>
-              <input type="number" id="harga_gula" class="form-control" step="500" value="17500">
+              <input type="number" id="harga_minyak" class="form-control" step="500" value="${data.harga_minyak}">
             </div>
           </div>
         </div>
@@ -73,69 +121,131 @@ export const SembakoModule = {
             <label for="telur_kg">Telur Ayam <span class="unit">(Kg)</span></label>
             <div class="input-wrapper">
               <i class="fa-egg fa-solid input-icon"></i>
-              <input type="number" id="telur_kg" class="form-control" step="0.5" value="2">
+              <input type="number" id="telur_kg" class="form-control" step="0.5" min="0" value="${data.telur_kg}">
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="harga_telur">Harga Telur <span class="unit">(Rp/Kg)</span></label>
             <div class="input-wrapper">
               <i class="fa-tag fa-solid input-icon"></i>
-              <input type="number" id="harga_telur" class="form-control" step="500" value="28000">
+              <input type="number" id="harga_telur" class="form-control" step="500" value="${data.harga_telur}">
             </div>
           </div>
         </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label for="bumbu_dapur">Bumbu Dapur, Garam & Kecap <span class="unit">(Rp/Bulan)</span></label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="gula_kg">Gula Pasir <span class="unit">(Kg)</span></label>
+            <div class="input-wrapper">
+              <i class="fa-cubes-stacked fa-solid input-icon"></i>
+              <input type="number" id="gula_kg" class="form-control" step="0.5" min="0" value="${data.gula_kg}">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="harga_gula">Harga Gula <span class="unit">(Rp/Kg)</span></label>
+            <div class="input-wrapper">
+              <i class="fa-tag fa-solid input-icon"></i>
+              <input type="number" id="harga_gula" class="form-control" step="500" value="${data.harga_gula}">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="kopi_teh_susu">Kopi, Teh & Susu <span class="unit">(Rp/Bulan)</span></label>
+            <div class="input-wrapper">
+              <i class="fa-mug-hot fa-solid input-icon"></i>
+              <input type="number" id="kopi_teh_susu" class="form-control" step="5000" value="${data.kopi_teh_susu}">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="mie_instan">Mie Instan & Pasta <span class="unit">(Rp/Bulan)</span></label>
+            <div class="input-wrapper">
+              <i class="fa-bowl-food fa-solid input-icon"></i>
+              <input type="number" id="mie_instan" class="form-control" step="5000" value="${data.mie_instan}">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="bumbu_dapur">Bumbu Dapur, Garam, Kecap & Bawang <span class="unit">(Rp/Bulan)</span></label>
           <div class="input-wrapper">
             <i class="fa-pepper-hot fa-solid input-icon"></i>
-            <input type="number" id="bumbu_dapur" class="form-control" step="10000" value="100000">
+            <input type="number" id="bumbu_dapur" class="form-control" step="5000" value="${data.bumbu_dapur}">
           </div>
         </div>
       </div>
 
-      <!-- Section 2: Lauk Pauk & Protein -->
-      <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;">
-        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-amber); margin-bottom: 10px;">
-          2. Lauk Pauk & Protein (Daging / Ayam / Ikan / Sayur)
-        </h4>
+      <!-- Section 3: Lauk Pauk, Protein & Cadangan Waste -->
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Lauk Pauk Segar & Proporsi Protein
+          </span>
+        </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label for="lauk_pauk">Total Belanja Lauk Pauk Bulanan <span class="unit">(Rupiah/Bulan)</span></label>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="budget_lauk">Alokasi Belanja Lauk Pauk Segar <span class="unit">(Rp/Bulan)</span></label>
           <div class="input-wrapper">
             <i class="fa-drumstick-bite fa-solid input-icon"></i>
-            <input type="number" id="lauk_pauk" class="form-control" step="25000" value="450000">
+            <input type="number" id="budget_lauk" class="form-control" step="25000" value="${data.budget_lauk}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip" data-target="lauk_pauk" data-val="300000">Hemat (Rp 300k)</button>
-            <button type="button" class="option-chip active" data-target="lauk_pauk" data-val="450000">Sedang (Rp 450k)</button>
-            <button type="button" class="option-chip" data-target="lauk_pauk" data-val="750000">Lengkap (Rp 750k)</button>
+            <button type="button" class="option-chip ${data.budget_lauk === 400000 ? 'active' : ''}" data-target="budget_lauk" data-val="400000">Hemat (Rp 400k)</button>
+            <button type="button" class="option-chip ${data.budget_lauk === 600000 ? 'active' : ''}" data-target="budget_lauk" data-val="600000">Standar (Rp 600k)</button>
+            <button type="button" class="option-chip ${data.budget_lauk === 950000 ? 'active' : ''}" data-target="budget_lauk" data-val="950000">Lengkap (Rp 950k)</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="profil_protein">Pola & Proporsi Konsumsi Protein</label>
+          <div class="input-wrapper">
+            <i class="fa-chart-pie fa-solid input-icon"></i>
+            <select id="profil_protein" class="form-control">
+              <option value="seimbang" ${data.profil_protein === 'seimbang' ? 'selected' : ''}>Seimbang: Ayam 40%, Ikan 25%, Tahu/Tempe 25%, Daging 10%</option>
+              <option value="hemat_nabati" ${data.profil_protein === 'hemat_nabati' ? 'selected' : ''}>Hemat Nabati: Tahu/Tempe 50%, Ayam/Ikan 40%, Daging 10%</option>
+              <option value="tinggi_hewani" ${data.profil_protein === 'tinggi_hewani' ? 'selected' : ''}>Tinggi Hewani: Daging/Ayam 60%, Ikan Segar 25%, Tahu/Tempe 15%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="waste_factor">Cadangan Susut / Bahan Rusak & Basi <span class="unit">(Waste Factor)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-shield-halved fa-solid input-icon"></i>
+            <select id="waste_factor" class="form-control">
+              <option value="0" ${data.waste_factor === 0 ? 'selected' : ''}>0% (Tanpa Cadangan / Habis Pas)</option>
+              <option value="5" ${data.waste_factor === 5 ? 'selected' : ''}>5% (Standar Cermat Rumah Tangga)</option>
+              <option value="10" ${data.waste_factor === 10 ? 'selected' : ''}>10% (Porsi Aman Bahan Segar / Sayur Basi)</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <!-- Section 3: Sanitasi & Kebersihan -->
-      <div style="margin-bottom: 16px;">
-        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-sky); margin-bottom: 10px;">
-          3. Perlengkapan Mandi & Cuci
-        </h4>
+      <!-- Section 4: Sanitasi & Perlengkapan Kebersihan Rumah -->
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Kebersihan, Mandi & Cuci Rumah Tangga
+          </span>
+        </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label for="paket_kebersihan">Sabun Mandi, Detergen, Shampo & Odol <span class="unit">(Rp/Bulan)</span></label>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="paket_sanitasi">Sabun, Odol, Detergen & Pembersih Lantai <span class="unit">(Rp/Bulan)</span></label>
           <div class="input-wrapper">
             <i class="fa-pump-soap fa-solid input-icon"></i>
-            <input type="number" id="paket_kebersihan" class="form-control" step="10000" value="150000">
+            <input type="number" id="paket_sanitasi" class="form-control" step="10000" value="${data.paket_sanitasi}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip" data-target="paket_kebersihan" data-val="100000">Hemat (Rp 100k)</button>
-            <button type="button" class="option-chip active" data-target="paket_kebersihan" data-val="150000">Standar (Rp 150k)</button>
-            <button type="button" class="option-chip" data-target="paket_kebersihan" data-val="250000">Lengkap (Rp 250k)</button>
+            <button type="button" class="option-chip ${data.paket_sanitasi === 120000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="120000">Hemat (Rp 120k)</button>
+            <button type="button" class="option-chip ${data.paket_sanitasi === 175000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="175000">Standar (Rp 175k)</button>
+            <button type="button" class="option-chip ${data.paket_sanitasi === 275000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="275000">Lengkap (Rp 275k)</button>
           </div>
         </div>
       </div>
 
       <!-- Action Sync to Budget Dashboard Button -->
-      <div style="margin-top: 20px; text-align: center;">
+      <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
           <i class="fa-bookmark fa-solid"></i> Simpan ke Dashboard Budget Bulanan
         </button>
@@ -143,9 +253,20 @@ export const SembakoModule = {
       </div>
     `;
 
-    const inputs = container.querySelectorAll('input');
-    inputs.forEach(input => input.addEventListener('input', () => onInputChange()));
+    // Event listeners
+    const inputs = container.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        SembakoModule.saveCurrentData(container);
+        onInputChange();
+      });
+      input.addEventListener('change', () => {
+        SembakoModule.saveCurrentData(container);
+        onInputChange();
+      });
+    });
 
+    // Auto-scaling when family size chips change
     const chips = container.querySelectorAll('.option-chip');
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -156,11 +277,45 @@ export const SembakoModule = {
           targetInput.value = val;
           container.querySelectorAll(`.option-chip[data-target="${targetId}"]`).forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
+
+          // If changing family size, adjust default dry goods & lauk reasonably if user clicked family chips
+          if (targetId === 'jumlah_anggota') {
+            const anggota = parseInt(val, 10);
+            const minyakEl = container.querySelector('#minyak_liter');
+            const telurEl = container.querySelector('#telur_kg');
+            const gulaEl = container.querySelector('#gula_kg');
+            const laukEl = container.querySelector('#budget_lauk');
+
+            if (anggota === 1) {
+              if (minyakEl) minyakEl.value = '1.5';
+              if (telurEl) telurEl.value = '1';
+              if (gulaEl) gulaEl.value = '1';
+              if (laukEl) laukEl.value = '250000';
+            } else if (anggota === 2) {
+              if (minyakEl) minyakEl.value = '2.5';
+              if (telurEl) telurEl.value = '1.5';
+              if (gulaEl) gulaEl.value = '1.5';
+              if (laukEl) laukEl.value = '400000';
+            } else if (anggota === 4) {
+              if (minyakEl) minyakEl.value = '4';
+              if (telurEl) telurEl.value = '3';
+              if (gulaEl) gulaEl.value = '2';
+              if (laukEl) laukEl.value = '600000';
+            } else if (anggota === 6) {
+              if (minyakEl) minyakEl.value = '6';
+              if (telurEl) telurEl.value = '4.5';
+              if (gulaEl) gulaEl.value = '3';
+              if (laukEl) laukEl.value = '900000';
+            }
+          }
+
+          SembakoModule.saveCurrentData(container);
           onInputChange();
         }
       });
     });
 
+    // Save to BudgetStore Button
     const saveBtn = container.querySelector('#saveToBudgetBtn');
     const notice = container.querySelector('#saveNotice');
 
@@ -174,7 +329,7 @@ export const SembakoModule = {
         name: 'Sembako & Kebersihan',
         amount: monthlyCost,
         category: 'Pokok',
-        source: `Minyak, Gula, Telur, Lauk & Kebersihan`
+        source: `Sembako Dapur, Lauk Segar (${currentInputs.jumlah_anggota} Jiwa) & Kebersihan Rumah`
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
@@ -182,104 +337,284 @@ export const SembakoModule = {
     });
   },
 
+  saveCurrentData: (container) => {
+    const inputs = SembakoModule.getFormInputs(container);
+    SembakoModule.saveData(inputs);
+  },
+
   getFormInputs: (container) => {
     return {
-      minyak_liter: parseFloat(container.querySelector('#minyak_liter')?.value || 0),
-      harga_minyak: parseFloat(container.querySelector('#harga_minyak')?.value || 0),
-      gula_kg: parseFloat(container.querySelector('#gula_kg')?.value || 0),
-      harga_gula: parseFloat(container.querySelector('#harga_gula')?.value || 0),
-      telur_kg: parseFloat(container.querySelector('#telur_kg')?.value || 0),
-      harga_telur: parseFloat(container.querySelector('#harga_telur')?.value || 0),
-      bumbu_dapur: parseFloat(container.querySelector('#bumbu_dapur')?.value || 0),
-      lauk_pauk: parseFloat(container.querySelector('#lauk_pauk')?.value || 0),
-      paket_kebersihan: parseFloat(container.querySelector('#paket_kebersihan')?.value || 0)
+      jumlah_anggota: parseInt(container.querySelector('#jumlah_anggota')?.value || '4', 10),
+      minyak_liter: parseFloat(container.querySelector('#minyak_liter')?.value || '0'),
+      harga_minyak: parseFloat(container.querySelector('#harga_minyak')?.value || '0'),
+      gula_kg: parseFloat(container.querySelector('#gula_kg')?.value || '0'),
+      harga_gula: parseFloat(container.querySelector('#harga_gula')?.value || '0'),
+      kopi_teh_susu: parseFloat(container.querySelector('#kopi_teh_susu')?.value || '0'),
+      telur_kg: parseFloat(container.querySelector('#telur_kg')?.value || '0'),
+      harga_telur: parseFloat(container.querySelector('#harga_telur')?.value || '0'),
+      mie_instan: parseFloat(container.querySelector('#mie_instan')?.value || '0'),
+      bumbu_dapur: parseFloat(container.querySelector('#bumbu_dapur')?.value || '0'),
+      budget_lauk: parseFloat(container.querySelector('#budget_lauk')?.value || '0'),
+      profil_protein: container.querySelector('#profil_protein')?.value || 'seimbang',
+      paket_sanitasi: parseFloat(container.querySelector('#paket_sanitasi')?.value || '0'),
+      waste_factor: parseFloat(container.querySelector('#waste_factor')?.value || '0'),
+      kondisi_musim: parseFloat(container.querySelector('#kondisi_musim')?.value || '0')
     };
   },
 
   calculate: (inputs) => {
     const {
+      jumlah_anggota,
       minyak_liter, harga_minyak,
-      gula_kg, harga_gula,
+      gula_kg, harga_gula, kopi_teh_susu,
       telur_kg, harga_telur,
-      bumbu_dapur, lauk_pauk, paket_kebersihan
+      mie_instan, bumbu_dapur,
+      budget_lauk, profil_protein,
+      paket_sanitasi, waste_factor, kondisi_musim
     } = inputs;
 
-    const biaya_minyak = minyak_liter * harga_minyak;
-    const biaya_gula = gula_kg * harga_gula;
-    const biaya_telur = telur_kg * harga_telur;
-    
-    const total_sembako_dapur = biaya_minyak + biaya_gula + biaya_telur + bumbu_dapur;
-    const total_lauk_protein = lauk_pauk;
-    const total_sanitasi_cuci = paket_kebersihan;
+    // Pengali musim (misal +15% untuk sembako pokok saat Ramadan/Lebaran)
+    const multiplierMusim = 1 + (kondisi_musim / 100);
 
-    const total_biaya = total_sembako_dapur + total_lauk_protein + total_sanitasi_cuci;
+    // 1. Sembako Pokok Dapur
+    const biaya_minyak = (minyak_liter * harga_minyak) * multiplierMusim;
+    const biaya_gula = (gula_kg * harga_gula) * multiplierMusim;
+    const biaya_telur = (telur_kg * harga_telur) * multiplierMusim;
+    const biaya_kopi_susu = kopi_teh_susu;
+    const biaya_mie = mie_instan;
+    const biaya_bumbu = bumbu_dapur * multiplierMusim;
 
+    const total_sembako_pokok = biaya_minyak + biaya_gula + biaya_telur + biaya_kopi_susu + biaya_mie + biaya_bumbu;
+
+    // 2. Lauk Pauk Segar & Cadangan Waste
+    const pengaliWaste = 1 + (waste_factor / 100);
+    const lauk_bersih = budget_lauk * multiplierMusim;
+    const nilai_waste = lauk_bersih * (waste_factor / 100);
+    const total_lauk_protein = lauk_bersih + nilai_waste;
+
+    // Rincian proporsi protein
+    let propAyam = 0.40;
+    let propIkan = 0.25;
+    let propNabati = 0.25;
+    let propDaging = 0.10;
+
+    if (profil_protein === 'hemat_nabati') {
+      propNabati = 0.50;
+      propAyam = 0.25;
+      propIkan = 0.15;
+      propDaging = 0.10;
+    } else if (profil_protein === 'tinggi_hewani') {
+      propAyam = 0.35;
+      propDaging = 0.25;
+      propIkan = 0.25;
+      propNabati = 0.15;
+    }
+
+    const biayaAyam = lauk_bersih * propAyam;
+    const biayaIkan = lauk_bersih * propIkan;
+    const biayaNabati = lauk_bersih * propNabati;
+    const biayaDaging = lauk_bersih * propDaging;
+
+    // 3. Kebersihan & Sanitasi Rumah
+    const total_sanitasi_rumah = paket_sanitasi;
+
+    // 4. Grand Total Bulanan
+    const total_biaya = total_sembako_pokok + total_lauk_protein + total_sanitasi_rumah;
+    const biayaHarian = total_biaya / 30;
+
+    // 4 Kartu Ringkasan (Auto-Balanced Layout)
     const summaryCards = [
       {
-        title: 'Sembako & Bahan Dapur',
-        value: formatRupiah(total_sembako_dapur),
-        note: `Minyak, Gula, Telur & Bumbu`,
+        title: 'Sembako & Bumbu Pokok',
+        value: formatRupiah(total_sembako_pokok),
+        note: `Minyak, Telur, Gula, Bumbu & Mie${kondisi_musim > 0 ? ` (+${kondisi_musim}% Musim)` : ''}`,
         icon: 'fa-bottle-droplet',
         type: 'emerald'
       },
       {
-        title: 'Lauk Pauk & Protein',
+        title: 'Lauk Pauk & Protein Segar',
         value: formatRupiah(total_lauk_protein),
-        note: `Daging, Ayam, Ikan & Sayur`,
+        note: `Ayam, Ikan, Tahu/Tempe${waste_factor > 0 ? ` (Cadangan +${waste_factor}%)` : ''}`,
         icon: 'fa-drumstick-bite',
         type: 'amber'
       },
       {
-        title: 'Total Belanja Dapur & Sanitasi',
-        value: formatRupiah(total_biaya),
-        note: `Termasuk Sabun & Detergen (${formatRupiah(total_sanitasi_cuci)})`,
-        icon: 'fa-basket-shopping',
+        title: 'Kebersihan & Sanitasi',
+        value: formatRupiah(total_sanitasi_rumah),
+        note: `Sabun Mandi, Detergen, Cuci Piring & Lantai`,
+        icon: 'fa-pump-soap',
         type: 'sky'
+      },
+      {
+        title: 'Total Belanja Dapur Bulanan',
+        value: formatRupiah(total_biaya),
+        note: `± ${formatRupiah(biayaHarian)} / Hari untuk ${jumlah_anggota} Jiwa`,
+        icon: 'fa-basket-shopping',
+        type: 'violet'
       }
     ];
 
+    // Tabel Primer: Proyeksi Berdasarkan Periode Waktu
     const periods = [
-      { label: '1 Bulan', d: 1 },
-      { label: '3 Bulan', d: 3 },
-      { label: '6 Bulan', d: 6 },
-      { label: '12 Bulan (1 Tahun)', d: 12 }
+      { label: '1 Minggu (7 Hari)', d: 7 / 30 },
+      { label: '1 Bulan (30 Hari)', d: 1 },
+      { label: '3 Bulan (90 Hari)', d: 3 },
+      { label: '6 Bulan (180 Hari)', d: 6 },
+      { label: '1 Tahun (12 Bulan)', d: 12 }
     ];
 
-    const tableHeaders = ['Periode', 'Sembako Dapur', 'Lauk Pauk & Protein', 'Mandi & Cuci', 'Total (Rp)'];
+    const tableHeaders = ['Periode Waktu', 'Sembako Pokok', 'Lauk Pauk Segar', 'Sanitasi Rumah', 'Total Belanja'];
     const tableRows = periods.map(p => {
-      const s = total_sembako_dapur * p.d;
-      const l = total_lauk_protein * p.d;
-      const c = total_sanitasi_cuci * p.d;
+      const s = Math.round(total_sembako_pokok * p.d);
+      const l = Math.round(total_lauk_protein * p.d);
+      const c = Math.round(total_sanitasi_rumah * p.d);
       const cost = s + l + c;
+      const isCurr = p.d === 1;
+
       return {
-        isCurrent: p.d === 1,
+        isCurrent: isCurr,
         cells: [
           `<strong>${p.label}</strong>`,
           formatRupiah(s),
           formatRupiah(l),
           formatRupiah(c),
-          `<span class="highlight">${formatRupiah(cost)}</span>`
+          `<span class="highlight"><strong>${formatRupiah(cost)}</strong></span>`
         ]
       };
     });
+
+    // Tabel Sekunder: Komposisi Belanja Dapur & Distribusi Protein
+    const secondaryTable = {
+      title: 'Komposisi Belanja Dapur & Distribusi Protein',
+      subtitle: `Rincian alokasi sembako, proporsi protein lauk pauk, cadangan bahan makanan, dan sanitasi (${jumlah_anggota} Jiwa).`,
+      headers: [
+        'Komponen Belanja',
+        'Alokasi Bulanan',
+        'Keterangan & Implikasi Rumah Tangga'
+      ],
+      rows: [
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Minyak Goreng</strong>',
+            formatRupiah(biaya_minyak),
+            `${minyak_liter} Liter @ ${formatRupiah(harga_minyak)}/L (Konsumsi memasak/menggoreng)`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Telur Ayam</strong>',
+            formatRupiah(biaya_telur),
+            `${telur_kg} Kg @ ${formatRupiah(harga_telur)}/Kg (Sumber protein harian praktis)`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Gula Pasir, Kopi, Teh & Susu</strong>',
+            formatRupiah(biaya_gula + biaya_kopi_susu),
+            `${gula_kg} Kg Gula (${formatRupiah(biaya_gula)}) + Paket Minuman/Susu (${formatRupiah(biaya_kopi_susu)})`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Bumbu Dapur & Mie Instan</strong>',
+            formatRupiah(biaya_bumbu + biaya_mie),
+            `Bumbu, bawang & kecap (${formatRupiah(biaya_bumbu)}) + Mie/olahan kering (${formatRupiah(biaya_mie)})`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Lauk: Ayam & Unggas</strong>',
+            formatRupiah(biayaAyam),
+            `Porsi ${Math.round(propAyam * 100)}% dari belanja lauk pauk segar`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Lauk: Ikan & Seafood</strong>',
+            formatRupiah(biayaIkan),
+            `Porsi ${Math.round(propIkan * 100)}% dari belanja lauk pauk segar`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Lauk: Tahu, Tempe & Nabati</strong>',
+            formatRupiah(biayaNabati),
+            `Porsi ${Math.round(propNabati * 100)}% dari belanja lauk pauk segar`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Lauk: Daging Sapi & Olahan</strong>',
+            formatRupiah(biayaDaging),
+            `Porsi ${Math.round(propDaging * 100)}% dari belanja lauk pauk segar`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Cadangan Bahan Rusak / Basi</strong>',
+            waste_factor > 0 ? formatRupiah(nilai_waste) : 'Rp 0',
+            waste_factor > 0 ? `Buffer ${waste_factor}% untuk sayur layu, ikan susut, atau bumbu busuk` : 'Belanja pas tanpa alokasi cadangan bahan basi'
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            '<strong>Sanitasi & Kebersihan Rumah</strong>',
+            formatRupiah(total_sanitasi_rumah),
+            `Sabun mandi, shampo, odol, detergen pakaian, sabun cuci piring & pembersih lantai`
+          ]
+        }
+      ]
+    };
 
     return {
       total_biaya,
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable,
       chartData: {
-        labels: ['Sembako & Bumbu Dapur', 'Lauk Pauk & Protein', 'Perlengkapan Mandi & Cuci'],
+        labels: [
+          'Sembako Kering & Minyak',
+          'Ayam & Unggas',
+          'Ikan & Seafood',
+          'Tahu, Tempe & Nabati',
+          'Daging Sapi & Olahan',
+          'Sanitasi & Kebersihan'
+        ],
         datasets: [
           {
-            label: 'Rincian Belanja Sembako & Dapur',
-            data: [total_sembako_dapur, total_lauk_protein, total_sanitasi_cuci],
-            backgroundColor: ['#10b981', '#f59e0b', '#06b6d4']
+            label: 'Alokasi Belanja Dapur & Rumah (Rp)',
+            data: [
+              Math.round(total_sembako_pokok),
+              Math.round(biayaAyam),
+              Math.round(biayaIkan),
+              Math.round(biayaNabati),
+              Math.round(biayaDaging),
+              Math.round(total_sanitasi_rumah)
+            ],
+            backgroundColor: [
+              '#10b981', // emerald
+              '#f59e0b', // amber
+              '#06b6d4', // cyan
+              '#84cc16', // lime
+              '#ef4444', // red
+              '#8b5cf6'  // violet
+            ]
           }
         ]
       },
       quickStats: {
-        totalQty: `Sembako, Lauk & Sanitasi`,
+        totalQty: `${jumlah_anggota} Jiwa (${formatRupiah(biayaHarian)}/Hari)`,
         totalCost: formatRupiah(total_biaya)
       }
     };
