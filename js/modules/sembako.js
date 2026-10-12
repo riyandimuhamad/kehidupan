@@ -2,11 +2,14 @@
  * Modul Kalkulator Sembako & Kebutuhan Dapur Rumah Tangga
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Masuk Akal:
+ * Parameter Realistis & Pemisahan Fungsi yang Jelas:
  * 1. Ukuran Keluarga: Jumlah anggota keluarga yang mempengaruhi kuantitas sembako & lauk.
  * 2. Bahan Pokok Dapur: Minyak goreng, gula pasir, teh/kopi/susu, telur ayam, mie instan & bumbu dapur.
  * 3. Distribusi Protein Lauk Pauk: Ayam, ikan, tahu/tempe, daging sapi/olahan dengan proporsi realistis.
- * 4. Perlengkapan Sanitasi Rumah: Sabun mandi, detergen baju, cairan pencuci piring, dan pembersih lantai.
+ * 4. Kebersihan Dapur & Rumah Tangga (Fasilitas Umum):
+ *    - Khusus cairan cuci piring, spons, pembersih lantai (karbol), tisu dapur & plastik sampah.
+ *    - Kebutuhan Personal Hygiene (sabun mandi, sampo, odol, skincare) serta deterjen pakaian
+ *      dikelola secara terpisah di modul Sandang & Perawatan Diri agar tidak terjadi duplikasi biaya.
  * 5. Cadangan & Waste Factor: Alokasi 5-10% untuk bahan makanan basah/segar yang rentan susut/rusak.
  * 6. Faktor Fluktuasi Musiman: Pilihan penyesuaian harga saat Peak Season (Ramadan/Lebaran/Nataru).
  */
@@ -28,19 +31,19 @@ const DEFAULT_SEMBAKO_DATA = {
   mie_instan: 45000,
   bumbu_dapur: 85000,
   budget_lauk: 600000,
-  profil_protein: 'seimbang', // 'seimbang', 'hemat_nabati', 'tinggi_hewani'
-  paket_sanitasi: 175000,
-  waste_factor: 5,            // 0, 5, 10 persen
-  kondisi_musim: 0            // 0 (Normal), 15 (Peak Season +15%), 25 (Paceklik/Inflasi +25%)
+  profil_protein: 'seimbang',     // 'seimbang', 'hemat_nabati', 'tinggi_hewani'
+  kebersihan_dapur: 75000,        // Cuci piring, spons, pembersih lantai & tisu dapur
+  waste_factor: 5,                // 0, 5, 10 persen
+  kondisi_musim: 0                // 0 (Normal), 15 (Peak Season +15%), 25 (Paceklik/Inflasi +25%)
 };
 
 export const SembakoModule = {
   id: 'sembako',
-  name: 'Sembako & Kebersihan',
+  name: 'Sembako & Dapur',
   icon: 'fa-basket-shopping',
-  badge: 'Module Dapur & Sanitasi',
+  badge: 'Module Dapur & Rumah Tangga',
   title: 'Kalkulator Sembako & Kebutuhan Dapur',
-  subtitle: 'Estimasi belanja sembako pokok, lauk pauk segar, bumbu dapur, dan perlengkapan sanitasi kebersihan rumah.',
+  subtitle: 'Estimasi belanja sembako pokok, lauk pauk segar, bumbu dapur, serta kebersihan dapur dan sanitasi rumah.',
 
   defaults: DEFAULT_SEMBAKO_DATA,
 
@@ -222,24 +225,30 @@ export const SembakoModule = {
         </div>
       </div>
 
-      <!-- Section 4: Sanitasi & Perlengkapan Kebersihan Rumah -->
+      <!-- Section 4: Kebersihan Dapur & Sanitasi Umum Rumah -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Kebersihan, Mandi & Cuci Rumah Tangga
+            Kebersihan Dapur & Sanitasi Rumah
           </span>
         </div>
 
+        <!-- Note pemisahan fungsi: Personal hygiene & laundry berada di Sandang -->
+        <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 14px; font-size: 0.73rem; color: var(--text-muted); line-height: 1.45;">
+          <i class="fa-circle-info fa-solid" style="color: var(--accent-sky); margin-right: 4px;"></i>
+          <strong>Pemisahan Fungsi:</strong> Pos ini khusus perlengkapan dapur & fasilitas rumah (sabun cuci piring, spons, cairan pel lantai/karbol, tisu dapur & kantong sampah). Kebutuhan pribadi (sabun mandi, sampo, odol, skincare) serta deterjen pakaian dihitung terpisah di modul <strong>Sandang & Perawatan</strong> agar tidak terjadi duplikasi pos.
+        </div>
+
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="paket_sanitasi">Sabun, Odol, Detergen & Pembersih Lantai <span class="unit">(Rp/Bulan)</span></label>
+          <label for="kebersihan_dapur">Cuci Piring, Pembersih Lantai & Tisu Dapur <span class="unit">(Rp/Bulan)</span></label>
           <div class="input-wrapper">
-            <i class="fa-pump-soap fa-solid input-icon"></i>
-            <input type="number" id="paket_sanitasi" class="form-control" step="10000" value="${data.paket_sanitasi}">
+            <i class="fa-spray-can-sparkles fa-solid input-icon"></i>
+            <input type="number" id="kebersihan_dapur" class="form-control" step="5000" value="${data.kebersihan_dapur}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.paket_sanitasi === 120000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="120000">Hemat (Rp 120k)</button>
-            <button type="button" class="option-chip ${data.paket_sanitasi === 175000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="175000">Standar (Rp 175k)</button>
-            <button type="button" class="option-chip ${data.paket_sanitasi === 275000 ? 'active' : ''}" data-target="paket_sanitasi" data-val="275000">Lengkap (Rp 275k)</button>
+            <button type="button" class="option-chip ${data.kebersihan_dapur === 45000 ? 'active' : ''}" data-target="kebersihan_dapur" data-val="45000">Hemat (Rp 45k)</button>
+            <button type="button" class="option-chip ${data.kebersihan_dapur === 75000 ? 'active' : ''}" data-target="kebersihan_dapur" data-val="75000">Standar (Rp 75k)</button>
+            <button type="button" class="option-chip ${data.kebersihan_dapur === 125000 ? 'active' : ''}" data-target="kebersihan_dapur" data-val="125000">Lengkap (Rp 125k)</button>
           </div>
         </div>
       </div>
@@ -326,10 +335,10 @@ export const SembakoModule = {
 
       BudgetStore.saveBudgetItem('sembako', {
         id: 'sembako',
-        name: 'Sembako & Kebersihan',
+        name: 'Sembako & Dapur',
         amount: monthlyCost,
         category: 'Pokok',
-        source: `Sembako Dapur, Lauk Segar (${currentInputs.jumlah_anggota} Jiwa) & Kebersihan Rumah`
+        source: `Sembako Dapur, Lauk Segar (${currentInputs.jumlah_anggota} Jiwa) & Kebersihan Dapur/Rumah`
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
@@ -356,7 +365,7 @@ export const SembakoModule = {
       bumbu_dapur: parseFloat(container.querySelector('#bumbu_dapur')?.value || '0'),
       budget_lauk: parseFloat(container.querySelector('#budget_lauk')?.value || '0'),
       profil_protein: container.querySelector('#profil_protein')?.value || 'seimbang',
-      paket_sanitasi: parseFloat(container.querySelector('#paket_sanitasi')?.value || '0'),
+      kebersihan_dapur: parseFloat(container.querySelector('#kebersihan_dapur')?.value || '0'),
       waste_factor: parseFloat(container.querySelector('#waste_factor')?.value || '0'),
       kondisi_musim: parseFloat(container.querySelector('#kondisi_musim')?.value || '0')
     };
@@ -370,7 +379,7 @@ export const SembakoModule = {
       telur_kg, harga_telur,
       mie_instan, bumbu_dapur,
       budget_lauk, profil_protein,
-      paket_sanitasi, waste_factor, kondisi_musim
+      kebersihan_dapur, waste_factor, kondisi_musim
     } = inputs;
 
     // Pengali musim (misal +15% untuk sembako pokok saat Ramadan/Lebaran)
@@ -387,7 +396,6 @@ export const SembakoModule = {
     const total_sembako_pokok = biaya_minyak + biaya_gula + biaya_telur + biaya_kopi_susu + biaya_mie + biaya_bumbu;
 
     // 2. Lauk Pauk Segar & Cadangan Waste
-    const pengaliWaste = 1 + (waste_factor / 100);
     const lauk_bersih = budget_lauk * multiplierMusim;
     const nilai_waste = lauk_bersih * (waste_factor / 100);
     const total_lauk_protein = lauk_bersih + nilai_waste;
@@ -415,11 +423,11 @@ export const SembakoModule = {
     const biayaNabati = lauk_bersih * propNabati;
     const biayaDaging = lauk_bersih * propDaging;
 
-    // 3. Kebersihan & Sanitasi Rumah
-    const total_sanitasi_rumah = paket_sanitasi;
+    // 3. Kebersihan Dapur & Sanitasi Umum Rumah (Khusus cuci piring, lantai, spons & tisu dapur)
+    const total_kebersihan_dapur = kebersihan_dapur;
 
-    // 4. Grand Total Bulanan
-    const total_biaya = total_sembako_pokok + total_lauk_protein + total_sanitasi_rumah;
+    // 4. Grand Total Bulanan Dapur & Rumah
+    const total_biaya = total_sembako_pokok + total_lauk_protein + total_kebersihan_dapur;
     const biayaHarian = total_biaya / 30;
 
     // 4 Kartu Ringkasan (Auto-Balanced Layout)
@@ -439,10 +447,10 @@ export const SembakoModule = {
         type: 'amber'
       },
       {
-        title: 'Kebersihan & Sanitasi',
-        value: formatRupiah(total_sanitasi_rumah),
-        note: `Sabun Mandi, Detergen, Cuci Piring & Lantai`,
-        icon: 'fa-pump-soap',
+        title: 'Kebersihan Dapur & Lantai',
+        value: formatRupiah(total_kebersihan_dapur),
+        note: `Cuci Piring, Spons, Pel Lantai & Tisu Dapur`,
+        icon: 'fa-spray-can-sparkles',
         type: 'sky'
       },
       {
@@ -463,11 +471,11 @@ export const SembakoModule = {
       { label: '1 Tahun (12 Bulan)', d: 12 }
     ];
 
-    const tableHeaders = ['Periode Waktu', 'Sembako Pokok', 'Lauk Pauk Segar', 'Sanitasi Rumah', 'Total Belanja'];
+    const tableHeaders = ['Periode Waktu', 'Sembako Pokok', 'Lauk Pauk Segar', 'Kebersihan Dapur', 'Total Belanja'];
     const tableRows = periods.map(p => {
       const s = Math.round(total_sembako_pokok * p.d);
       const l = Math.round(total_lauk_protein * p.d);
-      const c = Math.round(total_sanitasi_rumah * p.d);
+      const c = Math.round(total_kebersihan_dapur * p.d);
       const cost = s + l + c;
       const isCurr = p.d === 1;
 
@@ -486,7 +494,7 @@ export const SembakoModule = {
     // Tabel Sekunder: Komposisi Belanja Dapur & Distribusi Protein
     const secondaryTable = {
       title: 'Komposisi Belanja Dapur & Distribusi Protein',
-      subtitle: `Rincian alokasi sembako, proporsi protein lauk pauk, cadangan bahan makanan, dan sanitasi (${jumlah_anggota} Jiwa).`,
+      subtitle: `Rincian alokasi sembako, proporsi protein lauk pauk, cadangan bahan makanan, dan sanitasi dapur (${jumlah_anggota} Jiwa).`,
       headers: [
         'Komponen Belanja',
         'Alokasi Bulanan',
@@ -568,9 +576,9 @@ export const SembakoModule = {
         {
           isCurrent: false,
           cells: [
-            '<strong>Sanitasi & Kebersihan Rumah</strong>',
-            formatRupiah(total_sanitasi_rumah),
-            `Sabun mandi, shampo, odol, detergen pakaian, sabun cuci piring & pembersih lantai`
+            '<strong>Kebersihan Dapur & Lantai</strong>',
+            formatRupiah(total_kebersihan_dapur),
+            `Cairan cuci piring, spons, pembersih lantai/karbol, tisu dapur & plastik sampah (Personal hygiene & deterjen baju di modul Sandang)`
           ]
         }
       ]
@@ -589,7 +597,7 @@ export const SembakoModule = {
           'Ikan & Seafood',
           'Tahu, Tempe & Nabati',
           'Daging Sapi & Olahan',
-          'Sanitasi & Kebersihan'
+          'Kebersihan Dapur & Lantai'
         ],
         datasets: [
           {
@@ -600,7 +608,7 @@ export const SembakoModule = {
               Math.round(biayaIkan),
               Math.round(biayaNabati),
               Math.round(biayaDaging),
-              Math.round(total_sanitasi_rumah)
+              Math.round(total_kebersihan_dapur)
             ],
             backgroundColor: [
               '#10b981', // emerald
