@@ -449,11 +449,18 @@ body.dark-mode .nav-btn:hover {
 /* Main Content Area */
 .main-content {
   flex: 1;
-  padding: 28px 32px 50px;
-  max-width: 1400px;
+  padding: 24px 32px 50px;
+  max-width: 1840px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+@media (min-width: 1920px) {
+  .main-content {
+    max-width: 2160px;
+    padding: 28px 40px 60px;
+  }
 }
 
 /* App Footer */
@@ -987,6 +994,10 @@ body.dark-mode .nav-btn:hover {
   margin-bottom: 0;
 }
 
+.table-card .card-body {
+  padding: 18px 20px 22px;
+}
+
 .table-actions {
   display: flex;
   gap: 10px;
@@ -994,19 +1005,39 @@ body.dark-mode .nav-btn:hover {
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 
 .data-table th, .data-table td {
-  padding: 14px 18px;
+  padding: 12px 15px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-main);
+  vertical-align: middle;
 }
 
 .data-table th {
@@ -1014,8 +1045,19 @@ body.dark-mode .nav-btn:hover {
   color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
+  font-size: 0.72rem;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  line-height: 1.35;
+}
+
+.data-table td {
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.data-table td strong.highlight {
+  white-space: nowrap;
 }
 
 .data-table tbody tr {
