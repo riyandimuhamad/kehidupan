@@ -797,11 +797,75 @@ body.dark-mode .nav-btn:hover {
   gap: 24px;
 }
 
-/* Summary Cards Grid */
+/* Summary Cards Grid - Auto Adaptive Layout (Semua Menu) */
 .summary-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr); /* default fallback */
+}
+
+/* 1 Card: 1 Kolom Penuh */
+.summary-cards-grid.cards-count-1,
+.summary-cards-grid[data-cards-count="1"] {
+  grid-template-columns: 1fr;
+}
+
+/* 2 Cards: 2 Kolom Seimbang (50% - 50%) */
+.summary-cards-grid.cards-count-2,
+.summary-cards-grid[data-cards-count="2"] {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* 3 Cards: 3 Kolom Seimbang (33.3% masing-masing) */
+.summary-cards-grid.cards-count-3,
+.summary-cards-grid[data-cards-count="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* 4 Cards: 4 Kolom di Desktop (25% masing-masing) - Tepat Memenuhi 1 Baris Tanpa Ruang Kosong */
+.summary-cards-grid.cards-count-4,
+.summary-cards-grid[data-cards-count="4"] {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 5 Cards: 5 Kolom Seimbang */
+.summary-cards-grid.cards-count-5,
+.summary-cards-grid[data-cards-count="5"] {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* 6 Cards: 3 Kolom (2 baris x 3 kartu) */
+.summary-cards-grid.cards-count-6,
+.summary-cards-grid[data-cards-count="6"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Optimasi proporsi kartu jika 4 kolom */
+.summary-cards-grid.cards-count-4 .result-card,
+.summary-cards-grid[data-cards-count="4"] .result-card {
+  padding: 16px 14px;
+  gap: 12px;
+}
+
+.summary-cards-grid.cards-count-4 .res-icon,
+.summary-cards-grid[data-cards-count="4"] .res-icon {
+  width: 38px;
+  height: 38px;
+  font-size: 1.05rem;
+}
+
+.summary-cards-grid.cards-count-4 .res-val,
+.summary-cards-grid[data-cards-count="4"] .res-val {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 1280px) {
+  /* Jika viewport sempit untuk 4 kolom berjajar, ubah menjadi 2x2 seimbang tanpa ruang sisa */
+  .summary-cards-grid.cards-count-4,
+  .summary-cards-grid[data-cards-count="4"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .result-card {
@@ -1209,7 +1273,15 @@ body.dark-mode .data-table tbody tr.current-row:hover td {
     justify-content: flex-start;
   }
 
-  .summary-cards-grid {
+  .summary-cards-grid.cards-count-3,
+  .summary-cards-grid[data-cards-count="3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .summary-cards-grid.cards-count-4,
+  .summary-cards-grid[data-cards-count="4"],
+  .summary-cards-grid.cards-count-2,
+  .summary-cards-grid[data-cards-count="2"] {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1232,8 +1304,10 @@ body.dark-mode .data-table tbody tr.current-row:hover td {
     padding: 8px 10px;
   }
 
-  .summary-cards-grid {
-    grid-template-columns: 1fr;
+  .summary-cards-grid,
+  .summary-cards-grid[class*="cards-count-"],
+  .summary-cards-grid[data-cards-count] {
+    grid-template-columns: 1fr !important;
   }
 
   .hero-stats {

@@ -253,6 +253,17 @@ class KehidupanApp {
   }
 
   renderSummaryCards(cards) {
+    if (!cards || !cards.length) {
+      this.summaryCardsGrid.innerHTML = '';
+      this.summaryCardsGrid.className = 'summary-cards-grid';
+      delete this.summaryCardsGrid.dataset.cardsCount;
+      return;
+    }
+
+    const count = cards.length;
+    this.summaryCardsGrid.dataset.cardsCount = count;
+    this.summaryCardsGrid.className = `summary-cards-grid cards-count-${count}`;
+
     this.summaryCardsGrid.innerHTML = cards.map(c => `
       <div class="result-card ${c.type || ''}">
         <div class="res-icon">
