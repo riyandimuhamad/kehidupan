@@ -590,8 +590,10 @@ body.dark-mode .nav-btn:hover {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  flex-wrap: wrap;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .badge {
@@ -621,12 +623,13 @@ body.dark-mode .nav-btn:hover {
 .hero-text p {
   color: var(--text-muted);
   font-size: 0.95rem;
-  max-width: 600px;
+  max-width: 700px;
 }
 
 .hero-stats {
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .mini-stat-card {
@@ -635,7 +638,7 @@ body.dark-mode .nav-btn:hover {
   border: 1px solid var(--border-color);
   padding: 16px 20px;
   border-radius: var(--radius-md);
-  min-width: 150px;
+  min-width: 140px;
   display: flex;
   flex-direction: column;
 }
@@ -664,13 +667,32 @@ body.dark-mode .nav-btn:hover {
   color: var(--accent-emerald);
 }
 
-/* Calculator Grid */
+/* Calculator Grid - Autofit Architecture */
 .calculator-grid {
   display: grid;
-  grid-template-columns: 390px 1fr;
+  grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
   gap: 24px;
   margin-bottom: 32px;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.calculator-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.results-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 100%;
+  container-type: inline-size;
+  container-name: results;
 }
 
 .form-card {
@@ -831,57 +853,92 @@ body.dark-mode .nav-btn:hover {
 /* 2 Cards: 2 Kolom Seimbang (50% - 50%) */
 .summary-cards-grid.cards-count-2,
 .summary-cards-grid[data-cards-count="2"] {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* 3 Cards: 3 Kolom Seimbang (33.3% masing-masing) */
+/* 3 Cards: 3 Kolom Seimbang */
 .summary-cards-grid.cards-count-3,
 .summary-cards-grid[data-cards-count="3"] {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* 4 Cards: 4 Kolom di Desktop (25% masing-masing) - Tepat Memenuhi 1 Baris Tanpa Ruang Kosong */
+/* 4 Cards: 4 Kolom di Desktop luas */
 .summary-cards-grid.cards-count-4,
 .summary-cards-grid[data-cards-count="4"] {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 /* 5 Cards: 5 Kolom Seimbang */
 .summary-cards-grid.cards-count-5,
 .summary-cards-grid[data-cards-count="5"] {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-/* 6 Cards: 3 Kolom (2 baris x 3 kartu) */
+/* 6 Cards: 3 Kolom */
 .summary-cards-grid.cards-count-6,
 .summary-cards-grid[data-cards-count="6"] {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 /* Optimasi proporsi kartu jika 4 kolom */
 .summary-cards-grid.cards-count-4 .result-card,
 .summary-cards-grid[data-cards-count="4"] .result-card {
-  padding: 16px 14px;
-  gap: 12px;
+  padding: 14px 14px;
+  gap: 10px;
 }
 
 .summary-cards-grid.cards-count-4 .res-icon,
 .summary-cards-grid[data-cards-count="4"] .res-icon {
-  width: 38px;
-  height: 38px;
-  font-size: 1.05rem;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
 }
 
 .summary-cards-grid.cards-count-4 .res-val,
 .summary-cards-grid[data-cards-count="4"] .res-val {
-  font-size: 1.3rem;
+  font-size: 1.22rem;
 }
 
-@media (max-width: 1280px) {
-  /* Jika viewport sempit untuk 4 kolom berjajar, ubah menjadi 2x2 seimbang tanpa ruang sisa */
+/* Container Queries: Kartu otomatis adaptif terhadap lebar kolom hasil nyata */
+@container results (max-width: 980px) {
   .summary-cards-grid.cards-count-4,
-  .summary-cards-grid[data-cards-count="4"] {
-    grid-template-columns: repeat(2, 1fr);
+  .summary-cards-grid[data-cards-count="4"],
+  .summary-cards-grid.cards-count-5,
+  .summary-cards-grid[data-cards-count="5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container results (max-width: 680px) {
+  .summary-cards-grid.cards-count-3,
+  .summary-cards-grid[data-cards-count="3"],
+  .summary-cards-grid.cards-count-6,
+  .summary-cards-grid[data-cards-count="6"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container results (max-width: 480px) {
+  .summary-cards-grid,
+  .summary-cards-grid[class*="cards-count-"],
+  .summary-cards-grid[data-cards-count] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Media Query fallbacks untuk variasi zoom browser */
+@media (max-width: 1520px) {
+  .summary-cards-grid.cards-count-4,
+  .summary-cards-grid[data-cards-count="4"],
+  .summary-cards-grid.cards-count-5,
+  .summary-cards-grid[data-cards-count="5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .calculator-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -889,13 +946,15 @@ body.dark-mode .nav-btn:hover {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 16px 18px;
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .result-card::before {
@@ -918,14 +977,14 @@ body.dark-mode .nav-btn:hover {
 }
 
 .res-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
   background: var(--bg-input);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--primary);
   flex-shrink: 0;
 }
@@ -934,31 +993,48 @@ body.dark-mode .nav-btn:hover {
 .result-card.amber .res-icon { color: var(--accent-amber); background: rgba(245, 158, 11, 0.12); }
 .result-card.sky .res-icon { color: var(--accent-sky); background: rgba(6, 182, 212, 0.12); }
 
+.res-info {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
 .res-info .res-label {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .res-info .res-val {
   font-family: var(--font-heading);
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
   margin-top: 2px;
   color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .res-info .res-note {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-subtle);
   margin-top: 4px;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Chart Card */
 .chart-card {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
 }
 
 .chart-controls {
@@ -987,11 +1063,15 @@ body.dark-mode .nav-btn:hover {
 .chart-body {
   height: 280px;
   position: relative;
+  min-width: 0;
+  width: 100%;
 }
 
 /* Table Card */
 .table-card {
   margin-bottom: 0;
+  min-width: 0;
+  width: 100%;
 }
 
 .table-card .card-body {
@@ -1006,6 +1086,9 @@ body.dark-mode .nav-btn:hover {
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .table-wrapper::-webkit-scrollbar {
