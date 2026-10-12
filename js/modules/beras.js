@@ -103,9 +103,9 @@ export const BerasModule = {
             <input type="number" id="makan_per_hari" class="form-control" min="1" max="5" step="0.5" value="${data.makan_per_hari}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.makan_per_hari === 1 ? 'active' : ''}" data-target="makan_per_hari" data-val="1">1x (Diet / Puasa)</button>
-            <button type="button" class="option-chip ${data.makan_per_hari === 2 ? 'active' : ''}" data-target="makan_per_hari" data-val="2">2x (Roti / Mie)</button>
-            <button type="button" class="option-chip ${data.makan_per_hari === 3 ? 'active' : ''}" data-target="makan_per_hari" data-val="3">3x (Standar)</button>
+            <button type="button" class="option-chip ${data.makan_per_hari === 1 ? 'active' : ''}" data-target="makan_per_hari" data-val="1">1x Sehari</button>
+            <button type="button" class="option-chip ${data.makan_per_hari === 2 ? 'active' : ''}" data-target="makan_per_hari" data-val="2">2x Sehari</button>
+            <button type="button" class="option-chip ${data.makan_per_hari === 3 ? 'active' : ''}" data-target="makan_per_hari" data-val="3">3x Sehari</button>
           </div>
         </div>
 
