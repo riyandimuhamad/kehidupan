@@ -660,9 +660,27 @@ body.dark-mode .nav-btn:hover {
 /* Calculator Grid */
 .calculator-grid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 390px 1fr;
   gap: 24px;
   margin-bottom: 28px;
+  align-items: start;
+}
+
+.form-card {
+  align-self: start;
+  position: sticky;
+  top: 85px;
+  max-height: calc(100vh - 105px);
+  overflow-y: auto;
+}
+
+.form-card::-webkit-scrollbar {
+  width: 5px;
+}
+
+.form-card::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
 }
 
 /* Cards Standard */
@@ -940,7 +958,6 @@ body.dark-mode .nav-btn:hover {
 
 /* Chart Card */
 .chart-card {
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -969,13 +986,13 @@ body.dark-mode .nav-btn:hover {
 }
 
 .chart-body {
-  height: 250px;
+  height: 280px;
   position: relative;
 }
 
 /* Table Card */
 .table-card {
-  margin-bottom: 28px;
+  margin-bottom: 0;
 }
 
 .table-actions {

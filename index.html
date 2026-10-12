@@ -200,40 +200,40 @@
               <canvas id="analysisChart"></canvas>
             </div>
           </div>
+
+          <!-- Detailed Breakdown Table Section -->
+          <section class="card table-card">
+            <div class="card-header">
+              <div>
+                <h3><i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran</h3>
+                <p class="sub-text">Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan</p>
+              </div>
+              <div class="table-actions">
+                <button class="outline-btn" id="exportCsvBtn">
+                  <i class="fa-file-csv fa-solid"></i> Ekspor CSV
+                </button>
+                <button class="outline-btn" id="printBtn">
+                  <i class="fa-print fa-solid"></i> Cetak / PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-wrapper">
+                <table class="data-table" id="breakdownTable">
+                  <thead>
+                    <!-- Injected dynamically -->
+                  </thead>
+                  <tbody>
+                    <!-- Injected dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
         </div>
 
       </div>
-
-      <!-- Detailed Breakdown Table Section -->
-      <section class="card table-card">
-        <div class="card-header">
-          <div>
-            <h3><i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran</h3>
-            <p class="sub-text">Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan</p>
-          </div>
-          <div class="table-actions">
-            <button class="outline-btn" id="exportCsvBtn">
-              <i class="fa-file-csv fa-solid"></i> Ekspor CSV
-            </button>
-            <button class="outline-btn" id="printBtn">
-              <i class="fa-print fa-solid"></i> Cetak / PDF
-            </button>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <div class="table-wrapper">
-            <table class="data-table" id="breakdownTable">
-              <thead>
-                <!-- Injected dynamically -->
-              </thead>
-              <tbody>
-                <!-- Injected dynamically -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
 
       <!-- Extensibility Callout / Add New Module Banner -->
       <section class="extensibility-banner">
