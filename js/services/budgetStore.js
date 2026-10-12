@@ -70,7 +70,7 @@ export const BudgetStore = {
       kesehatan: { id: 'kesehatan', name: 'Kesehatan & BPJS', amount: 350000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Kesehatan' },
       pendidikan: { id: 'pendidikan', name: 'Pendidikan & Anak', amount: 680000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Pendidikan' },
       hiburan: { id: 'hiburan', name: 'Hiburan & Gaya Hidup', amount: 250000, category: 'Lainnya', group: 'lifestyle', source: 'Kalkulator Hiburan' },
-      pajak: { id: 'pajak', name: 'Pajak & Administrasi', amount: 150000, category: 'Pokok', group: 'pajak', source: 'Kalkulator Pajak' },
+      pajak: { id: 'pajak', name: 'PBB & Administrasi Tahunan', amount: 150000, category: 'Pokok', group: 'pajak', source: 'Kalkulator Pajak' },
       tabungan: { id: 'tabungan', name: 'Tabungan & Dana Darurat', amount: 1000000, category: 'Tabungan', group: 'investasi', source: 'Kalkulator Tabungan' }
     });
   },
