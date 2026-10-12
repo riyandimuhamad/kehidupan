@@ -1,10 +1,28 @@
 /**
- * Modul Kalkulator Kebutuhan Beras
+ * Modul Kalkulator Kebutuhan Beras & Pangan Utama
  * Kehidupan App Suite
+ * 
+ * Dilengkapi Parameter Realistis Rumah Tangga Indonesia:
+ * 1. Komposisi Keluarga: Dewasa (>12 thn) vs Anak-anak (2-12 thn, porsi 50-60%)
+ * 2. Variasi Pola Konsumsi: Frekuensi makan nasi 1-3x sehari & substitusi non-nasi
+ * 3. Cadangan & Waste Factor: Toleransi nasi basi, susut cuci beras, & porsi sisa (0-15%)
+ * 4. Smart Karung Optimizer: Rekomendasi paket pembelian kemasan 5 kg, 10 kg, 25 kg, 50 kg
  */
 
-import { formatRupiah, formatNumber } from '../utils/formatters.js';
+import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
 import { BudgetStore } from '../services/budgetStore.js';
+
+const STORAGE_KEY_BERAS = 'kehidupan_beras_data';
+
+const DEFAULT_BERAS_DATA = {
+  dewasa: 2,
+  anak: 1,
+  makan_per_hari: 3,
+  porsi_dewasa_gram: 115, // Gram beras mentah per makan dewasa (~115g = ~250g nasi matang)
+  waste_percent: 5,        // Cadangan nasi basi / susut / sisa (5%)
+  harga_per_kg: 15000,     // Standar beras premium (Rp 15.000/kg)
+  hari: 30
+};
 
 export const BerasModule = {
   id: 'beras',
@@ -12,72 +30,169 @@ export const BerasModule = {
   icon: 'fa-bowl-rice',
   badge: 'Module Pangan Utama',
   title: 'Kalkulator Kebutuhan Beras',
-  subtitle: 'Hitung estimasi konsumsi beras harian, mingguan, hingga tahunan beserta estimasi paket pembelian yang efisien.',
+  subtitle: 'Estimasi konsumsi beras realistis (dewasa vs anak), faktor waste nasi basi, dan rekomendasi paket karung paling efisien.',
 
-  defaults: {
-    orang: 1,
-    makan_per_hari: 3,
-    harga_per_kg: 15000,
-    hari: 30
+  defaults: DEFAULT_BERAS_DATA,
+
+  getData: () => {
+    return getFromStorage(STORAGE_KEY_BERAS, { ...DEFAULT_BERAS_DATA });
+  },
+
+  saveData: (data) => {
+    saveToStorage(STORAGE_KEY_BERAS, data);
   },
 
   renderForm: (container, onInputChange) => {
+    const data = BerasModule.getData();
+
     container.innerHTML = `
-      <div class="form-group">
-        <label for="orang">Jumlah Orang <span class="unit">(Anggota Keluarga / Jiwa)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-users fa-solid input-icon"></i>
-          <input type="number" id="orang" class="form-control" min="1" max="1000" value="1">
+      <!-- Section 1: Komposisi Anggota Keluarga -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Komposisi Anggota Keluarga
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip active" data-target="orang" data-val="1">1 Orang</button>
-          <button type="button" class="option-chip" data-target="orang" data-val="2">2 Orang</button>
-          <button type="button" class="option-chip" data-target="orang" data-val="4">Keluarga (4)</button>
-          <button type="button" class="option-chip" data-target="orang" data-val="6">Keluarga Besar (6)</button>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Dewasa (>12 Thn)</span> <span class="unit">(Jiwa)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="dewasa" class="form-control" min="1" max="50" value="${data.dewasa}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.dewasa === 1 ? 'active' : ''}" data-target="dewasa" data-val="1" style="font-size: 0.7rem; padding: 2px 7px;">1</button>
+              <button type="button" class="option-chip ${data.dewasa === 2 ? 'active' : ''}" data-target="dewasa" data-val="2" style="font-size: 0.7rem; padding: 2px 7px;">2</button>
+              <button type="button" class="option-chip ${data.dewasa === 3 ? 'active' : ''}" data-target="dewasa" data-val="3" style="font-size: 0.7rem; padding: 2px 7px;">3</button>
+              <button type="button" class="option-chip ${data.dewasa === 4 ? 'active' : ''}" data-target="dewasa" data-val="4" style="font-size: 0.7rem; padding: 2px 7px;">4</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Anak (2-12 Thn)</span> <span class="unit">(Jiwa)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-child fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="anak" class="form-control" min="0" max="20" value="${data.anak}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.anak === 0 ? 'active' : ''}" data-target="anak" data-val="0" style="font-size: 0.7rem; padding: 2px 7px;">0</button>
+              <button type="button" class="option-chip ${data.anak === 1 ? 'active' : ''}" data-target="anak" data-val="1" style="font-size: 0.7rem; padding: 2px 7px;">1</button>
+              <button type="button" class="option-chip ${data.anak === 2 ? 'active' : ''}" data-target="anak" data-val="2" style="font-size: 0.7rem; padding: 2px 7px;">2</button>
+              <button type="button" class="option-chip ${data.anak === 3 ? 'active' : ''}" data-target="anak" data-val="3" style="font-size: 0.7rem; padding: 2px 7px;">3</button>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 4px 0 0 0;">*Porsi makan anak dihitung 55% dari porsi dewasa sesuai standar asupan gizi.</p>
+      </div>
+
+      <!-- Section 2: Pola Makan & Variasi Konsumsi -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Pola Makan & Variasi Konsumsi Nasi
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Frekuensi Makan Nasi</span> <span class="unit">(Kali/Hari)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-utensils fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="makan_per_hari" class="form-control" min="1" max="5" step="0.5" value="${data.makan_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.makan_per_hari === 1 ? 'active' : ''}" data-target="makan_per_hari" data-val="1" style="font-size: 0.68rem; padding: 2px 6px;">1x (Diet)</button>
+              <button type="button" class="option-chip ${data.makan_per_hari === 2 ? 'active' : ''}" data-target="makan_per_hari" data-val="2" style="font-size: 0.68rem; padding: 2px 6px;">2x (Roti/Mie)</button>
+              <button type="button" class="option-chip ${data.makan_per_hari === 3 ? 'active' : ''}" data-target="makan_per_hari" data-val="3" style="font-size: 0.68rem; padding: 2px 6px;">3x (Standar)</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Porsi Dewasa / Makan</span> <span class="unit">(Gram)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-bowl-rice fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="porsi_dewasa_gram" class="form-control" min="50" max="250" step="5" value="${data.porsi_dewasa_gram}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 85 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="85" style="font-size: 0.68rem; padding: 2px 6px;">Kecil (85g)</button>
+              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 115 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="115" style="font-size: 0.68rem; padding: 2px 6px;">Sedang (115g)</button>
+              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 145 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="145" style="font-size: 0.68rem; padding: 2px 6px;">Besar (145g)</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="makan_per_hari">Pola Makan per Hari <span class="unit">(kali makan)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-utensils fa-solid input-icon"></i>
-          <input type="number" id="makan_per_hari" class="form-control" min="1" max="10" value="3">
+      <!-- Section 3: Cadangan & Waste Factor -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Cadangan & Waste Factor (Nasi Basi / Sisa)
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="makan_per_hari" data-val="2">2 Kali / Hari</button>
-          <button type="button" class="option-chip active" data-target="makan_per_hari" data-val="3">3 Kali / Hari (Standar)</button>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+            <span>Faktor Cadangan & Susut</span> <span class="unit">(%)</span>
+          </label>
+          <div class="input-wrapper">
+            <i class="fa-shield-halved fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+            <input type="number" id="waste_percent" class="form-control" min="0" max="30" step="1" value="${data.waste_percent}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+          </div>
+          <div class="form-options" style="margin-top: 5px; gap: 4px;">
+            <button type="button" class="option-chip ${data.waste_percent === 0 ? 'active' : ''}" data-target="waste_percent" data-val="0" style="font-size: 0.68rem; padding: 2px 6px;">0% (Nol Waste)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 5 ? 'active' : ''}" data-target="waste_percent" data-val="5" style="font-size: 0.68rem; padding: 2px 6px;">5% (Standar Hemat)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 10 ? 'active' : ''}" data-target="waste_percent" data-val="10" style="font-size: 0.68rem; padding: 2px 6px;">10% (Sering Sisa)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 15 ? 'active' : ''}" data-target="waste_percent" data-val="15" style="font-size: 0.68rem; padding: 2px 6px;">15% (Porsi Longgar)</button>
+          </div>
+          <p style="font-size: 0.72rem; color: var(--text-muted); margin: 6px 0 0 0;">*Mengantisipasi nasi basi di magic com, kerak menempel, susut saat cuci, dan porsi sisa piring.</p>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="harga_per_kg">Harga Beras per Kg <span class="unit">(Rupiah)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-tag fa-solid input-icon"></i>
-          <input type="number" id="harga_per_kg" class="form-control" step="500" value="15000">
+      <!-- Section 4: Kualitas Harga & Durasi Waktu -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Harga Pasar & Periode Perhitungan
         </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="harga_per_kg" data-val="13500">Medium (Rp 13.500)</button>
-          <button type="button" class="option-chip active" data-target="harga_per_kg" data-val="15000">Premium (Rp 15.000)</button>
-          <button type="button" class="option-chip" data-target="harga_per_kg" data-val="18000">Super (Rp 18.000)</button>
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label for="hari">Lama Waktu <span class="unit">(Hari)</span></label>
-        <div class="input-wrapper">
-          <i class="fa-calendar-days fa-solid input-icon"></i>
-          <input type="number" id="hari" class="form-control" min="1" max="3650" value="30">
-        </div>
-        <div class="form-options">
-          <button type="button" class="option-chip" data-target="hari" data-val="7">1 Minggu (7h)</button>
-          <button type="button" class="option-chip active" data-target="hari" data-val="30">1 Bulan (30h)</button>
-          <button type="button" class="option-chip" data-target="hari" data-val="90">3 Bulan (90h)</button>
-          <button type="button" class="option-chip" data-target="hari" data-val="365">1 Tahun (365h)</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Harga Beras / Kg</span> <span class="unit">(Rp)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="harga_per_kg" class="form-control" step="500" value="${data.harga_per_kg}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.harga_per_kg === 13500 ? 'active' : ''}" data-target="harga_per_kg" data-val="13500" style="font-size: 0.68rem; padding: 2px 6px;">Medium (13.5k)</button>
+              <button type="button" class="option-chip ${data.harga_per_kg === 15000 ? 'active' : ''}" data-target="harga_per_kg" data-val="15000" style="font-size: 0.68rem; padding: 2px 6px;">Premium (15k)</button>
+              <button type="button" class="option-chip ${data.harga_per_kg === 18000 ? 'active' : ''}" data-target="harga_per_kg" data-val="18000" style="font-size: 0.68rem; padding: 2px 6px;">Super (18k)</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Lama Kebutuhan</span> <span class="unit">(Hari)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="hari" class="form-control" min="1" max="3650" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+            <div class="form-options" style="margin-top: 5px; gap: 4px;">
+              <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7" style="font-size: 0.68rem; padding: 2px 6px;">1 Mgg</button>
+              <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30" style="font-size: 0.68rem; padding: 2px 6px;">1 Bln</button>
+              <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90" style="font-size: 0.68rem; padding: 2px 6px;">3 Bln</button>
+              <button type="button" class="option-chip ${data.hari === 365 ? 'active' : ''}" data-target="hari" data-val="365" style="font-size: 0.68rem; padding: 2px 6px;">1 Thn</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Action Sync to Budget Dashboard Button -->
-      <div style="margin-top: 20px; text-align: center;">
+      <div style="margin-top: 18px; text-align: center;">
         <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
           <i class="fa-bookmark fa-solid"></i> Simpan ke Dashboard Budget Bulanan
         </button>
@@ -85,9 +200,15 @@ export const BerasModule = {
       </div>
     `;
 
+    // Event listener for all inputs
     const inputs = container.querySelectorAll('input');
-    inputs.forEach(input => input.addEventListener('input', () => onInputChange()));
+    inputs.forEach(input => input.addEventListener('input', () => {
+      const current = BerasModule.getFormInputs(container);
+      BerasModule.saveData(current);
+      onInputChange();
+    }));
 
+    // Event listener for chips
     const chips = container.querySelectorAll('.option-chip');
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -98,103 +219,292 @@ export const BerasModule = {
           targetInput.value = val;
           container.querySelectorAll(`.option-chip[data-target="${targetId}"]`).forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
+          const current = BerasModule.getFormInputs(container);
+          BerasModule.saveData(current);
           onInputChange();
         }
       });
     });
 
+    // Save to BudgetStore button listener
     const saveBtn = container.querySelector('#saveToBudgetBtn');
     const notice = container.querySelector('#saveNotice');
 
     saveBtn.addEventListener('click', () => {
       const currentInputs = BerasModule.getFormInputs(container);
+      BerasModule.saveData(currentInputs);
       const res = BerasModule.calculate(currentInputs);
       
-      // Normalize monthly cost (30 days)
-      const monthlyCost = (res.total_beras / (currentInputs.hari || 1)) * 30 * currentInputs.harga_per_kg;
+      // Hitung normalisasi alokasi 1 bulan (30 hari)
+      const dailyCostWithWaste = (res.total_biaya / (currentInputs.hari || 1));
+      const monthlyBudgetCost = dailyCostWithWaste * 30;
 
       BudgetStore.saveBudgetItem('beras', {
         id: 'beras',
-        name: 'Beras & Pangan',
-        amount: monthlyCost,
+        name: 'Beras & Pangan Utama',
+        amount: monthlyBudgetCost,
         category: 'Pokok',
-        source: `Kalkulator Beras (${currentInputs.orang} orang)`
+        source: `Kalkulator Beras (${currentInputs.dewasa} Dewasa, ${currentInputs.anak} Anak, Waste ${currentInputs.waste_percent}%)`
       });
 
-      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
+      notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyBudgetCost)} telah disinkronkan ke Dashboard Keuangan.`;
       setTimeout(() => notice.innerHTML = '', 4000);
     });
   },
 
   getFormInputs: (container) => {
     return {
-      orang: parseInt(container.querySelector('#orang')?.value || 1, 10),
+      dewasa: parseInt(container.querySelector('#dewasa')?.value || 2, 10),
+      anak: parseInt(container.querySelector('#anak')?.value || 0, 10),
       makan_per_hari: parseFloat(container.querySelector('#makan_per_hari')?.value || 3),
+      porsi_dewasa_gram: parseFloat(container.querySelector('#porsi_dewasa_gram')?.value || 115),
+      waste_percent: parseFloat(container.querySelector('#waste_percent')?.value || 5),
       harga_per_kg: parseFloat(container.querySelector('#harga_per_kg')?.value || 15000),
       hari: parseInt(container.querySelector('#hari')?.value || 30, 10)
     };
   },
 
   calculate: (inputs) => {
-    const { orang, makan_per_hari, harga_per_kg, hari } = inputs;
+    const { dewasa, anak, makan_per_hari, porsi_dewasa_gram, waste_percent, harga_per_kg, hari } = inputs;
 
-    const konsumsi_per_hari_per_orang = makan_per_hari / 6; 
-    const konsumsi_per_orang = konsumsi_per_hari_per_orang * hari;
-    const total_beras = konsumsi_per_orang * orang;
+    // 1. Konsumsi Harian Bersih per Jiwa (Beras mentah dalam kg)
+    const porsiDewasaKg = porsi_dewasa_gram / 1000;
+    const porsiAnakKg = porsiDewasaKg * 0.55; // Porsi anak 55% porsi dewasa
+
+    const konsumsiHarianDewasaSatuOrang = porsiDewasaKg * makan_per_hari;
+    const konsumsiHarianAnakSatuOrang = porsiAnakKg * makan_per_hari;
+
+    const totalHarianDewasa = konsumsiHarianDewasaSatuOrang * dewasa;
+    const totalHarianAnak = konsumsiHarianAnakSatuOrang * anak;
+    const totalHarianNetto = totalHarianDewasa + totalHarianAnak;
+
+    // 2. Faktor Cadangan & Waste
+    const wasteFactorMultiplier = 1 + (waste_percent / 100);
+    const totalHarianBruto = totalHarianNetto * wasteFactorMultiplier;
+    const wasteHarianKg = totalHarianNetto * (waste_percent / 100);
+
+    // 3. Akumulasi untuk Periode Pilihan (Hari)
+    const totalBerasNetto = totalHarianNetto * hari;
+    const totalWasteKg = wasteHarianKg * hari;
+    const total_beras = totalHarianBruto * hari;
     const total_biaya = total_beras * harga_per_kg;
-    const konsumsi_total_harian = konsumsi_per_hari_per_orang * orang;
 
+    // Biaya masing-masing komponen untuk periode pilihan
+    const biayaDewasa = (totalHarianDewasa * hari) * harga_per_kg;
+    const biayaAnak = (totalHarianAnak * hari) * harga_per_kg;
+    const biayaWaste = totalWasteKg * harga_per_kg;
+
+    // 4. Smart Karung Optimizer (Rekomendasi Paket Pembelian Karung)
+    // Karung standar di Indonesia: 25 kg, 10 kg, 5 kg
+    const getKarungCombination = (targetKg) => {
+      let remaining = targetKg;
+      let k25 = 0;
+      let k10 = 0;
+      let k5 = 0;
+
+      if (remaining >= 25) {
+        k25 = Math.floor(remaining / 25);
+        remaining = remaining % 25;
+      }
+
+      // Sisa di bawah 25 kg dioptimalkan dengan karung 10kg dan 5kg
+      if (remaining > 20) {
+        k25 += 1;
+        remaining = 0;
+      } else if (remaining > 15) {
+        k10 += 2;
+        remaining = 0;
+      } else if (remaining > 10) {
+        k10 += 1;
+        k5 += 1;
+        remaining = 0;
+      } else if (remaining > 5) {
+        k10 += 1;
+        remaining = 0;
+      } else if (remaining > 0) {
+        k5 += 1;
+        remaining = 0;
+      }
+
+      const totalDapat = (k25 * 25) + (k10 * 10) + (k5 * 5);
+      const sisaCadangan = totalDapat - targetKg;
+
+      const rincianTeks = [];
+      if (k25 > 0) rincianTeks.push(`${k25} Karung (25kg)`);
+      if (k10 > 0) rincianTeks.push(`${k10} Karung (10kg)`);
+      if (k5 > 0) rincianTeks.push(`${k5} Karung (5kg)`);
+
+      return {
+        teks: rincianTeks.length > 0 ? rincianTeks.join(' + ') : '1 Karung (5kg)',
+        totalKg: totalDapat,
+        sisaKg: sisaCadangan,
+        biaya: totalDapat * harga_per_kg
+      };
+    };
+
+    const smartPack = getKarungCombination(total_beras);
+
+    // Opsi alternatif seragam 5kg
+    const pack5Count = Math.ceil(total_beras / 5);
+    const pack5TotalKg = pack5Count * 5;
+    const pack5Sisa = pack5TotalKg - total_beras;
+
+    // Opsi alternatif seragam 10kg
+    const pack10Count = Math.ceil(total_beras / 10);
+    const pack10TotalKg = pack10Count * 10;
+    const pack10Sisa = pack10TotalKg - total_beras;
+
+    // Opsi alternatif seragam 25kg
+    const pack25Count = Math.ceil(total_beras / 25);
+    const pack25TotalKg = pack25Count * 25;
+    const pack25Sisa = pack25TotalKg - total_beras;
+
+    // 5. Summary Cards (4 Cards)
     const summaryCards = [
       {
         title: 'Total Kebutuhan Beras',
-        value: `${formatNumber(total_beras, 2)} kg`,
-        note: `Setara ± ${formatNumber(total_beras * 1.25, 1)} Liter`,
-        icon: 'fa-box-archive',
+        value: `${formatNumber(total_beras, 1)} kg`,
+        note: `Netto ${formatNumber(totalBerasNetto, 1)} kg + Waste ${formatNumber(totalWasteKg, 1)} kg (${waste_percent}%)`,
+        icon: 'fa-bowl-rice',
         type: 'emerald'
       },
       {
-        title: 'Total Biaya Beras',
+        title: 'Estimasi Biaya Beras',
         value: formatRupiah(total_biaya),
-        note: `@ ${formatRupiah(harga_per_kg)} / kg`,
+        note: `@ ${formatRupiah(harga_per_kg)}/kg (${hari} Hari)`,
         icon: 'fa-money-bill-wave',
         type: 'amber'
       },
       {
-        title: 'Konsumsi Harian (Total)',
-        value: `${formatNumber(konsumsi_total_harian, 2)} kg/hari`,
-        note: `${formatNumber(konsumsi_per_hari_per_orang, 2)} kg/orang/hari`,
+        title: 'Konsumsi Harian Riil',
+        value: `${formatNumber(totalHarianBruto, 2)} kg/hari`,
+        note: `Dewasa ${formatNumber(totalHarianDewasa, 2)} kg + Anak ${formatNumber(totalHarianAnak, 2)} kg`,
         icon: 'fa-scale-balanced',
         type: 'sky'
+      },
+      {
+        title: 'Paket Karung Paling Pas',
+        value: smartPack.teks,
+        note: `Dapat ${formatNumber(smartPack.totalKg, 0)} kg (Sisa cadangan: +${formatNumber(smartPack.sisaKg, 1)} kg)`,
+        icon: 'fa-box-archive',
+        type: 'emerald'
       }
     ];
 
-    const periods = [
-      { label: '1 Hari', d: 1 },
-      { label: '1 Minggu (7 Hari)', d: 7 },
-      { label: '1 Bulan (30 Hari)', d: 30 },
-      { label: '3 Bulan (90 Hari)', d: 90 },
-      { label: '1 Tahun (365 Hari)', d: 365 },
-      { label: `Custom (${hari} Hari)`, d: hari, isCurrent: true }
+    // 6. Primary Breakdown Table: Komponen Konsumsi
+    const tableHeaders = ['Komponen Konsumsi', 'Porsi & Anggota', 'Konsumsi Harian', `Kebutuhan ${hari} Hari (kg)`, 'Total Biaya (Rp)', 'Proporsi (%)'];
+    const tableRows = [
+      {
+        isCurrent: false,
+        cells: [
+          `<strong>Konsumsi Orang Dewasa</strong>`,
+          `${dewasa} Jiwa × ${makan_per_hari}x makan (@${porsi_dewasa_gram} gr)`,
+          `${formatNumber(totalHarianDewasa, 3)} kg/hari`,
+          `${formatNumber(totalHarianDewasa * hari, 2)} kg`,
+          formatRupiah(biayaDewasa),
+          `${total_biaya > 0 ? ((biayaDewasa / total_biaya) * 100).toFixed(1) : 0}%`
+        ]
+      },
+      ...(anak > 0 ? [{
+        isCurrent: false,
+        cells: [
+          `<strong>Konsumsi Anak-Anak</strong>`,
+          `${anak} Anak × ${makan_per_hari}x makan (@${(porsi_dewasa_gram * 0.55).toFixed(0)} gr - 55%)`,
+          `${formatNumber(totalHarianAnak, 3)} kg/hari`,
+          `${formatNumber(totalHarianAnak * hari, 2)} kg`,
+          formatRupiah(biayaAnak),
+          `${total_biaya > 0 ? ((biayaAnak / total_biaya) * 100).toFixed(1) : 0}%`
+        ]
+      }] : []),
+      {
+        isCurrent: false,
+        cells: [
+          `<strong>Cadangan & Waste Factor</strong>`,
+          `Susut cuci beras, nasi basi magic com, porsi sisa (${waste_percent}%)`,
+          `${formatNumber(wasteHarianKg, 3)} kg/hari`,
+          `${formatNumber(totalWasteKg, 2)} kg`,
+          formatRupiah(biayaWaste),
+          `${total_biaya > 0 ? ((biayaWaste / total_biaya) * 100).toFixed(1) : 0}%`
+        ]
+      },
+      {
+        isCurrent: true,
+        cells: [
+          `<strong>TOTAL KEBUTUHAN RIIL</strong>`,
+          `<strong>${dewasa + anak} Jiwa (${dewasa} Dewasa, ${anak} Anak)</strong>`,
+          `<strong>${formatNumber(totalHarianBruto, 3)} kg/hari</strong>`,
+          `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.95rem;">${formatNumber(total_beras, 2)} kg</strong>`,
+          `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.95rem;">${formatRupiah(total_biaya)}</strong>`,
+          `<strong>100%</strong>`
+        ]
+      }
     ];
 
-    const tableHeaders = ['Periode', 'Total Konsumsi (kg)', 'Rata-rata / Orang (kg)', 'Estimasi Karung (5kg)', 'Total Biaya (Rp)'];
-    const tableRows = periods.map(p => {
-      const kgPeriodTotal = konsumsi_per_hari_per_orang * p.d * orang;
-      const kgPerOrang = konsumsi_per_hari_per_orang * p.d;
-      const costPeriod = kgPeriodTotal * harga_per_kg;
-      const packs = Math.ceil(kgPeriodTotal / 5);
+    // 7. Secondary Table: Rekomendasi Paket Pembelian Karung
+    const secondaryTable = {
+      title: 'Rekomendasi Paket Pembelian Karung di Pasaran',
+      subtitle: 'Analisis kombinasi kemasan (5 kg, 10 kg, 25 kg) untuk meminimalkan sisa beras dan mengoptimalkan anggaran belanja.',
+      headers: [
+        'Opsi Paket Pembelian',
+        'Kombinasi Karung',
+        'Total Beras (kg)',
+        'Selisih / Sisa Stok',
+        'Estimasi Biaya Paket (Rp)',
+        'Karakteristik & Saran'
+      ],
+      rows: [
+        {
+          isCurrent: true,
+          cells: [
+            `<strong>Paket Paling Pas (Rekomendasi)</strong>`,
+            `<strong>${smartPack.teks}</strong>`,
+            `${formatNumber(smartPack.totalKg, 0)} kg`,
+            `<span class="badge" style="background: rgba(16,185,129,0.15); color: var(--accent-emerald);">+${formatNumber(smartPack.sisaKg, 1)} kg (Cadangan Aman)</span>`,
+            `<strong class="highlight" style="color: var(--accent-emerald);">${formatRupiah(smartPack.biaya)}</strong>`,
+            `Sisa minimum, efisien dan tidak menumpuk beras lama.`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>Opsi Seragam Karung 5 kg</strong>`,
+            `${pack5Count} Karung (5 kg)`,
+            `${pack5TotalKg} kg`,
+            `+${formatNumber(pack5Sisa, 1)} kg`,
+            formatRupiah(pack5TotalKg * harga_per_kg),
+            `Paling fleksibel dibeli bertahap/mingguan di minimarket.`
+          ]
+        },
+        ...(total_beras >= 10 ? [{
+          isCurrent: false,
+          cells: [
+            `<strong>Opsi Seragam Karung 10 kg</strong>`,
+            `${pack10Count} Karung (10 kg)`,
+            `${pack10TotalKg} kg`,
+            `+${formatNumber(pack10Sisa, 1)} kg`,
+            formatRupiah(pack10TotalKg * harga_per_kg),
+            `Praktis untuk stok bulanan keluarga kecil & menengah.`
+          ]
+        }] : []),
+        ...(total_beras >= 20 ? [{
+          isCurrent: false,
+          cells: [
+            `<strong>Opsi Grosir Karung 25 kg</strong>`,
+            `${pack25Count} Karung (25 kg)`,
+            `${pack25TotalKg} kg`,
+            `+${formatNumber(pack25Sisa, 1)} kg`,
+            formatRupiah(pack25TotalKg * harga_per_kg),
+            `Harga grosir lebih hemat per kg, cocok untuk stok 1-2 bulan.`
+          ]
+        }] : [])
+      ]
+    };
 
-      return {
-        isCurrent: p.isCurrent || false,
-        cells: [
-          `<strong>${p.label}</strong>`,
-          `${formatNumber(kgPeriodTotal, 2)} kg`,
-          `${formatNumber(kgPerOrang, 2)} kg`,
-          `${packs} Karung (5kg)`,
-          `<span class="highlight">${formatRupiah(costPeriod)}</span>`
-        ]
-      };
-    });
+    // 8. Chart Data: Proyeksi Kebutuhan Beras Menurut Durasi Waktu
+    const periodDays = [1, 7, 30, 90, 365];
+    const periodLabels = ['1 Hari', '1 Minggu (7h)', '1 Bulan (30h)', '3 Bulan (90h)', '1 Tahun (365h)'];
+    const netData = periodDays.map(d => parseFloat((totalHarianNetto * d).toFixed(2)));
+    const wasteData = periodDays.map(d => parseFloat((wasteHarianKg * d).toFixed(2)));
 
     return {
       total_beras,
@@ -202,21 +512,26 @@ export const BerasModule = {
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable,
       chartData: {
-        labels: ['1 Harian', '7 Hari', '30 Hari', '90 Hari', '365 Hari'],
+        labels: periodLabels,
         datasets: [
           {
-            label: 'Biaya Beras (Rp)',
-            data: [1, 7, 30, 90, 365].map(d => konsumsi_per_hari_per_orang * d * orang * harga_per_kg),
-            backgroundColor: 'rgba(99, 102, 241, 0.6)',
-            borderColor: '#6366f1',
-            borderWidth: 2,
+            label: 'Konsumsi Bersih (kg)',
+            data: netData,
+            backgroundColor: '#4f46e5',
+            borderRadius: 6
+          },
+          {
+            label: `Cadangan / Waste ${waste_percent}% (kg)`,
+            data: wasteData,
+            backgroundColor: '#f59e0b',
             borderRadius: 6
           }
         ]
       },
       quickStats: {
-        totalQty: `${formatNumber(total_beras, 2)} kg`,
+        totalQty: `${formatNumber(total_beras, 1)} kg`,
         totalCost: formatRupiah(total_biaya)
       }
     };
