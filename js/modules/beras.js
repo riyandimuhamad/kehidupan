@@ -47,152 +47,146 @@ export const BerasModule = {
 
     container.innerHTML = `
       <!-- Section 1: Komposisi Anggota Keluarga -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Komposisi Anggota Keluarga
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Komposisi Anggota Keluarga
+          </span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 8px;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Dewasa (>12 Thn)</span> <span class="unit">(Jiwa)</span>
-            </label>
+            <label for="dewasa">Dewasa (>12 Thn) <span class="unit">(Jiwa)</span></label>
             <div class="input-wrapper">
-              <i class="fa-user fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="dewasa" class="form-control" min="1" max="50" value="${data.dewasa}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <i class="fa-user fa-solid input-icon"></i>
+              <input type="number" id="dewasa" class="form-control" min="1" max="50" value="${data.dewasa}">
             </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.dewasa === 1 ? 'active' : ''}" data-target="dewasa" data-val="1" style="font-size: 0.7rem; padding: 2px 7px;">1</button>
-              <button type="button" class="option-chip ${data.dewasa === 2 ? 'active' : ''}" data-target="dewasa" data-val="2" style="font-size: 0.7rem; padding: 2px 7px;">2</button>
-              <button type="button" class="option-chip ${data.dewasa === 3 ? 'active' : ''}" data-target="dewasa" data-val="3" style="font-size: 0.7rem; padding: 2px 7px;">3</button>
-              <button type="button" class="option-chip ${data.dewasa === 4 ? 'active' : ''}" data-target="dewasa" data-val="4" style="font-size: 0.7rem; padding: 2px 7px;">4</button>
+            <div class="form-options">
+              <button type="button" class="option-chip ${data.dewasa === 1 ? 'active' : ''}" data-target="dewasa" data-val="1">1</button>
+              <button type="button" class="option-chip ${data.dewasa === 2 ? 'active' : ''}" data-target="dewasa" data-val="2">2</button>
+              <button type="button" class="option-chip ${data.dewasa === 3 ? 'active' : ''}" data-target="dewasa" data-val="3">3</button>
+              <button type="button" class="option-chip ${data.dewasa === 4 ? 'active' : ''}" data-target="dewasa" data-val="4">4</button>
             </div>
           </div>
 
           <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Anak (2-12 Thn)</span> <span class="unit">(Jiwa)</span>
-            </label>
+            <label for="anak">Anak (2-12 Thn) <span class="unit">(Jiwa)</span></label>
             <div class="input-wrapper">
-              <i class="fa-child fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="anak" class="form-control" min="0" max="20" value="${data.anak}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <i class="fa-child fa-solid input-icon"></i>
+              <input type="number" id="anak" class="form-control" min="0" max="20" value="${data.anak}">
             </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.anak === 0 ? 'active' : ''}" data-target="anak" data-val="0" style="font-size: 0.7rem; padding: 2px 7px;">0</button>
-              <button type="button" class="option-chip ${data.anak === 1 ? 'active' : ''}" data-target="anak" data-val="1" style="font-size: 0.7rem; padding: 2px 7px;">1</button>
-              <button type="button" class="option-chip ${data.anak === 2 ? 'active' : ''}" data-target="anak" data-val="2" style="font-size: 0.7rem; padding: 2px 7px;">2</button>
-              <button type="button" class="option-chip ${data.anak === 3 ? 'active' : ''}" data-target="anak" data-val="3" style="font-size: 0.7rem; padding: 2px 7px;">3</button>
+            <div class="form-options">
+              <button type="button" class="option-chip ${data.anak === 0 ? 'active' : ''}" data-target="anak" data-val="0">0</button>
+              <button type="button" class="option-chip ${data.anak === 1 ? 'active' : ''}" data-target="anak" data-val="1">1</button>
+              <button type="button" class="option-chip ${data.anak === 2 ? 'active' : ''}" data-target="anak" data-val="2">2</button>
+              <button type="button" class="option-chip ${data.anak === 3 ? 'active' : ''}" data-target="anak" data-val="3">3</button>
             </div>
           </div>
         </div>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 4px 0 0 0;">*Porsi makan anak dihitung 55% dari porsi dewasa sesuai standar asupan gizi.</p>
+        <p style="font-size: 0.74rem; color: var(--text-muted); margin: 6px 0 0 0; line-height: 1.4;">
+          *Porsi makan anak dihitung 55% dari porsi dewasa sesuai standar gizi.
+        </p>
       </div>
 
       <!-- Section 2: Pola Makan & Variasi Konsumsi -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Pola Makan & Variasi Konsumsi Nasi
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Pola Makan & Variasi Konsumsi Nasi
+          </span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Frekuensi Makan Nasi</span> <span class="unit">(Kali/Hari)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-utensils fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="makan_per_hari" class="form-control" min="1" max="5" step="0.5" value="${data.makan_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.makan_per_hari === 1 ? 'active' : ''}" data-target="makan_per_hari" data-val="1" style="font-size: 0.68rem; padding: 2px 6px;">1x (Diet)</button>
-              <button type="button" class="option-chip ${data.makan_per_hari === 2 ? 'active' : ''}" data-target="makan_per_hari" data-val="2" style="font-size: 0.68rem; padding: 2px 6px;">2x (Roti/Mie)</button>
-              <button type="button" class="option-chip ${data.makan_per_hari === 3 ? 'active' : ''}" data-target="makan_per_hari" data-val="3" style="font-size: 0.68rem; padding: 2px 6px;">3x (Standar)</button>
-            </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="makan_per_hari">Frekuensi Makan Nasi <span class="unit">(Kali / Hari)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-utensils fa-solid input-icon"></i>
+            <input type="number" id="makan_per_hari" class="form-control" min="1" max="5" step="0.5" value="${data.makan_per_hari}">
           </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.makan_per_hari === 1 ? 'active' : ''}" data-target="makan_per_hari" data-val="1">1x (Diet / Puasa)</button>
+            <button type="button" class="option-chip ${data.makan_per_hari === 2 ? 'active' : ''}" data-target="makan_per_hari" data-val="2">2x (Roti / Mie)</button>
+            <button type="button" class="option-chip ${data.makan_per_hari === 3 ? 'active' : ''}" data-target="makan_per_hari" data-val="3">3x (Standar)</button>
+          </div>
+        </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Porsi Dewasa / Makan</span> <span class="unit">(Gram)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-bowl-rice fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="porsi_dewasa_gram" class="form-control" min="50" max="250" step="5" value="${data.porsi_dewasa_gram}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 85 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="85" style="font-size: 0.68rem; padding: 2px 6px;">Kecil (85g)</button>
-              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 115 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="115" style="font-size: 0.68rem; padding: 2px 6px;">Sedang (115g)</button>
-              <button type="button" class="option-chip ${data.porsi_dewasa_gram === 145 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="145" style="font-size: 0.68rem; padding: 2px 6px;">Besar (145g)</button>
-            </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="porsi_dewasa_gram">Porsi Dewasa per Makan <span class="unit">(Gram Beras Mentah)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-bowl-rice fa-solid input-icon"></i>
+            <input type="number" id="porsi_dewasa_gram" class="form-control" min="50" max="250" step="5" value="${data.porsi_dewasa_gram}">
+          </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.porsi_dewasa_gram === 85 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="85">Kecil (85g)</button>
+            <button type="button" class="option-chip ${data.porsi_dewasa_gram === 115 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="115">Sedang (115g)</button>
+            <button type="button" class="option-chip ${data.porsi_dewasa_gram === 145 ? 'active' : ''}" data-target="porsi_dewasa_gram" data-val="145">Besar (145g)</button>
           </div>
         </div>
       </div>
 
       <!-- Section 3: Cadangan & Waste Factor -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Cadangan & Waste Factor (Nasi Basi / Sisa)
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Cadangan & Waste Factor
+          </span>
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-            <span>Faktor Cadangan & Susut</span> <span class="unit">(%)</span>
-          </label>
+          <label for="waste_percent">Faktor Toleransi & Nasi Basi <span class="unit">(%)</span></label>
           <div class="input-wrapper">
-            <i class="fa-shield-halved fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-            <input type="number" id="waste_percent" class="form-control" min="0" max="30" step="1" value="${data.waste_percent}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            <i class="fa-shield-halved fa-solid input-icon"></i>
+            <input type="number" id="waste_percent" class="form-control" min="0" max="30" step="1" value="${data.waste_percent}">
           </div>
-          <div class="form-options" style="margin-top: 5px; gap: 4px;">
-            <button type="button" class="option-chip ${data.waste_percent === 0 ? 'active' : ''}" data-target="waste_percent" data-val="0" style="font-size: 0.68rem; padding: 2px 6px;">0% (Nol Waste)</button>
-            <button type="button" class="option-chip ${data.waste_percent === 5 ? 'active' : ''}" data-target="waste_percent" data-val="5" style="font-size: 0.68rem; padding: 2px 6px;">5% (Standar Hemat)</button>
-            <button type="button" class="option-chip ${data.waste_percent === 10 ? 'active' : ''}" data-target="waste_percent" data-val="10" style="font-size: 0.68rem; padding: 2px 6px;">10% (Sering Sisa)</button>
-            <button type="button" class="option-chip ${data.waste_percent === 15 ? 'active' : ''}" data-target="waste_percent" data-val="15" style="font-size: 0.68rem; padding: 2px 6px;">15% (Porsi Longgar)</button>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.waste_percent === 0 ? 'active' : ''}" data-target="waste_percent" data-val="0">0% (Tepat Habis)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 5 ? 'active' : ''}" data-target="waste_percent" data-val="5">5% (Standar Wajar)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 10 ? 'active' : ''}" data-target="waste_percent" data-val="10">10% (Sering Sisa)</button>
+            <button type="button" class="option-chip ${data.waste_percent === 15 ? 'active' : ''}" data-target="waste_percent" data-val="15">15% (Porsi Aman)</button>
           </div>
-          <p style="font-size: 0.72rem; color: var(--text-muted); margin: 6px 0 0 0;">*Mengantisipasi nasi basi di magic com, kerak menempel, susut saat cuci, dan porsi sisa piring.</p>
+          <p style="font-size: 0.74rem; color: var(--text-muted); margin: 6px 0 0 0; line-height: 1.4;">
+            *Mengantisipasi nasi basi di magic com, kerak menempel, susut saat cuci, dan porsi sisa piring.
+          </p>
         </div>
       </div>
 
-      <!-- Section 4: Kualitas Harga & Durasi Waktu -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Harga Pasar & Periode Perhitungan
+      <!-- Section 4: Harga Pasar & Periode Perhitungan -->
+      <div style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Harga Pasar & Durasi Waktu
+          </span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Harga Beras / Kg</span> <span class="unit">(Rp)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="harga_per_kg" class="form-control" step="500" value="${data.harga_per_kg}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.harga_per_kg === 13500 ? 'active' : ''}" data-target="harga_per_kg" data-val="13500" style="font-size: 0.68rem; padding: 2px 6px;">Medium (13.5k)</button>
-              <button type="button" class="option-chip ${data.harga_per_kg === 15000 ? 'active' : ''}" data-target="harga_per_kg" data-val="15000" style="font-size: 0.68rem; padding: 2px 6px;">Premium (15k)</button>
-              <button type="button" class="option-chip ${data.harga_per_kg === 18000 ? 'active' : ''}" data-target="harga_per_kg" data-val="18000" style="font-size: 0.68rem; padding: 2px 6px;">Super (18k)</button>
-            </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="harga_per_kg">Harga Beras per Kg <span class="unit">(Rupiah)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-tag fa-solid input-icon"></i>
+            <input type="number" id="harga_per_kg" class="form-control" step="500" value="${data.harga_per_kg}">
           </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.harga_per_kg === 13500 ? 'active' : ''}" data-target="harga_per_kg" data-val="13500">Medium (Rp 13.500)</button>
+            <button type="button" class="option-chip ${data.harga_per_kg === 15000 ? 'active' : ''}" data-target="harga_per_kg" data-val="15000">Premium (Rp 15.000)</button>
+            <button type="button" class="option-chip ${data.harga_per_kg === 18000 ? 'active' : ''}" data-target="harga_per_kg" data-val="18000">Super (Rp 18.000)</button>
+          </div>
+        </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Lama Kebutuhan</span> <span class="unit">(Hari)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="hari" class="form-control" min="1" max="3650" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-            <div class="form-options" style="margin-top: 5px; gap: 4px;">
-              <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7" style="font-size: 0.68rem; padding: 2px 6px;">1 Mgg</button>
-              <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30" style="font-size: 0.68rem; padding: 2px 6px;">1 Bln</button>
-              <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90" style="font-size: 0.68rem; padding: 2px 6px;">3 Bln</button>
-              <button type="button" class="option-chip ${data.hari === 365 ? 'active' : ''}" data-target="hari" data-val="365" style="font-size: 0.68rem; padding: 2px 6px;">1 Thn</button>
-            </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="hari">Lama Kebutuhan <span class="unit">(Hari)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-calendar-days fa-solid input-icon"></i>
+            <input type="number" id="hari" class="form-control" min="1" max="3650" value="${data.hari}">
+          </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7">1 Minggu (7h)</button>
+            <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30">1 Bulan (30h)</button>
+            <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90">3 Bulan (90h)</button>
+            <button type="button" class="option-chip ${data.hari === 365 ? 'active' : ''}" data-target="hari" data-val="365">1 Tahun (365h)</button>
           </div>
         </div>
       </div>
 
       <!-- Action Sync to Budget Dashboard Button -->
-      <div style="margin-top: 18px; text-align: center;">
+      <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
           <i class="fa-bookmark fa-solid"></i> Simpan ke Dashboard Budget Bulanan
         </button>
