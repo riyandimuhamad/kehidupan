@@ -2,13 +2,10 @@
  * Modul Kalkulator Uang Saku & Budget Harian (Daily Allowance & Micro-Savings)
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Pemisahan Fungsi Gamblang:
- * 1. Fokus Perencanaan / Estimasi Uang Saku: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan biaya tak terduga.
- * 2. Biaya Tak Terduga Harian (Uang Keluar): Keperluan kecil tak terduga (toilet umum, fotokopi, tips, admin e-wallet).
- * 3. Tabungan Celengan Harian (Uang Disimpan): Menyisihkan uang koin/kertas ke celengan (bukan dibelanjakan).
- * 4. Tanpa Duplikasi Transport: Biaya BBM/bensin, parkir bulanan, tol, dan tiket transport umum
- *    sudah sepenuhnya dikelola di modul BBM & Transportasi.
- * 5. Pola Hari Kerja vs Hari Libur (Weekend): Membedakan kebutuhan harian saat hari aktif kerja/kuliah dan akhir pekan.
+ * Parameter Simpel, Rasional & Bebas Pusing:
+ * 1. Jumlah Hari Aktivitas: Pilihan simpel hari kerja (22 hari) atau full bulan (30 hari).
+ * 2. Pos Uang Saku Realistis: Makan siang/sarapan luar, kopi/jajan, dan biaya tak terduga.
+ * 3. Tabungan Celengan Harian: Menyisihkan koin receh Rp 2.000 - Rp 10.000 per hari ke celengan pribadi.
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -17,13 +14,10 @@ import { BudgetStore } from '../services/budgetStore.js';
 const STORAGE_KEY_HARIAN = 'kehidupan_harian_data';
 
 const DEFAULT_HARIAN_DATA = {
-  pola_hari: 'split',             // 'split' (22 kerja + 8 libur), 'penuh' (30 hari sama), 'kerja_saja' (22 hari)
-  hari_kerja: 22,
-  hari_libur: 8,
+  hari_dalam_bulan: 30,           // 22 (Hari Kerja), 26, 30 (Full Bulan)
   makan_siang: 20000,             // Makan siang / sarapan kantor/luar
   jajan_kopi: 10000,              // Kopi, es teh, camilan, jajan santai
   dana_taktis: 5000,              // Biaya tak terduga harian (toilet, fotokopi, tips, admin)
-  budget_hari_libur: 25000,       // Pengeluaran jajan/santai hari libur akhir pekan
   tabungan_harian: 5000           // Tabungan celengan harian (uang disimpan ke celengan)
 };
 
@@ -49,49 +43,33 @@ export const HarianModule = {
     const data = HarianModule.getData();
 
     container.innerHTML = `
-      <!-- Section 1: Pola Hari Aktivitas -->
+      <!-- Section 1: Jumlah Hari Aktivitas -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Pola Hari & Jadwal Aktivitas
+            Hari Aktivitas dalam Sebulan
           </span>
         </div>
 
-        <div class="form-group" style="margin-bottom: 14px;">
-          <label for="pola_hari">Distribusi Hari dalam Sebulan</label>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="hari_dalam_bulan">Jumlah Hari Aktivitas <span class="unit">(Hari/Bulan)</span></label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon"></i>
-            <select id="pola_hari" class="form-control">
-              <option value="split" ${data.pola_hari === 'split' ? 'selected' : ''}>Pemisahan Hari Kerja & Hari Libur (Rekomendasi)</option>
-              <option value="penuh" ${data.pola_hari === 'penuh' ? 'selected' : ''}>Penuh 30 Hari Sama Rata</option>
-              <option value="kerja_saja" ${data.pola_hari === 'kerja_saja' ? 'selected' : ''}>Hari Kerja Saja (22 Hari Aktif)</option>
-            </select>
+            <input type="number" id="hari_dalam_bulan" class="form-control" min="1" max="31" value="${data.hari_dalam_bulan}">
           </div>
-        </div>
-
-        <div id="wrapper_hari_split" style="display: ${data.pola_hari === 'split' ? 'grid' : 'none'}; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="hari_kerja">Hari Kerja <span class="unit">(Hari)</span></label>
-            <div class="input-wrapper">
-              <i class="fa-briefcase fa-solid input-icon"></i>
-              <input type="number" id="hari_kerja" class="form-control" min="1" max="31" value="${data.hari_kerja}">
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="hari_libur">Hari Libur <span class="unit">(Hari)</span></label>
-            <div class="input-wrapper">
-              <i class="fa-mug-saucer fa-solid input-icon"></i>
-              <input type="number" id="hari_libur" class="form-control" min="0" max="31" value="${data.hari_libur}">
-            </div>
+          <div class="form-options">
+            <button type="button" class="option-chip ${data.hari_dalam_bulan === 22 ? 'active' : ''}" data-target="hari_dalam_bulan" data-val="22">Hari Kerja (22 Hari)</button>
+            <button type="button" class="option-chip ${data.hari_dalam_bulan === 26 ? 'active' : ''}" data-target="hari_dalam_bulan" data-val="26">Senin-Sabtu (26 Hari)</button>
+            <button type="button" class="option-chip ${data.hari_dalam_bulan === 30 ? 'active' : ''}" data-target="hari_dalam_bulan" data-val="30">Full Bulan (30 Hari)</button>
           </div>
         </div>
       </div>
 
-      <!-- Section 2: Pos Pengeluaran Hari Kerja / Utama -->
+      <!-- Section 2: Pos Pengeluaran Uang Saku Harian -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Alokasi Pengeluaran Harian (Hari Aktif)
+            Alokasi Uang Saku Harian
           </span>
         </div>
 
@@ -136,29 +114,16 @@ export const HarianModule = {
         </div>
       </div>
 
-      <!-- Section 3: Budget Hari Libur & Tabungan Celengan (Uang Disimpan) -->
+      <!-- Section 3: Tabungan Celengan Harian -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Hari Libur & Tabungan Celengan
+            Tabungan Celengan (Uang Disimpan)
           </span>
         </div>
 
-        <div id="wrapper_budget_libur" class="form-group" style="margin-bottom: 12px; display: ${data.pola_hari === 'split' ? 'block' : 'none'};">
-          <label for="budget_hari_libur">Jatah Uang Santai Hari Libur / Weekend <span class="unit">(Rp/Hari Libur)</span></label>
-          <div class="input-wrapper">
-            <i class="fa-couch fa-solid input-icon"></i>
-            <input type="number" id="budget_hari_libur" class="form-control" step="5000" min="0" value="${data.budget_hari_libur}">
-          </div>
-          <div class="form-options">
-            <button type="button" class="option-chip ${data.budget_hari_libur === 15000 ? 'active' : ''}" data-target="budget_hari_libur" data-val="15000">Rp 15k</button>
-            <button type="button" class="option-chip ${data.budget_hari_libur === 25000 ? 'active' : ''}" data-target="budget_hari_libur" data-val="25000">Rp 25k (Standar)</button>
-            <button type="button" class="option-chip ${data.budget_hari_libur === 50000 ? 'active' : ''}" data-target="budget_hari_libur" data-val="50000">Rp 50k (Santai)</button>
-          </div>
-        </div>
-
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="tabungan_harian">Tabungan Celengan Harian (Uang Disimpan) <span class="unit">(Rp/Hari)</span></label>
+          <label for="tabungan_harian">Tabungan Celengan Harian <span class="unit">(Rp/Hari)</span></label>
           <div class="input-wrapper">
             <i class="fa-piggy-bank fa-solid input-icon"></i>
             <input type="number" id="tabungan_harian" class="form-control" step="1000" min="0" value="${data.tabungan_harian}">
@@ -181,26 +146,8 @@ export const HarianModule = {
       </div>
     `;
 
-    // Dynamic UI toggling when pola_hari changes
-    const polaSelect = container.querySelector('#pola_hari');
-    const splitWrapper = container.querySelector('#wrapper_hari_split');
-    const liburWrapper = container.querySelector('#wrapper_budget_libur');
-
-    polaSelect.addEventListener('change', () => {
-      const mode = polaSelect.value;
-      if (mode === 'split') {
-        if (splitWrapper) splitWrapper.style.display = 'grid';
-        if (liburWrapper) liburWrapper.style.display = 'block';
-      } else {
-        if (splitWrapper) splitWrapper.style.display = 'none';
-        if (liburWrapper) liburWrapper.style.display = 'none';
-      }
-      HarianModule.saveCurrentData(container);
-      onInputChange();
-    });
-
     // Event listeners
-    const inputs = container.querySelectorAll('input, select');
+    const inputs = container.querySelectorAll('input');
     inputs.forEach(input => {
       input.addEventListener('input', () => {
         HarianModule.saveCurrentData(container);
@@ -243,7 +190,7 @@ export const HarianModule = {
         name: 'Budget Harian / Uang Saku',
         amount: monthlyCost,
         category: 'Pokok',
-        source: `Jatah Harian & Tabungan Receh (${res.quickStats.hariAktif} Hari)`
+        source: `Rp ${formatNumber(res.totalPerHari, 0)}/hari x ${currentInputs.hari_dalam_bulan} hari`
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
@@ -258,69 +205,48 @@ export const HarianModule = {
 
   getFormInputs: (container) => {
     return {
-      pola_hari: container.querySelector('#pola_hari')?.value || 'split',
-      hari_kerja: parseInt(container.querySelector('#hari_kerja')?.value || '22', 10),
-      hari_libur: parseInt(container.querySelector('#hari_libur')?.value || '8', 10),
+      hari_dalam_bulan: parseInt(container.querySelector('#hari_dalam_bulan')?.value || '30', 10),
       makan_siang: parseFloat(container.querySelector('#makan_siang')?.value || '0'),
       jajan_kopi: parseFloat(container.querySelector('#jajan_kopi')?.value || '0'),
       dana_taktis: parseFloat(container.querySelector('#dana_taktis')?.value || '0'),
-      budget_hari_libur: parseFloat(container.querySelector('#budget_hari_libur')?.value || '0'),
       tabungan_harian: parseFloat(container.querySelector('#tabungan_harian')?.value || '0')
     };
   },
 
   calculate: (inputs) => {
     const {
-      pola_hari,
-      hari_kerja, hari_libur,
+      hari_dalam_bulan,
       makan_siang, jajan_kopi, dana_taktis,
-      budget_hari_libur, tabungan_harian
+      tabungan_harian
     } = inputs;
 
-    // 1. Tentukan jumlah hari berdasarkan mode
-    let countHariKerja = 22;
-    let countHariLibur = 8;
-    let totalHariSebulan = 30;
+    const days = Math.max(1, hari_dalam_bulan);
 
-    if (pola_hari === 'split') {
-      countHariKerja = hari_kerja;
-      countHariLibur = hari_libur;
-      totalHariSebulan = countHariKerja + countHariLibur;
-    } else if (pola_hari === 'penuh') {
-      countHariKerja = 30;
-      countHariLibur = 0;
-      totalHariSebulan = 30;
-    } else if (pola_hari === 'kerja_saja') {
-      countHariKerja = hari_kerja;
-      countHariLibur = 0;
-      totalHariSebulan = countHariKerja;
-    }
+    // Total per hari
+    const jatah_makan_jajan_hari = makan_siang + jajan_kopi;
+    const jatah_operasional_hari = jatah_makan_jajan_hari + dana_taktis;
+    const total_per_hari = jatah_operasional_hari + tabungan_harian;
 
-    // 2. Akumulasi Biaya Bulanan
-    const total_makan_bulan = makan_siang * countHariKerja;
-    const total_jajan_bulan = jajan_kopi * countHariKerja;
-    const total_taktis_bulan = dana_taktis * countHariKerja;
-    const total_operasional_kerja = total_makan_bulan + total_jajan_bulan + total_taktis_bulan;
-
-    const total_libur_bulan = pola_hari === 'split' ? budget_hari_libur * countHariLibur : 0;
-    const total_tabungan_bulan = tabungan_harian * totalHariSebulan;
-
-    const total_biaya = total_operasional_kerja + total_libur_bulan + total_tabungan_bulan;
-    const rataRataPerHari = totalHariSebulan > 0 ? total_biaya / totalHariSebulan : 0;
+    // Total bulanan
+    const total_makan_bulan = makan_siang * days;
+    const total_jajan_bulan = jajan_kopi * days;
+    const total_taktis_bulan = dana_taktis * days;
+    const total_tabungan_bulan = tabungan_harian * days;
+    const total_biaya = total_per_hari * days;
 
     // 4 Kartu Ringkasan (Auto-Balanced Layout)
     const summaryCards = [
       {
         title: 'Total Budget Harian Bulanan',
         value: formatRupiah(total_biaya),
-        note: `± ${formatRupiah(rataRataPerHari)} / Hari (${totalHariSebulan} Hari Aktivitas)`,
+        note: `@ ${formatRupiah(total_per_hari)} / Hari x ${days} Hari`,
         icon: 'fa-wallet',
         type: 'emerald'
       },
       {
         title: 'Alokasi Makan & Jajan',
         value: formatRupiah(total_makan_bulan + total_jajan_bulan),
-        note: `@ ${formatRupiah(makan_siang + jajan_kopi)} / Hari Kerja`,
+        note: `@ ${formatRupiah(jatah_makan_jajan_hari)} / Hari x ${days} Hari`,
         icon: 'fa-utensils',
         type: 'amber'
       },
@@ -334,7 +260,7 @@ export const HarianModule = {
       {
         title: 'Tabungan Celengan Harian',
         value: formatRupiah(total_tabungan_bulan),
-        note: `Disimpan ke Celengan (${formatRupiah(tabungan_harian)}/Hari x ${totalHariSebulan} Hari)`,
+        note: `Disimpan ke Celengan (${formatRupiah(tabungan_harian)}/Hari x ${days} Hari)`,
         icon: 'fa-piggy-bank',
         type: 'violet'
       }
@@ -342,30 +268,40 @@ export const HarianModule = {
 
     // Tabel Primer: Proyeksi Berdasarkan Periode Waktu
     const periods = [
-      { label: '1 Hari Kerja', dKerja: 1, dLibur: 0 },
-      { label: '1 Minggu (5 Kerja + 2 Libur)', dKerja: 5, dLibur: 2 },
-      { label: `1 Bulan (${totalHariSebulan} Hari)`, dKerja: countHariKerja, dLibur: countHariLibur, isCurrent: true },
-      { label: '3 Bulan (Kuartal)', dKerja: countHariKerja * 3, dLibur: countHariLibur * 3 },
-      { label: '1 Tahun (12 Bulan)', dKerja: countHariKerja * 12, dLibur: countHariLibur * 12 }
+      { label: '1 Hari', d: 1 },
+      { label: '1 Minggu (7 Hari)', d: 7 },
+      { label: 'Hari Kerja (22 Hari)', d: 22 },
+      { label: `Pilihan (${days} Hari)`, d: days, isCurrent: true },
+      { label: '1 Bulan Penuh (30 Hari)', d: 30 },
+      { label: '3 Bulan (90 Hari)', d: 90 },
+      { label: '1 Tahun (365 Hari)', d: 365 }
     ];
 
-    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Biaya Tak Terduga', 'Uang Libur', 'Tabungan Celengan', 'Total Budget'];
-    const tableRows = periods.map(p => {
-      const m = makan_siang * p.dKerja;
-      const j = jajan_kopi * p.dKerja;
-      const t = dana_taktis * p.dKerja;
-      const l = pola_hari === 'split' ? budget_hari_libur * p.dLibur : 0;
-      const tab = tabungan_harian * (p.dKerja + p.dLibur);
-      const total = m + j + t + l + tab;
+    // Filter unique periods
+    const uniquePeriods = [];
+    const seenDays = new Set();
+    periods.forEach(p => {
+      if (!seenDays.has(p.d)) {
+        seenDays.add(p.d);
+        uniquePeriods.push(p);
+      }
+    });
+
+    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Biaya Tak Terduga', 'Tabungan Celengan', 'Total Budget'];
+    const tableRows = uniquePeriods.map(p => {
+      const m = makan_siang * p.d;
+      const j = jajan_kopi * p.d;
+      const t = dana_taktis * p.d;
+      const tab = tabungan_harian * p.d;
+      const total = total_per_hari * p.d;
 
       return {
-        isCurrent: !!p.isCurrent,
+        isCurrent: p.d === days,
         cells: [
           `<strong>${p.label}</strong>`,
           formatRupiah(m),
           formatRupiah(j),
           formatRupiah(t),
-          l > 0 ? formatRupiah(l) : '-',
           formatRupiah(tab),
           `<span class="highlight"><strong>${formatRupiah(total)}</strong></span>`
         ]
@@ -375,11 +311,11 @@ export const HarianModule = {
     // Tabel Sekunder: Komposisi Alokasi Uang Saku & Tabungan Harian
     const secondaryTable = {
       title: 'Komposisi Alokasi Uang Saku & Tabungan Harian',
-      subtitle: `Rincian jatah operasional hari kerja, uang libur, dan akumulasi uang yang disimpan ke celengan bulanan.`,
+      subtitle: `Rincian jatah biaya harian dan akumulasinya selama ${days} hari aktivitas per bulan.`,
       headers: [
         'Komponen Pengeluaran Harian',
-        'Jatah Harian',
-        'Akumulasi Sebulan',
+        'Jatah per Hari',
+        `Akumulasi (${days} Hari)`,
         'Keterangan & Kebiasaan Nyata'
       ],
       rows: [
@@ -389,7 +325,7 @@ export const HarianModule = {
             '<strong>Makan Siang & Sarapan</strong>',
             formatRupiah(makan_siang),
             formatRupiah(total_makan_bulan),
-            `Makan siang kantor / warteg / sarapan luar (${countHariKerja} Hari Kerja)`
+            `Makan siang kantor / warteg / sarapan luar harian`
           ]
         },
         {
@@ -398,7 +334,7 @@ export const HarianModule = {
             '<strong>Kopi, Es Teh & Jajan</strong>',
             formatRupiah(jajan_kopi),
             formatRupiah(total_jajan_bulan),
-            `Minuman harian, camilan sore, atau jajan santai (${countHariKerja} Hari Kerja)`
+            `Minuman harian, kopi, es teh, camilan sore, atau jajan santai`
           ]
         },
         {
@@ -407,20 +343,9 @@ export const HarianModule = {
             '<strong>Biaya Tak Terduga Harian</strong>',
             formatRupiah(dana_taktis),
             formatRupiah(total_taktis_bulan),
-            `Uang keluar tak terduga: bayar toilet umum, fotokopi dokumen, tips kecil, dan biaya admin e-wallet`
+            `Uang keluar tak terduga: bayar toilet umum, fotokopi, tips, atau admin e-wallet`
           ]
         },
-        ...(pola_hari === 'split' ? [
-          {
-            isCurrent: false,
-            cells: [
-              '<strong>Jatah Santai Hari Libur</strong>',
-              formatRupiah(budget_hari_libur),
-              formatRupiah(total_libur_bulan),
-              `Uang jajan santai/keluar rumah akhir pekan (${countHariLibur} Hari Libur)`
-            ]
-          }
-        ] : []),
         {
           isCurrent: false,
           cells: [
@@ -434,9 +359,9 @@ export const HarianModule = {
           isCurrent: false,
           cells: [
             '<strong>Total Proyeksi Alokasi Harian</strong>',
-            `± ${formatRupiah(rataRataPerHari)} / Hari`,
+            `<strong>${formatRupiah(total_per_hari)} / Hari</strong>`,
             `<strong class="highlight">${formatRupiah(total_biaya)}</strong>`,
-            `Total estimasi kebutuhan bulanan (${totalHariSebulan} Hari) siap disimpan ke Dashboard Budget`
+            `Total estimasi kebutuhan uang saku (${days} Hari) siap disimpan ke Dashboard Budget`
           ]
         }
       ]
@@ -444,6 +369,7 @@ export const HarianModule = {
 
     return {
       total_biaya,
+      totalPerHari: total_per_hari,
       summaryCards,
       tableHeaders,
       tableRows,
@@ -453,32 +379,29 @@ export const HarianModule = {
           'Makan Siang',
           'Kopi & Jajan',
           'Biaya Tak Terduga',
-          ...(pola_hari === 'split' ? ['Hari Libur'] : []),
           'Tabungan Celengan'
         ],
         datasets: [
           {
-            label: 'Alokasi Pengeluaran Bulanan (Rp)',
+            label: `Alokasi Bulanan (${days} Hari)`,
             data: [
               Math.round(total_makan_bulan),
               Math.round(total_jajan_bulan),
               Math.round(total_taktis_bulan),
-              ...(pola_hari === 'split' ? [Math.round(total_libur_bulan)] : []),
               Math.round(total_tabungan_bulan)
             ],
             backgroundColor: [
               '#10b981', // emerald
               '#f59e0b', // amber
               '#06b6d4', // cyan
-              ...(pola_hari === 'split' ? ['#ec4899'] : []), // pink
               '#8b5cf6'  // violet
             ]
           }
         ]
       },
       quickStats: {
-        hariAktif: totalHariSebulan,
-        totalQty: `${totalHariSebulan} Hari (${formatRupiah(rataRataPerHari)}/Hari)`,
+        hariAktif: days,
+        totalQty: `${days} Hari (${formatRupiah(total_per_hari)}/Hari)`,
         totalCost: formatRupiah(total_biaya)
       }
     };
