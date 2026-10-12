@@ -2,11 +2,13 @@
  * Modul Kalkulator & Tracker Budget Harian (Daily Allowance & Micro-Savings)
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Masuk Akal:
- * 1. Kategori Pengeluaran Harian: Makan siang/sarapan luar, jajan/kopi/camilan, dan transport/bensin/parkir receh.
- * 2. Hari Kerja vs Hari Libur (Weekend): Pola pengeluaran dipisah realistis antara hari kerja aktif dan hari libur.
- * 3. Celengan Tabungan Harian (Micro-Savings): Menyisihkan Rp 2.000 - Rp 10.000 per hari menjadi akumulasi tabungan bulanan.
- * 4. Tracking Realistis Hari Ini: Evaluasi jatah target vs pengeluaran aktual untuk memantau surplus/defisit harian.
+ * Parameter Realistis & Bebas Duplikasi:
+ * 1. Fokus Uang Saku Personal: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan dana taktis receh harian.
+ * 2. Tanpa Duplikasi Transport: Biaya BBM/bensin, parkir bulanan, tol, dan tiket transport umum
+ *    sudah sepenuhnya dikelola di modul BBM & Transportasi.
+ * 3. Pola Hari Kerja vs Hari Libur (Weekend): Membedakan kebutuhan harian saat hari aktif kerja/kuliah dan akhir pekan.
+ * 4. Celengan Tabungan Harian: Menyisihkan koin receh Rp 2.000 - Rp 10.000 per hari menjadi tabungan mikro bulanan.
+ * 5. Tracking Realistis Hari Ini: Evaluasi target jatah harian vs pengeluaran aktual yang terpakai hari ini.
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -19,11 +21,11 @@ const DEFAULT_HARIAN_DATA = {
   hari_kerja: 22,
   hari_libur: 8,
   makan_siang: 20000,             // Makan siang / sarapan kantor/luar
-  jajan_kopi: 10000,              // Kopi, es teh, camilan, rokok
-  transport_parkir: 8000,         // Bensin receh harian, parkir, angkot
-  budget_hari_libur: 25000,       // Pengeluaran santai/jajan per hari libur
-  tabungan_harian: 5000,          // Celengan / sisihan koin per hari
-  aktual_hari_ini: 35000          // Realisasi pengeluaran hari ini
+  jajan_kopi: 10000,              // Kopi, es teh, camilan, jajan santai
+  dana_taktis: 5000,              // Dana taktis / uang receh keperluan kecil harian
+  budget_hari_libur: 25000,       // Pengeluaran jajan/santai hari libur akhir pekan
+  tabungan_harian: 5000,          // Celengan / sisihan koin tabungan per hari
+  aktual_hari_ini: 30000          // Realisasi pengeluaran terpakai hari ini
 };
 
 export const HarianModule = {
@@ -32,7 +34,7 @@ export const HarianModule = {
   icon: 'fa-wallet',
   badge: 'Module Uang Harian',
   title: 'Kalkulator & Tracker Budget Harian',
-  subtitle: 'Estimasi alokasi uang saku harian, pemisahan hari kerja dan libur, serta tabungan receh harian.',
+  subtitle: 'Estimasi alokasi uang saku harian, konsumsi makan siang, dana taktis, dan celengan tabungan receh.',
 
   defaults: DEFAULT_HARIAN_DATA,
 
@@ -116,20 +118,21 @@ export const HarianModule = {
           <div class="form-options">
             <button type="button" class="option-chip ${data.jajan_kopi === 5000 ? 'active' : ''}" data-target="jajan_kopi" data-val="5000">Rp 5k (Es Teh)</button>
             <button type="button" class="option-chip ${data.jajan_kopi === 10000 ? 'active' : ''}" data-target="jajan_kopi" data-val="10000">Rp 10k (Kopi)</button>
-            <button type="button" class="option-chip ${data.jajan_kopi === 25000 ? 'active' : ''}" data-target="jajan_kopi" data-val="25000">Rp 25k (Kafe)</button>
+            <button type="button" class="option-chip ${data.jajan_kopi === 20000 ? 'active' : ''}" data-target="jajan_kopi" data-val="20000">Rp 20k (Kafe)</button>
           </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="transport_parkir">Bensin Harian, Parkir & Angkot <span class="unit">(Rp/Hari)</span></label>
+          <label for="dana_taktis">Dana Taktis / Receh Harian <span class="unit">(Rp/Hari)</span></label>
           <div class="input-wrapper">
-            <i class="fa-motorcycle fa-solid input-icon"></i>
-            <input type="number" id="transport_parkir" class="form-control" step="1000" min="0" value="${data.transport_parkir}">
+            <i class="fa-coins fa-solid input-icon"></i>
+            <input type="number" id="dana_taktis" class="form-control" step="1000" min="0" value="${data.dana_taktis}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.transport_parkir === 4000 ? 'active' : ''}" data-target="transport_parkir" data-val="4000">Rp 4k (Parkir)</button>
-            <button type="button" class="option-chip ${data.transport_parkir === 8000 ? 'active' : ''}" data-target="transport_parkir" data-val="8000">Rp 8k (Bensin+Parkir)</button>
-            <button type="button" class="option-chip ${data.transport_parkir === 15000 ? 'active' : ''}" data-target="transport_parkir" data-val="15000">Rp 15k (Angkot/KRL)</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 0 ? 'active' : ''}" data-target="dana_taktis" data-val="0">Rp 0</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 2000 ? 'active' : ''}" data-target="dana_taktis" data-val="2000">Rp 2k</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 5000 ? 'active' : ''}" data-target="dana_taktis" data-val="5000">Rp 5k (Standar)</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 10000 ? 'active' : ''}" data-target="dana_taktis" data-val="10000">Rp 10k</button>
           </div>
         </div>
       </div>
@@ -278,7 +281,7 @@ export const HarianModule = {
       hari_libur: parseInt(container.querySelector('#hari_libur')?.value || '8', 10),
       makan_siang: parseFloat(container.querySelector('#makan_siang')?.value || '0'),
       jajan_kopi: parseFloat(container.querySelector('#jajan_kopi')?.value || '0'),
-      transport_parkir: parseFloat(container.querySelector('#transport_parkir')?.value || '0'),
+      dana_taktis: parseFloat(container.querySelector('#dana_taktis')?.value || '0'),
       budget_hari_libur: parseFloat(container.querySelector('#budget_hari_libur')?.value || '0'),
       tabungan_harian: parseFloat(container.querySelector('#tabungan_harian')?.value || '0'),
       aktual_hari_ini: parseFloat(container.querySelector('#aktual_hari_ini')?.value || '0')
@@ -289,12 +292,12 @@ export const HarianModule = {
     const {
       pola_hari,
       hari_kerja, hari_libur,
-      makan_siang, jajan_kopi, transport_parkir,
+      makan_siang, jajan_kopi, dana_taktis,
       budget_hari_libur, tabungan_harian, aktual_hari_ini
     } = inputs;
 
     // 1. Hitung jatah per hari kerja (operasional)
-    const jatah_harian_kerja = makan_siang + jajan_kopi + transport_parkir;
+    const jatah_harian_kerja = makan_siang + jajan_kopi + dana_taktis;
     const jatah_total_kerja_dengan_tabungan = jatah_harian_kerja + tabungan_harian;
 
     // 2. Tentukan jumlah hari berdasarkan mode
@@ -319,8 +322,8 @@ export const HarianModule = {
     // 3. Akumulasi Biaya Bulanan
     const total_makan_bulan = makan_siang * countHariKerja;
     const total_jajan_bulan = jajan_kopi * countHariKerja;
-    const total_transport_bulan = transport_parkir * countHariKerja;
-    const total_operasional_kerja = total_makan_bulan + total_jajan_bulan + total_transport_bulan;
+    const total_taktis_bulan = dana_taktis * countHariKerja;
+    const total_operasional_kerja = total_makan_bulan + total_jajan_bulan + total_taktis_bulan;
 
     const total_libur_bulan = pola_hari === 'split' ? budget_hari_libur * countHariLibur : 0;
     const total_tabungan_bulan = tabungan_harian * totalHariSebulan;
@@ -350,10 +353,10 @@ export const HarianModule = {
         type: 'amber'
       },
       {
-        title: 'Transport & Parkir Harian',
-        value: formatRupiah(total_transport_bulan),
-        note: `@ ${formatRupiah(transport_parkir)} / Hari (${countHariKerja} Hari Kerja)`,
-        icon: 'fa-motorcycle',
+        title: 'Dana Taktis & Receh Harian',
+        value: formatRupiah(total_taktis_bulan),
+        note: `@ ${formatRupiah(dana_taktis)} / Hari (${countHariKerja} Hari Kerja)`,
+        icon: 'fa-coins',
         type: 'sky'
       },
       {
@@ -374,11 +377,11 @@ export const HarianModule = {
       { label: '1 Tahun (12 Bulan)', dKerja: countHariKerja * 12, dLibur: countHariLibur * 12 }
     ];
 
-    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Transport Harian', 'Uang Libur', 'Celengan Tabungan', 'Total Budget'];
+    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Dana Taktis', 'Uang Libur', 'Celengan Tabungan', 'Total Budget'];
     const tableRows = periods.map(p => {
       const m = makan_siang * p.dKerja;
       const j = jajan_kopi * p.dKerja;
-      const t = transport_parkir * p.dKerja;
+      const t = dana_taktis * p.dKerja;
       const l = pola_hari === 'split' ? budget_hari_libur * p.dLibur : 0;
       const tab = tabungan_harian * (p.dKerja + p.dLibur);
       const total = m + j + t + l + tab;
@@ -423,16 +426,16 @@ export const HarianModule = {
             '<strong>Kopi, Es Teh & Jajan</strong>',
             formatRupiah(jajan_kopi),
             formatRupiah(total_jajan_bulan),
-            `Minuman harian, camilan sore, atau rokok (${countHariKerja} Hari Kerja)`
+            `Minuman harian, camilan sore, atau jajan santai (${countHariKerja} Hari Kerja)`
           ]
         },
         {
           isCurrent: false,
           cells: [
-            '<strong>Bensin Harian & Parkir</strong>',
-            formatRupiah(transport_parkir),
-            formatRupiah(total_transport_bulan),
-            `Operasional harian bensin motor, parkir kantor/minimarket, atau tiket komuter`
+            '<strong>Dana Taktis & Keperluan Receh</strong>',
+            formatRupiah(dana_taktis),
+            formatRupiah(total_taktis_bulan),
+            `Uang receh tak terduga harian (tips, fotokopi, toilet umum, atau sumbangan kecil)`
           ]
         },
         ...(pola_hari === 'split' ? [
@@ -477,7 +480,7 @@ export const HarianModule = {
         labels: [
           'Makan Siang',
           'Kopi & Jajan',
-          'Transport & Parkir',
+          'Dana Taktis Harian',
           ...(pola_hari === 'split' ? ['Hari Libur'] : []),
           'Celengan Tabungan'
         ],
@@ -487,7 +490,7 @@ export const HarianModule = {
             data: [
               Math.round(total_makan_bulan),
               Math.round(total_jajan_bulan),
-              Math.round(total_transport_bulan),
+              Math.round(total_taktis_bulan),
               ...(pola_hari === 'split' ? [Math.round(total_libur_bulan)] : []),
               Math.round(total_tabungan_bulan)
             ],
