@@ -29,6 +29,8 @@ const DEFAULT_VEHICLES = [
     pajak_tahunan: 2400000,
     pajak_5_tahunan: 1200000,
     biaya_servis_oli_bulan: 250000,
+    asuransi_tahunan: 2500000, // TLO / All Risk Rp 2,5 jt/tahun
+    parkir_tol_bulan: 200000,  // Parkir kantor & e-Toll bulanan
     hari_per_bulan: 30
   },
   {
@@ -42,6 +44,8 @@ const DEFAULT_VEHICLES = [
     pajak_tahunan: 350000,
     pajak_5_tahunan: 500000,
     biaya_servis_oli_bulan: 80000,
+    asuransi_tahunan: 0,       // Motor non-asuransi (SWDKLLJ STNK)
+    parkir_tol_bulan: 50000,   // Parkir harian / minimarket
     hari_per_bulan: 30
   }
 ];
@@ -52,7 +56,7 @@ export const TransportModule = {
   icon: 'fa-car-side',
   badge: 'Module Mobilitas & Transport',
   title: 'Kalkulator Transportasi (Pribadi & Publik)',
-  subtitle: 'Hitung estimasi operasional Kendaraan Pribadi (BBM, Pajak STNK, Servis/Oli) dan/atau Transportasi Umum (KRL, TransJakarta, Ojol).',
+  subtitle: 'Estimasi operasional riil Kendaraan Pribadi (BBM, Pajak STNK, Servis, Asuransi TLO/All Risk, Parkir & Tol) dan Transportasi Umum.',
 
   defaults: {},
 
@@ -65,7 +69,12 @@ export const TransportModule = {
   },
 
   getVehicles: () => {
-    return getFromStorage(STORAGE_KEY_VEHICLES, DEFAULT_VEHICLES);
+    const raw = getFromStorage(STORAGE_KEY_VEHICLES, DEFAULT_VEHICLES);
+    return raw.map(v => ({
+      ...v,
+      asuransi_tahunan: v.asuransi_tahunan !== undefined ? v.asuransi_tahunan : (v.jenis === 'mobil' ? 2500000 : 0),
+      parkir_tol_bulan: v.parkir_tol_bulan !== undefined ? v.parkir_tol_bulan : (v.jenis === 'mobil' ? 200000 : 50000)
+    }));
   },
 
   saveVehicles: (vehicles) => {
@@ -149,9 +158,45 @@ export const TransportModule = {
           </div>
 
           <!-- Line 5: Servis Rutin, Oli & Sparepart / Bulan -->
-          <div class="form-group" style="margin-bottom: 0;">
+          <div class="form-group" style="margin-bottom: 10px;">
             <label style="font-size: 0.74rem;">Estimasi Servis Rutin, Oli & Sparepart <span style="color: var(--text-muted);">(Alokasi Rp/Bulan)</span></label>
             <input type="number" class="form-control v-input-servis" data-vid="${v.id}" value="${v.biaya_servis_oli_bulan}" step="10000" style="font-size: 0.8rem; padding: 6px 10px;">
+          </div>
+
+          <!-- Line 6: Asuransi Kendaraan Komersial (TLO / All Risk) -->
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.74rem;">
+              <span>Asuransi Kendaraan (TLO / All Risk)</span>
+              <span style="color: var(--text-muted); font-size: 0.7rem;">(Rp/Tahun)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-shield-halved fa-solid input-icon" style="left: 10px; font-size: 0.8rem;"></i>
+              <input type="number" class="form-control v-input-asuransi" data-vid="${v.id}" value="${v.asuransi_tahunan !== undefined ? v.asuransi_tahunan : (isMobil ? 2500000 : 0)}" step="100000" style="font-size: 0.8rem; padding: 6px 10px 6px 30px;">
+            </div>
+            <div class="form-options v-options-asuransi" style="margin-top: 4px; gap: 4px;">
+              <button type="button" class="option-chip v-chip-asuransi ${(!v.asuransi_tahunan || v.asuransi_tahunan === 0) ? 'active' : ''}" data-val="0" style="font-size: 0.68rem; padding: 2px 6px;">0 (Tidak Ada)</button>
+              <button type="button" class="option-chip v-chip-asuransi ${v.asuransi_tahunan === 1500000 ? 'active' : ''}" data-val="1500000" style="font-size: 0.68rem; padding: 2px 6px;">TLO (1.5jt)</button>
+              <button type="button" class="option-chip v-chip-asuransi ${v.asuransi_tahunan === 3500000 ? 'active' : ''}" data-val="3500000" style="font-size: 0.68rem; padding: 2px 6px;">All Risk (3.5jt)</button>
+            </div>
+            <span style="font-size: 0.68rem; color: var(--text-muted); display: block; margin-top: 3px;">*Di luar santunan SWDKLLJ Jasa Raharja yang sudah tercakup di Pajak STNK.</span>
+          </div>
+
+          <!-- Line 7: Parkir & Tol Rutin Bulanan -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.74rem;">
+              <span>Biaya Parkir & e-Toll Rutin</span>
+              <span style="color: var(--text-muted); font-size: 0.7rem;">(Alokasi Rp/Bulan)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-square-parking fa-solid input-icon" style="left: 10px; font-size: 0.8rem;"></i>
+              <input type="number" class="form-control v-input-parkir" data-vid="${v.id}" value="${v.parkir_tol_bulan !== undefined ? v.parkir_tol_bulan : (isMobil ? 200000 : 50000)}" step="25000" style="font-size: 0.8rem; padding: 6px 10px 6px 30px;">
+            </div>
+            <div class="form-options v-options-parkir" style="margin-top: 4px; gap: 4px;">
+              <button type="button" class="option-chip v-chip-parkir ${(!v.parkir_tol_bulan || v.parkir_tol_bulan === 0) ? 'active' : ''}" data-val="0" style="font-size: 0.68rem; padding: 2px 6px;">Rp 0</button>
+              <button type="button" class="option-chip v-chip-parkir ${v.parkir_tol_bulan === 50000 ? 'active' : ''}" data-val="50000" style="font-size: 0.68rem; padding: 2px 6px;">50k (Harian)</button>
+              <button type="button" class="option-chip v-chip-parkir ${v.parkir_tol_bulan === 200000 ? 'active' : ''}" data-val="200000" style="font-size: 0.68rem; padding: 2px 6px;">200k (Kantor)</button>
+              <button type="button" class="option-chip v-chip-parkir ${v.parkir_tol_bulan === 500000 ? 'active' : ''}" data-val="500000" style="font-size: 0.68rem; padding: 2px 6px;">500k (+Tol)</button>
+            </div>
           </div>
         </div>
       `;
@@ -282,6 +327,8 @@ export const TransportModule = {
         const pajak_tahunan = parseFloat(card.querySelector('.v-input-pajak-tahunan')?.value || 0);
         const pajak_5_tahunan = parseFloat(card.querySelector('.v-input-pajak-5tahunan')?.value || 0);
         const biaya_servis_oli_bulan = parseFloat(card.querySelector('.v-input-servis')?.value || 0);
+        const asuransi_tahunan = parseFloat(card.querySelector('.v-input-asuransi')?.value || 0);
+        const parkir_tol_bulan = parseFloat(card.querySelector('.v-input-parkir')?.value || 0);
 
         updatedVehicles.push({
           id,
@@ -294,6 +341,8 @@ export const TransportModule = {
           pajak_tahunan,
           pajak_5_tahunan,
           biaya_servis_oli_bulan,
+          asuransi_tahunan,
+          parkir_tol_bulan,
           hari_per_bulan: 30
         });
       });
@@ -330,7 +379,7 @@ export const TransportModule = {
     });
 
     // Attach Option Chips listener
-    const chips = container.querySelectorAll('.option-chip');
+    const chips = container.querySelectorAll('.option-chip:not(.v-chip-asuransi):not(.v-chip-parkir)');
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
         const targetId = chip.getAttribute('data-target');
@@ -343,6 +392,35 @@ export const TransportModule = {
           bindInputs();
         }
       });
+    });
+
+    // Chip delegation for Asuransi and Parkir chips inside vehicle cards
+    container.addEventListener('click', (e) => {
+      const chipAsuransi = e.target.closest('.v-chip-asuransi');
+      if (chipAsuransi) {
+        const card = chipAsuransi.closest('.vehicle-item-card');
+        const input = card.querySelector('.v-input-asuransi');
+        if (input) {
+          input.value = chipAsuransi.getAttribute('data-val');
+          card.querySelectorAll('.v-chip-asuransi').forEach(c => c.classList.remove('active'));
+          chipAsuransi.classList.add('active');
+          bindInputs();
+        }
+        return;
+      }
+
+      const chipParkir = e.target.closest('.v-chip-parkir');
+      if (chipParkir) {
+        const card = chipParkir.closest('.vehicle-item-card');
+        const input = card.querySelector('.v-input-parkir');
+        if (input) {
+          input.value = chipParkir.getAttribute('data-val');
+          card.querySelectorAll('.v-chip-parkir').forEach(c => c.classList.remove('active'));
+          chipParkir.classList.add('active');
+          bindInputs();
+        }
+        return;
+      }
     });
 
     container.querySelectorAll('input, select').forEach(elem => {
@@ -382,6 +460,8 @@ export const TransportModule = {
           pajak_tahunan: 300000,
           pajak_5_tahunan: 400000,
           biaya_servis_oli_bulan: 75000,
+          asuransi_tahunan: 0,
+          parkir_tol_bulan: 50000,
           hari_per_bulan: 30
         };
 
@@ -430,6 +510,8 @@ export const TransportModule = {
     let grandTotalLiterBulanan = 0;
     let grandTotalPajakBulanan = 0;
     let grandTotalPerawatanBulanan = 0;
+    let grandTotalAsuransiBulanan = 0;
+    let grandTotalParkirBulanan = 0;
     let totalPribadiBulanan = 0;
 
     const vehicleCalculations = list.map(v => {
@@ -441,14 +523,18 @@ export const TransportModule = {
       const pajak5TahunanBulanan = (v.pajak_5_tahunan || 0) / 60;
       const totalPajakBulanan = pajakTahunanBulanan + pajak5TahunanBulanan;
 
+      const asuransiBulanan = (v.asuransi_tahunan || 0) / 12;
+      const parkirTolBulanan = v.parkir_tol_bulan || 0;
       const perawatanBulanan = v.biaya_servis_oli_bulan || 0;
-      const totalBiayaBulanan = bbmBulanan + totalPajakBulanan + perawatanBulanan;
+      const totalBiayaBulanan = bbmBulanan + totalPajakBulanan + perawatanBulanan + asuransiBulanan + parkirTolBulanan;
 
       if (s.enable_pribadi) {
         grandTotalBbmBulanan += bbmBulanan;
         grandTotalLiterBulanan += literBulanan;
         grandTotalPajakBulanan += totalPajakBulanan;
         grandTotalPerawatanBulanan += perawatanBulanan;
+        grandTotalAsuransiBulanan += asuransiBulanan;
+        grandTotalParkirBulanan += parkirTolBulanan;
         totalPribadiBulanan += totalBiayaBulanan;
       }
 
@@ -458,6 +544,8 @@ export const TransportModule = {
         literBulanan,
         bbmBulanan,
         totalPajakBulanan,
+        asuransiBulanan,
+        parkirTolBulanan,
         perawatanBulanan,
         totalBiayaBulanan
       };
@@ -470,31 +558,39 @@ export const TransportModule = {
     // Grand Total Transport
     const grandTotalBiayaBulanan = (s.enable_pribadi ? totalPribadiBulanan : 0) + (s.enable_umum ? totalUmumBulanan : 0);
 
+    // Summary Cards (4 Cards - Auto Balanced Layout)
     const summaryCards = [
       {
         title: 'Kendaraan Pribadi',
         value: s.enable_pribadi ? formatRupiah(totalPribadiBulanan) : 'Non-Aktif',
-        note: s.enable_pribadi ? `${list.length} Kendaraan (${formatNumber(grandTotalLiterBulanan, 1)} L BBM)` : 'Mode Pribadi Dimatikan',
+        note: s.enable_pribadi ? `${list.length} Kendaraan (${formatNumber(grandTotalLiterBulanan, 1)} L BBM/bln)` : 'Mode Pribadi Dimatikan',
         icon: 'fa-car-side',
         type: s.enable_pribadi ? 'emerald' : 'sky'
       },
       {
-        title: 'Transportasi Umum / Publik',
-        value: s.enable_umum ? formatRupiah(totalUmumBulanan) : 'Non-Aktif',
-        note: s.enable_umum ? `@ ${formatRupiah(s.biaya_umum_harian)} / Hari (${s.hari_umum_per_bulan}h)` : 'Mode Umum Dimatikan',
-        icon: 'fa-bus',
-        type: s.enable_umum ? 'amber' : 'sky'
+        title: 'BBM & Servis Rutin',
+        value: s.enable_pribadi ? formatRupiah(grandTotalBbmBulanan + grandTotalPerawatanBulanan) : 'Rp 0',
+        note: `BBM ${formatRupiah(grandTotalBbmBulanan)} + Servis ${formatRupiah(grandTotalPerawatanBulanan)}`,
+        icon: 'fa-gas-pump',
+        type: 'amber'
+      },
+      {
+        title: 'Pajak, Asuransi & Parkir',
+        value: s.enable_pribadi ? formatRupiah(grandTotalPajakBulanan + grandTotalAsuransiBulanan + grandTotalParkirBulanan) : 'Rp 0',
+        note: `Pajak ${formatRupiah(grandTotalPajakBulanan)} + Asuransi ${formatRupiah(grandTotalAsuransiBulanan)} + Parkir ${formatRupiah(grandTotalParkirBulanan)}`,
+        icon: 'fa-shield-halved',
+        type: 'sky'
       },
       {
         title: 'Grand Total Transport',
         value: formatRupiah(grandTotalBiayaBulanan),
-        note: `Total Operasional Transportasi / Bln`,
+        note: s.enable_umum ? `Termasuk Umum ${formatRupiah(totalUmumBulanan)}/bln` : 'Alokasi Bulanan Kendaraan',
         icon: 'fa-route',
         type: 'emerald'
       }
     ];
 
-    const tableHeaders = ['Kategori Transport', 'Jenis / Rincian', 'Jarak / Frekuensi', 'BBM / Ongkos Harian', 'Pajak / Langganan', 'Servis & Oli / Bln', 'Total Est. Bulanan'];
+    const tableHeaders = ['Kategori Transport', 'Jenis / Rincian', 'BBM (Liter & Biaya)', 'Pajak & Asuransi / Bln', 'Servis, Parkir & Tol / Bln', 'Total Est. Bulanan'];
     const tableRows = [];
 
     // Rows for Private Vehicles (If ON)
@@ -505,11 +601,10 @@ export const TransportModule = {
           cells: [
             `<strong>Pribadi</strong>`,
             `${vc.nama || 'Kendaraan'} <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
-            `${formatNumber(vc.jarak_km_per_hari, 0)} km/hr`,
-            `${formatRupiah(vc.bbmBulanan)} (${formatNumber(vc.literBulanan, 1)} L)`,
-            `${formatRupiah(vc.totalPajakBulanan)}`,
-            `${formatRupiah(vc.perawatanBulanan)}`,
-            `<span class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</span>`
+            `${formatRupiah(vc.bbmBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(${formatNumber(vc.literBulanan, 1)} L)</span>`,
+            `${formatRupiah(vc.totalPajakBulanan + vc.asuransiBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(Pajak ${formatRupiah(vc.totalPajakBulanan)}${vc.asuransiBulanan > 0 ? ` + Asuransi ${formatRupiah(vc.asuransiBulanan)}` : ''})</span>`,
+            `${formatRupiah(vc.perawatanBulanan + vc.parkirTolBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(Servis ${formatRupiah(vc.perawatanBulanan)}${vc.parkirTolBulanan > 0 ? ` + Parkir/Tol ${formatRupiah(vc.parkirTolBulanan)}` : ''})</span>`,
+            `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`
           ]
         });
       });
@@ -522,11 +617,10 @@ export const TransportModule = {
         cells: [
           `<strong>Publik / Umum</strong>`,
           `KRL / Bus / Ojol / Shuttle`,
-          `${s.hari_umum_per_bulan} Hari / Bulan`,
-          `${formatRupiah(s.biaya_umum_harian)} / Hari (${formatRupiah(totalUmumHarianBulanan)})`,
-          `${formatRupiah(s.langganan_umum_per_bulan)} (Kartu)`,
           `-`,
-          `<span class="highlight" style="color: var(--accent-amber);">${formatRupiah(totalUmumBulanan)}</span>`
+          `${formatRupiah(s.langganan_umum_per_bulan)} (Kartu)`,
+          `${formatRupiah(s.biaya_umum_harian)} / Hari (${formatRupiah(totalUmumHarianBulanan)} / bln)`,
+          `<strong class="highlight" style="color: var(--accent-amber);">${formatRupiah(totalUmumBulanan)}</strong>`
         ]
       });
     }
@@ -537,13 +631,41 @@ export const TransportModule = {
       cells: [
         `<strong>TOTAL MOBILITAS</strong>`,
         `<strong>-</strong>`,
-        `<strong>-</strong>`,
-        `<strong>-</strong>`,
-        `<strong>-</strong>`,
-        `<strong>-</strong>`,
+        `<strong>${formatRupiah(grandTotalBbmBulanan)}</strong>`,
+        `<strong>${formatRupiah(grandTotalPajakBulanan + grandTotalAsuransiBulanan + (s.enable_umum ? s.langganan_umum_per_bulan : 0))}</strong>`,
+        `<strong>${formatRupiah(grandTotalPerawatanBulanan + grandTotalParkirBulanan + (s.enable_umum ? totalUmumHarianBulanan : 0))}</strong>`,
         `<strong class="highlight" style="font-size: 1rem; color: var(--accent-emerald);">${formatRupiah(grandTotalBiayaBulanan)}</strong>`
       ]
     });
+
+    // Secondary Table: Detailed Cost Breakdown per Vehicle (TCO)
+    const secondaryTable = {
+      title: 'Struktur Biaya Kepemilikan (Total Cost of Ownership)',
+      subtitle: 'Rincian komponen pengeluaran per kendaraan termasuk proteksi asuransi komersial dan alokasi parkir/tol rutin.',
+      headers: [
+        'Nama Kendaraan',
+        'BBM / Bulan',
+        'Pajak STNK / Bln',
+        'Asuransi / Bln',
+        'Servis & Oli / Bln',
+        'Parkir & Tol / Bln',
+        'Total TCO / Bulan',
+        'Total TCO / Tahun'
+      ],
+      rows: vehicleCalculations.map(vc => ({
+        isCurrent: false,
+        cells: [
+          `<strong>${vc.nama || 'Kendaraan'}</strong> <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
+          formatRupiah(vc.bbmBulanan),
+          formatRupiah(vc.totalPajakBulanan),
+          formatRupiah(vc.asuransiBulanan),
+          formatRupiah(vc.perawatanBulanan),
+          formatRupiah(vc.parkirTolBulanan),
+          `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`,
+          `<strong>${formatRupiah(vc.totalBiayaBulanan * 12)}</strong>`
+        ]
+      }))
+    };
 
     const chartLabels = [];
     const chartDataValues = [];
@@ -565,6 +687,7 @@ export const TransportModule = {
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable: s.enable_pribadi && list.length > 0 ? secondaryTable : null,
       grandTotalBiayaBulanan,
       chartData: {
         labels: chartLabels,
