@@ -129,7 +129,7 @@ export const TransportModule = {
             </div>
             <div class="form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.74rem;">Harga BBM/Liter (Rp)</label>
-              <input type="number" class="form-control v-input-harga-bbm" data-vid="${v.id}" value="${v.harga_bbm}" step="100" style="font-size: 0.8rem; padding: 6px 10px;">
+              <input type="number" class="form-control v-input-harga-bbm" data-vid="${v.id}" value="${v.harga_bbm}" placeholder="Input harga..." step="100" style="font-size: 0.8rem; padding: 6px 10px;">
             </div>
           </div>
 
@@ -146,7 +146,7 @@ export const TransportModule = {
           </div>
 
           <!-- Line 4: Biaya Pajak Tahunan & Pajak 5 Tahunan -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px;">
             <div class="form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.74rem;">Pajak STNK Tahunan <span style="color: var(--text-muted);">(Rp/Thn)</span></label>
               <input type="number" class="form-control v-input-pajak-tahunan" data-vid="${v.id}" value="${v.pajak_tahunan}" step="50000" style="font-size: 0.8rem; padding: 6px 10px;">
@@ -156,6 +156,7 @@ export const TransportModule = {
               <input type="number" class="form-control v-input-pajak-5tahunan" data-vid="${v.id}" value="${v.pajak_5_tahunan}" step="50000" style="font-size: 0.8rem; padding: 6px 10px;">
             </div>
           </div>
+          <span style="font-size: 0.68rem; color: var(--text-muted); display: block; margin-bottom: 10px;">*Dihitung per bulan sebagai tabungan (sinking fund): Tahunan dibagi 12 & 5-Tahunan dibagi 60.</span>
 
           <!-- Line 5: Servis Rutin, Oli & Sparepart / Bulan -->
           <div class="form-group" style="margin-bottom: 10px;">
@@ -351,28 +352,13 @@ export const TransportModule = {
       onInputChange();
     };
 
-    // Attach BBM dropdown preset listener
+    // Attach BBM dropdown listener (hanya simpan pilihan jenis BBM, tidak menimpa harga secara otomatis karena harga BBM bersifat dinamis)
     container.addEventListener('change', (e) => {
       if (e.target.classList.contains('v-input-bbm-type')) {
-        const bbmType = e.target.value;
         const card = e.target.closest('.vehicle-item-card');
-        const hargaInput = card.querySelector('.v-input-harga-bbm');
-
-        const bbmPrices = {
-          'Pertalite': 10000,
-          'Pertamax': 12950,
-          'Pertamax Turbo': 14400,
-          'Dexlite': 14500,
-          'Solar': 6800
-        };
-
-        if (bbmType === 'Custom') {
-          if (hargaInput) {
-            hargaInput.focus();
-            hargaInput.select();
-          }
-        } else if (bbmPrices[bbmType] && hargaInput) {
-          hargaInput.value = bbmPrices[bbmType];
+        const hargaInput = card?.querySelector('.v-input-harga-bbm');
+        if (hargaInput && (!hargaInput.value || parseFloat(hargaInput.value) === 0)) {
+          hargaInput.focus();
         }
         bindInputs();
       }
@@ -590,7 +576,7 @@ export const TransportModule = {
       }
     ];
 
-    const tableHeaders = ['Kategori Transport', 'Jenis / Rincian', 'BBM (Liter & Biaya)', 'Pajak & Asuransi / Bln', 'Servis, Parkir & Tol / Bln', 'Total Est. Bulanan'];
+    const tableHeaders = ['Kategori Transport', 'Jenis / Rincian', 'BBM (Liter & Biaya)', 'Tabungan Pajak & Asuransi / Bln', 'Servis, Parkir & Tol / Bln', 'Total Est. Bulanan'];
     const tableRows = [];
 
     // Rows for Private Vehicles (If ON)
@@ -602,8 +588,8 @@ export const TransportModule = {
             `<strong>Pribadi</strong>`,
             `${vc.nama || 'Kendaraan'} <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
             `${formatRupiah(vc.bbmBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(${formatNumber(vc.literBulanan, 1)} L)</span>`,
-            `${formatRupiah(vc.totalPajakBulanan + vc.asuransiBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(Pajak ${formatRupiah(vc.totalPajakBulanan)}${vc.asuransiBulanan > 0 ? ` + Asuransi ${formatRupiah(vc.asuransiBulanan)}` : ''})</span>`,
-            `${formatRupiah(vc.perawatanBulanan + vc.parkirTolBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(Servis ${formatRupiah(vc.perawatanBulanan)}${vc.parkirTolBulanan > 0 ? ` + Parkir/Tol ${formatRupiah(vc.parkirTolBulanan)}` : ''})</span>`,
+            `${formatRupiah(vc.totalPajakBulanan + vc.asuransiBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Pajak ${formatRupiah(vc.totalPajakBulanan)}${vc.asuransiBulanan > 0 ? ` + Asuransi ${formatRupiah(vc.asuransiBulanan)}` : ''})</span>`,
+            `${formatRupiah(vc.perawatanBulanan + vc.parkirTolBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Servis ${formatRupiah(vc.perawatanBulanan)}${vc.parkirTolBulanan > 0 ? ` + Parkir/Tol ${formatRupiah(vc.parkirTolBulanan)}` : ''})</span>`,
             `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`
           ]
         });
@@ -641,12 +627,12 @@ export const TransportModule = {
     // Secondary Table: Detailed Cost Breakdown per Vehicle (TCO)
     const secondaryTable = {
       title: 'Struktur Biaya Kepemilikan (Total Cost of Ownership)',
-      subtitle: 'Rincian komponen pengeluaran per kendaraan termasuk proteksi asuransi komersial dan alokasi parkir/tol rutin.',
+      subtitle: 'Rincian komponen biaya per kendaraan. Pengeluaran tahunan (Pajak STNK & Asuransi) dihitung per bulan sebagai tabungan rutin (sinking fund) agar siap saat jatuh tempo.',
       headers: [
         'Nama Kendaraan',
         'BBM / Bulan',
-        'Pajak STNK / Bln',
-        'Asuransi / Bln',
+        'Tabungan Pajak STNK / Bln',
+        'Tabungan Asuransi / Bln',
         'Servis & Oli / Bln',
         'Parkir & Tol / Bln',
         'Total TCO / Bulan',
@@ -657,8 +643,8 @@ export const TransportModule = {
         cells: [
           `<strong>${vc.nama || 'Kendaraan'}</strong> <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
           formatRupiah(vc.bbmBulanan),
-          formatRupiah(vc.totalPajakBulanan),
-          formatRupiah(vc.asuransiBulanan),
+          `${formatRupiah(vc.totalPajakBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.pajak_tahunan || 0)}/thn)</span>`,
+          `${formatRupiah(vc.asuransiBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.asuransi_tahunan || 0)}/thn)</span>`,
           formatRupiah(vc.perawatanBulanan),
           formatRupiah(vc.parkirTolBulanan),
           `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`,
