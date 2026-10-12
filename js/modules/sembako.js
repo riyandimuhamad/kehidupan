@@ -233,12 +233,6 @@ export const SembakoModule = {
           </span>
         </div>
 
-        <!-- Note pemisahan fungsi: Personal hygiene & laundry berada di Sandang -->
-        <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 14px; font-size: 0.73rem; color: var(--text-muted); line-height: 1.45;">
-          <i class="fa-circle-info fa-solid" style="color: var(--accent-sky); margin-right: 4px;"></i>
-          <strong>Pemisahan Fungsi:</strong> Pos ini khusus perlengkapan dapur & fasilitas rumah (sabun cuci piring, spons, cairan pel lantai/karbol, tisu dapur & kantong sampah). Kebutuhan pribadi (sabun mandi, sampo, odol, skincare) serta deterjen pakaian dihitung terpisah di modul <strong>Sandang & Perawatan</strong> agar tidak terjadi duplikasi pos.
-        </div>
-
         <div class="form-group" style="margin-bottom: 0;">
           <label for="kebersihan_dapur">Cuci Piring, Pembersih Lantai & Tisu Dapur <span class="unit">(Rp/Bulan)</span></label>
           <div class="input-wrapper">
@@ -578,7 +572,7 @@ export const SembakoModule = {
           cells: [
             '<strong>Kebersihan Dapur & Lantai</strong>',
             formatRupiah(total_kebersihan_dapur),
-            `Cairan cuci piring, spons, pembersih lantai/karbol, tisu dapur & plastik sampah (Personal hygiene & deterjen baju di modul Sandang)`
+            `Cairan cuci piring, spons, pembersih lantai/karbol, tisu dapur & plastik sampah`
           ]
         }
       ]
