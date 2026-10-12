@@ -1,14 +1,14 @@
 /**
- * Modul Kalkulator & Tracker Budget Harian (Daily Allowance & Micro-Savings)
+ * Modul Kalkulator Uang Saku & Budget Harian (Daily Allowance & Micro-Savings)
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Bebas Duplikasi:
- * 1. Fokus Uang Saku Personal: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan dana taktis receh harian.
+ * Parameter Realistis & Murni Estimasi Anggaran:
+ * 1. Fokus Perencanaan / Estimasi Uang Saku: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan dana taktis receh harian.
  * 2. Tanpa Duplikasi Transport: Biaya BBM/bensin, parkir bulanan, tol, dan tiket transport umum
  *    sudah sepenuhnya dikelola di modul BBM & Transportasi.
  * 3. Pola Hari Kerja vs Hari Libur (Weekend): Membedakan kebutuhan harian saat hari aktif kerja/kuliah dan akhir pekan.
  * 4. Celengan Tabungan Harian: Menyisihkan koin receh Rp 2.000 - Rp 10.000 per hari menjadi tabungan mikro bulanan.
- * 5. Tracking Realistis Hari Ini: Evaluasi target jatah harian vs pengeluaran aktual yang terpakai hari ini.
+ * 5. Murni Kalkulator Estimasi: Perencanaan alokasi pengeluaran bulanan tanpa pencatatan harian manual.
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -24,16 +24,15 @@ const DEFAULT_HARIAN_DATA = {
   jajan_kopi: 10000,              // Kopi, es teh, camilan, jajan santai
   dana_taktis: 5000,              // Dana taktis / uang receh keperluan kecil harian
   budget_hari_libur: 25000,       // Pengeluaran jajan/santai hari libur akhir pekan
-  tabungan_harian: 5000,          // Celengan / sisihan koin tabungan per hari
-  aktual_hari_ini: 30000          // Realisasi pengeluaran terpakai hari ini
+  tabungan_harian: 5000           // Celengan / sisihan koin tabungan per hari
 };
 
 export const HarianModule = {
   id: 'harian',
   name: 'Budget Harian',
   icon: 'fa-wallet',
-  badge: 'Module Uang Harian',
-  title: 'Kalkulator & Tracker Budget Harian',
+  badge: 'Module Anggaran Harian',
+  title: 'Kalkulator Uang Saku & Budget Harian',
   subtitle: 'Estimasi alokasi uang saku harian, konsumsi makan siang, dana taktis, dan celengan tabungan receh.',
 
   defaults: DEFAULT_HARIAN_DATA,
@@ -173,23 +172,6 @@ export const HarianModule = {
         </div>
       </div>
 
-      <!-- Section 4: Evaluasi Realisasi Hari Ini -->
-      <div style="margin-bottom: 22px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Tracking Realisasi Hari Ini
-          </span>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 0;">
-          <label for="aktual_hari_ini">Pengeluaran Riil Terpakai Hari Ini <span class="unit">(Rupiah)</span></label>
-          <div class="input-wrapper">
-            <i class="fa-receipt fa-solid input-icon"></i>
-            <input type="number" id="aktual_hari_ini" class="form-control" step="1000" min="0" value="${data.aktual_hari_ini}">
-          </div>
-        </div>
-      </div>
-
       <!-- Action Sync to Budget Dashboard Button -->
       <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="saveToBudgetBtn" class="primary-btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
@@ -283,8 +265,7 @@ export const HarianModule = {
       jajan_kopi: parseFloat(container.querySelector('#jajan_kopi')?.value || '0'),
       dana_taktis: parseFloat(container.querySelector('#dana_taktis')?.value || '0'),
       budget_hari_libur: parseFloat(container.querySelector('#budget_hari_libur')?.value || '0'),
-      tabungan_harian: parseFloat(container.querySelector('#tabungan_harian')?.value || '0'),
-      aktual_hari_ini: parseFloat(container.querySelector('#aktual_hari_ini')?.value || '0')
+      tabungan_harian: parseFloat(container.querySelector('#tabungan_harian')?.value || '0')
     };
   },
 
@@ -293,14 +274,10 @@ export const HarianModule = {
       pola_hari,
       hari_kerja, hari_libur,
       makan_siang, jajan_kopi, dana_taktis,
-      budget_hari_libur, tabungan_harian, aktual_hari_ini
+      budget_hari_libur, tabungan_harian
     } = inputs;
 
-    // 1. Hitung jatah per hari kerja (operasional)
-    const jatah_harian_kerja = makan_siang + jajan_kopi + dana_taktis;
-    const jatah_total_kerja_dengan_tabungan = jatah_harian_kerja + tabungan_harian;
-
-    // 2. Tentukan jumlah hari berdasarkan mode
+    // 1. Tentukan jumlah hari berdasarkan mode
     let countHariKerja = 22;
     let countHariLibur = 8;
     let totalHariSebulan = 30;
@@ -319,7 +296,7 @@ export const HarianModule = {
       totalHariSebulan = countHariKerja;
     }
 
-    // 3. Akumulasi Biaya Bulanan
+    // 2. Akumulasi Biaya Bulanan
     const total_makan_bulan = makan_siang * countHariKerja;
     const total_jajan_bulan = jajan_kopi * countHariKerja;
     const total_taktis_bulan = dana_taktis * countHariKerja;
@@ -330,11 +307,6 @@ export const HarianModule = {
 
     const total_biaya = total_operasional_kerja + total_libur_bulan + total_tabungan_bulan;
     const rataRataPerHari = totalHariSebulan > 0 ? total_biaya / totalHariSebulan : 0;
-
-    // 4. Evaluasi Hari Ini
-    const targetHariIni = jatah_total_kerja_dengan_tabungan;
-    const selisihHariIni = targetHariIni - aktual_hari_ini;
-    const isSurplusHariIni = selisihHariIni >= 0;
 
     // 4 Kartu Ringkasan (Auto-Balanced Layout)
     const summaryCards = [
@@ -461,10 +433,10 @@ export const HarianModule = {
         {
           isCurrent: false,
           cells: [
-            '<strong>Evaluasi Realisasi Hari Ini</strong>',
-            formatRupiah(aktual_hari_ini),
-            `<span style="color: ${isSurplusHariIni ? 'var(--accent-emerald)' : 'var(--accent-rose)'}; font-weight: 700;">${isSurplusHariIni ? `Surplus +${formatRupiah(selisihHariIni)}` : `Overbudget -${formatRupiah(Math.abs(selisihHariIni))}`}</span>`,
-            `Target harian ${formatRupiah(targetHariIni)} vs terpakai ${formatRupiah(aktual_hari_ini)}`
+            '<strong>Total Proyeksi Alokasi Harian</strong>',
+            `± ${formatRupiah(rataRataPerHari)} / Hari`,
+            `<strong class="highlight">${formatRupiah(total_biaya)}</strong>`,
+            `Total estimasi kebutuhan bulanan (${totalHariSebulan} Hari) siap disimpan ke Dashboard Budget`
           ]
         }
       ]
