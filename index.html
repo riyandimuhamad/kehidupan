@@ -20,23 +20,117 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="dark-mode">
-  <div class="app-container">
+  <div class="app-layout">
     
-    <!-- Navigation Header -->
-    <header class="app-header">
-      <!-- Top Row: Brand & Global Actions -->
-      <div class="header-top">
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Left Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar">
+      <!-- Sidebar Brand Header -->
+      <div class="sidebar-header">
         <div class="brand-container">
           <div class="brand-icon">
             <i class="fa-solid fa-leaf"></i>
           </div>
           <div class="brand-text">
             <h1>Kehidupan<span class="dot">.</span></h1>
-            <p>Financial & Household Essentials Suite</p>
+            <p>Financial & Household Suite</p>
+          </div>
+        </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup Menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Sidebar Navigation Menu Categories -->
+      <nav class="sidebar-nav" id="navTabs">
+        
+        <!-- Category 1: Pangan & Harian -->
+        <div class="nav-group">
+          <span class="group-label"><i class="fa-solid fa-utensils"></i> Pangan & Harian</span>
+          <div class="group-btns">
+            <button class="nav-btn active" data-module="beras"><i class="fa-solid fa-bowl-rice"></i> Beras</button>
+            <button class="nav-btn" data-module="air"><i class="fa-solid fa-bottle-water"></i> Air Galon</button>
+            <button class="nav-btn" data-module="gas"><i class="fa-solid fa-fire-burner"></i> Gas LPG</button>
+            <button class="nav-btn" data-module="sembako"><i class="fa-solid fa-basket-shopping"></i> Sembako</button>
+            <button class="nav-btn" data-module="harian"><i class="fa-solid fa-wallet"></i> Budget Harian</button>
           </div>
         </div>
 
-        <div class="header-actions">
+        <!-- Category 2: Papan & Utilitas -->
+        <div class="nav-group">
+          <span class="group-label"><i class="fa-solid fa-house"></i> Papan & Utilitas</span>
+          <div class="group-btns">
+            <button class="nav-btn" data-module="sewa"><i class="fa-solid fa-house-user"></i> Hunian</button>
+            <button class="nav-btn" data-module="listrik"><i class="fa-solid fa-bolt"></i> Listrik</button>
+            <button class="nav-btn" data-module="airpam"><i class="fa-solid fa-faucet-drip"></i> Air Bersih</button>
+          </div>
+        </div>
+
+        <!-- Category 3: Sandang & Edukasi -->
+        <div class="nav-group">
+          <span class="group-label"><i class="fa-solid fa-shirt"></i> Sandang & Edukasi</span>
+          <div class="group-btns">
+            <button class="nav-btn" data-module="sandang"><i class="fa-solid fa-shirt"></i> Sandang</button>
+            <button class="nav-btn" data-module="kesehatan"><i class="fa-solid fa-heart-pulse"></i> Kesehatan</button>
+            <button class="nav-btn" data-module="pendidikan"><i class="fa-solid fa-graduation-cap"></i> Pendidikan</button>
+          </div>
+        </div>
+
+        <!-- Category 4: Mobilitas & Gaya Hidup -->
+        <div class="nav-group">
+          <span class="group-label"><i class="fa-solid fa-car"></i> Mobilitas & Gaya Hidup</span>
+          <div class="group-btns">
+            <button class="nav-btn" data-module="transport"><i class="fa-solid fa-car"></i> Transport</button>
+            <button class="nav-btn" data-module="internet"><i class="fa-solid fa-wifi"></i> Internet</button>
+            <button class="nav-btn" data-module="hiburan"><i class="fa-solid fa-gamepad"></i> Hiburan</button>
+          </div>
+        </div>
+
+        <!-- Category 5: Finansial & Proteksi -->
+        <div class="nav-group">
+          <span class="group-label"><i class="fa-solid fa-vault"></i> Finansial & Proteksi</span>
+          <div class="group-btns">
+            <button class="nav-btn" data-module="investasi"><i class="fa-solid fa-vault"></i> Tabungan</button>
+            <button class="nav-btn" data-module="pajak"><i class="fa-solid fa-landmark-dome"></i> Pajak</button>
+            <button class="nav-btn" data-module="zakat"><i class="fa-solid fa-hand-holding-heart"></i> Zakat</button>
+          </div>
+        </div>
+
+        <!-- Category 6: Ikhtisar -->
+        <div class="nav-group dashboard-group">
+          <span class="group-label"><i class="fa-solid fa-chart-pie"></i> Ikhtisar</span>
+          <div class="group-btns">
+            <button class="nav-btn dashboard-btn" data-module="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard Keuangan</button>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- Sidebar Status Footer -->
+      <div class="sidebar-footer">
+        <div class="app-status-badge">
+          <span class="status-pulse-dot"></span>
+          <span class="status-text">Kehidupan v2.4 &bull; Household Suite</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Main App Wrapper -->
+    <div class="app-main-wrapper">
+      <!-- Topbar Header -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Buka Menu Navigasi">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="topbar-breadcrumb">
+            <span class="topbar-badge" id="topbarCategoryBadge"><i class="fa-solid fa-compass"></i> Module Pangan Utama</span>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
           <button id="sheetsModalBtn" class="secondary-btn sheets-btn" title="Integrasi Google Sheets API">
             <i class="fa-solid fa-file-excel"></i>
             <span>Google Sheets</span>
@@ -44,83 +138,15 @@
           <button id="themeToggleBtn" class="icon-btn" title="Ganti Tema">
             <i class="fa-solid fa-sun"></i>
           </button>
-          <button id="historyBtn" class="secondary-btn">
+          <button id="historyBtn" class="secondary-btn" title="Riwayat Perhitungan">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <span>Riwayat</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <!-- Bottom Row: Categorized Navigation Groups -->
-      <div class="header-nav">
-        <nav class="nav-tabs-container" id="navTabs">
-          
-          <!-- Category 1: Pangan & Harian -->
-          <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-utensils"></i> Pangan & Harian</span>
-            <div class="group-btns">
-              <button class="nav-btn active" data-module="beras"><i class="fa-solid fa-bowl-rice"></i> Beras</button>
-              <button class="nav-btn" data-module="air"><i class="fa-solid fa-bottle-water"></i> Air Galon</button>
-              <button class="nav-btn" data-module="gas"><i class="fa-solid fa-fire-burner"></i> Gas LPG</button>
-              <button class="nav-btn" data-module="sembako"><i class="fa-solid fa-basket-shopping"></i> Sembako</button>
-              <button class="nav-btn" data-module="harian"><i class="fa-solid fa-wallet"></i> Budget Harian</button>
-            </div>
-          </div>
-
-          <!-- Category 2: Papan -->
-          <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-house"></i> Papan & Utilitas</span>
-            <div class="group-btns">
-              <button class="nav-btn" data-module="sewa"><i class="fa-solid fa-house-user"></i> Hunian</button>
-              <button class="nav-btn" data-module="listrik"><i class="fa-solid fa-bolt"></i> Listrik</button>
-              <button class="nav-btn" data-module="airpam"><i class="fa-solid fa-faucet-drip"></i> Air Bersih</button>
-            </div>
-          </div>
-
-          <!-- Category 3: Sandang & Sehat -->
-          <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-shirt"></i> Sandang & Edukasi</span>
-            <div class="group-btns">
-              <button class="nav-btn" data-module="sandang"><i class="fa-solid fa-shirt"></i> Sandang</button>
-              <button class="nav-btn" data-module="kesehatan"><i class="fa-solid fa-heart-pulse"></i> Kesehatan</button>
-              <button class="nav-btn" data-module="pendidikan"><i class="fa-solid fa-graduation-cap"></i> Pendidikan</button>
-            </div>
-          </div>
-
-          <!-- Category 4: Digital & Gaya Hidup -->
-          <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-car"></i> Mobilitas & Gaya Hidup</span>
-            <div class="group-btns">
-              <button class="nav-btn" data-module="transport"><i class="fa-solid fa-car"></i> Transport</button>
-              <button class="nav-btn" data-module="internet"><i class="fa-solid fa-wifi"></i> Internet</button>
-              <button class="nav-btn" data-module="hiburan"><i class="fa-solid fa-gamepad"></i> Hiburan</button>
-            </div>
-          </div>
-
-          <!-- Category 5: Finansial & Kewajiban -->
-          <div class="nav-group">
-            <span class="group-label"><i class="fa-solid fa-vault"></i> Finansial & Proteksi</span>
-            <div class="group-btns">
-              <button class="nav-btn" data-module="investasi"><i class="fa-solid fa-vault"></i> Tabungan</button>
-              <button class="nav-btn" data-module="pajak"><i class="fa-solid fa-landmark-dome"></i> Pajak</button>
-              <button class="nav-btn" data-module="zakat"><i class="fa-solid fa-hand-holding-heart"></i> Zakat</button>
-            </div>
-          </div>
-
-          <!-- Category 6: Dashboard -->
-          <div class="nav-group dashboard-group">
-            <span class="group-label"><i class="fa-solid fa-chart-pie"></i> Ikhtisar</span>
-            <div class="group-btns">
-              <button class="nav-btn dashboard-btn" data-module="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard Keuangan</button>
-            </div>
-          </div>
-
-        </nav>
-      </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="main-content">
+      <!-- Main Content Area -->
+      <main class="main-content">
 
       <!-- Hero Banner -->
       <section class="hero-banner">
@@ -232,7 +258,8 @@
       <p>&copy; 2026 <strong>Kehidupan App</strong> &bull; Perencanaan Kebutuhan & Keuangan Rumah Tangga Indonesia</p>
     </footer>
 
-  </div>
+    </div><!-- End app-main-wrapper -->
+  </div><!-- End app-layout -->
 
   <!-- Modal History -->
   <div class="modal-overlay" id="historyModal">

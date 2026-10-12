@@ -97,6 +97,13 @@ class KehidupanApp {
     this.addModuleModal = document.getElementById('addModuleModal');
     this.closeAddModuleModal = document.getElementById('closeAddModuleModal');
     this.closeAddModuleModalBtn = document.getElementById('closeAddModuleModalBtn');
+
+    // Sidebar & Topbar Elements
+    this.appSidebar = document.getElementById('appSidebar');
+    this.sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    this.sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    this.sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    this.topbarCategoryBadge = document.getElementById('topbarCategoryBadge');
   }
 
   bindEvents() {
@@ -109,9 +116,37 @@ class KehidupanApp {
           this.navTabs.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           this.loadModule(moduleId);
+
+          // Auto close sidebar on mobile after clicking
+          if (window.innerWidth <= 1024 && this.appSidebar) {
+            this.appSidebar.classList.remove('open');
+            this.sidebarBackdrop?.classList.remove('active');
+          }
         }
       }
     });
+
+    // Mobile Sidebar Toggle
+    if (this.sidebarToggleBtn && this.appSidebar) {
+      this.sidebarToggleBtn.addEventListener('click', () => {
+        this.appSidebar.classList.toggle('open');
+        this.sidebarBackdrop?.classList.toggle('active');
+      });
+    }
+
+    if (this.sidebarCloseBtn && this.appSidebar) {
+      this.sidebarCloseBtn.addEventListener('click', () => {
+        this.appSidebar.classList.remove('open');
+        this.sidebarBackdrop?.classList.remove('active');
+      });
+    }
+
+    if (this.sidebarBackdrop && this.appSidebar) {
+      this.sidebarBackdrop.addEventListener('click', () => {
+        this.appSidebar.classList.remove('open');
+        this.sidebarBackdrop.classList.remove('active');
+      });
+    }
 
     // Dynamic delete budget item & topup listener in table
     this.breakdownTable.addEventListener('click', (e) => {
@@ -169,6 +204,11 @@ class KehidupanApp {
   loadModule(moduleId) {
     this.activeModuleId = moduleId;
     const activeModule = this.modules[moduleId];
+
+    // Update Topbar Breadcrumb
+    if (this.topbarCategoryBadge && activeModule) {
+      this.topbarCategoryBadge.innerHTML = `<i class="fa-solid ${activeModule.icon}"></i> ${activeModule.name}`;
+    }
 
     // Update Hero Metadata
     this.moduleBadge.innerHTML = `<i class="fa-solid ${activeModule.icon}"></i> ${activeModule.badge}`;
