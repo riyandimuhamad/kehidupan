@@ -71,6 +71,7 @@ export const BudgetStore = {
       pendidikan: { id: 'pendidikan', name: 'Pendidikan & Anak', amount: 680000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Pendidikan' },
       hiburan: { id: 'hiburan', name: 'Hiburan & Gaya Hidup', amount: 250000, category: 'Lainnya', group: 'lifestyle', source: 'Kalkulator Hiburan' },
       pajak: { id: 'pajak', name: 'PBB & Administrasi Tahunan', amount: 150000, category: 'Pokok', group: 'pajak', source: 'Kalkulator Pajak' },
+      zakat: { id: 'zakat', name: 'Zakat & Donasi Sosial', amount: 212500, category: 'Pokok', group: 'pajak', source: 'Kalkulator Zakat BAZNAS' },
       tabungan: { id: 'tabungan', name: 'Tabungan & Dana Darurat', amount: 1000000, category: 'Tabungan', group: 'investasi', source: 'Kalkulator Tabungan' }
     });
   },
@@ -145,7 +146,7 @@ export const BudgetStore = {
       'Keluarga & Sehat': 0,
       'Mobilitas & Digital': 0,
       'Gaya Hidup & Sosial': 0,
-      'Pajak & Administrasi': 0,
+      'Pajak & Zakat': 0,
       'Tabungan & Investasi': 0
     };
 
@@ -175,8 +176,8 @@ export const BudgetStore = {
           categoryTotals['Keluarga & Sehat'] += amt;
         } else if (['transport', 'internet'].includes(id)) {
           categoryTotals['Mobilitas & Digital'] += amt;
-        } else if (['pajak'].includes(id)) {
-          categoryTotals['Pajak & Administrasi'] += amt;
+        } else if (['pajak', 'zakat'].includes(id)) {
+          categoryTotals['Pajak & Zakat'] += amt;
         } else if (['hiburan'].includes(id)) {
           categoryTotals['Gaya Hidup & Sosial'] += amt;
         } else {

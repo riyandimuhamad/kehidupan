@@ -18,6 +18,7 @@ import { HarianModule } from './modules/harian.js';
 import { HiburanModule } from './modules/hiburan.js';
 import { InvestasiModule } from './modules/investasi.js';
 import { PajakModule } from './modules/pajak.js';
+import { ZakatModule } from './modules/zakat.js';
 import { DashboardModule } from './modules/dashboard.js';
 
 import { BudgetStore } from './services/budgetStore.js';
@@ -44,6 +45,7 @@ class KehidupanApp {
       hiburan: HiburanModule,
       investasi: InvestasiModule,
       pajak: PajakModule,
+      zakat: ZakatModule,
       dashboard: DashboardModule
     };
 
