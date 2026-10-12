@@ -2,13 +2,13 @@
  * Modul Kalkulator Uang Saku & Budget Harian (Daily Allowance & Micro-Savings)
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Murni Estimasi Anggaran:
- * 1. Fokus Perencanaan / Estimasi Uang Saku: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan dana taktis receh harian.
- * 2. Tanpa Duplikasi Transport: Biaya BBM/bensin, parkir bulanan, tol, dan tiket transport umum
+ * Parameter Realistis & Pemisahan Fungsi Gamblang:
+ * 1. Fokus Perencanaan / Estimasi Uang Saku: Khusus konsumsi makan siang/sarapan luar, kopi/jajan, dan biaya tak terduga.
+ * 2. Biaya Tak Terduga Harian (Uang Keluar): Keperluan kecil tak terduga (toilet umum, fotokopi, tips, admin e-wallet).
+ * 3. Tabungan Celengan Harian (Uang Disimpan): Menyisihkan uang koin/kertas ke celengan (bukan dibelanjakan).
+ * 4. Tanpa Duplikasi Transport: Biaya BBM/bensin, parkir bulanan, tol, dan tiket transport umum
  *    sudah sepenuhnya dikelola di modul BBM & Transportasi.
- * 3. Pola Hari Kerja vs Hari Libur (Weekend): Membedakan kebutuhan harian saat hari aktif kerja/kuliah dan akhir pekan.
- * 4. Celengan Tabungan Harian: Menyisihkan koin receh Rp 2.000 - Rp 10.000 per hari menjadi tabungan mikro bulanan.
- * 5. Murni Kalkulator Estimasi: Perencanaan alokasi pengeluaran bulanan tanpa pencatatan harian manual.
+ * 5. Pola Hari Kerja vs Hari Libur (Weekend): Membedakan kebutuhan harian saat hari aktif kerja/kuliah dan akhir pekan.
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -22,9 +22,9 @@ const DEFAULT_HARIAN_DATA = {
   hari_libur: 8,
   makan_siang: 20000,             // Makan siang / sarapan kantor/luar
   jajan_kopi: 10000,              // Kopi, es teh, camilan, jajan santai
-  dana_taktis: 5000,              // Dana taktis / uang receh keperluan kecil harian
+  dana_taktis: 5000,              // Biaya tak terduga harian (toilet, fotokopi, tips, admin)
   budget_hari_libur: 25000,       // Pengeluaran jajan/santai hari libur akhir pekan
-  tabungan_harian: 5000           // Celengan / sisihan koin tabungan per hari
+  tabungan_harian: 5000           // Tabungan celengan harian (uang disimpan ke celengan)
 };
 
 export const HarianModule = {
@@ -33,7 +33,7 @@ export const HarianModule = {
   icon: 'fa-wallet',
   badge: 'Module Anggaran Harian',
   title: 'Kalkulator Uang Saku & Budget Harian',
-  subtitle: 'Estimasi alokasi uang saku harian, konsumsi makan siang, dana taktis, dan celengan tabungan receh.',
+  subtitle: 'Estimasi alokasi uang saku harian, konsumsi makan siang, biaya tak terduga, dan tabungan celengan.',
 
   defaults: DEFAULT_HARIAN_DATA,
 
@@ -122,25 +122,25 @@ export const HarianModule = {
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="dana_taktis">Dana Taktis / Receh Harian <span class="unit">(Rp/Hari)</span></label>
+          <label for="dana_taktis">Biaya Tak Terduga (Toilet, Fotokopi, Tips) <span class="unit">(Rp/Hari)</span></label>
           <div class="input-wrapper">
-            <i class="fa-coins fa-solid input-icon"></i>
+            <i class="fa-hand-holding-dollar fa-solid input-icon"></i>
             <input type="number" id="dana_taktis" class="form-control" step="1000" min="0" value="${data.dana_taktis}">
           </div>
           <div class="form-options">
             <button type="button" class="option-chip ${data.dana_taktis === 0 ? 'active' : ''}" data-target="dana_taktis" data-val="0">Rp 0</button>
-            <button type="button" class="option-chip ${data.dana_taktis === 2000 ? 'active' : ''}" data-target="dana_taktis" data-val="2000">Rp 2k</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 2000 ? 'active' : ''}" data-target="dana_taktis" data-val="2000">Rp 2k (Toilet/Print)</button>
             <button type="button" class="option-chip ${data.dana_taktis === 5000 ? 'active' : ''}" data-target="dana_taktis" data-val="5000">Rp 5k (Standar)</button>
-            <button type="button" class="option-chip ${data.dana_taktis === 10000 ? 'active' : ''}" data-target="dana_taktis" data-val="10000">Rp 10k</button>
+            <button type="button" class="option-chip ${data.dana_taktis === 10000 ? 'active' : ''}" data-target="dana_taktis" data-val="10000">Rp 10k (Leluasa)</button>
           </div>
         </div>
       </div>
 
-      <!-- Section 3: Budget Hari Libur & Tabungan Celengan -->
+      <!-- Section 3: Budget Hari Libur & Tabungan Celengan (Uang Disimpan) -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Hari Libur & Celengan Harian
+            Hari Libur & Tabungan Celengan
           </span>
         </div>
 
@@ -158,13 +158,13 @@ export const HarianModule = {
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label for="tabungan_harian">Celengan / Tabungan Receh Harian <span class="unit">(Rp/Hari)</span></label>
+          <label for="tabungan_harian">Tabungan Celengan Harian (Uang Disimpan) <span class="unit">(Rp/Hari)</span></label>
           <div class="input-wrapper">
             <i class="fa-piggy-bank fa-solid input-icon"></i>
             <input type="number" id="tabungan_harian" class="form-control" step="1000" min="0" value="${data.tabungan_harian}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.tabungan_harian === 0 ? 'active' : ''}" data-target="tabungan_harian" data-val="0">Rp 0</button>
+            <button type="button" class="option-chip ${data.tabungan_harian === 0 ? 'active' : ''}" data-target="tabungan_harian" data-val="0">Rp 0 (Tanpa Celengan)</button>
             <button type="button" class="option-chip ${data.tabungan_harian === 2000 ? 'active' : ''}" data-target="tabungan_harian" data-val="2000">Rp 2k</button>
             <button type="button" class="option-chip ${data.tabungan_harian === 5000 ? 'active' : ''}" data-target="tabungan_harian" data-val="5000">Rp 5k (Koin)</button>
             <button type="button" class="option-chip ${data.tabungan_harian === 10000 ? 'active' : ''}" data-target="tabungan_harian" data-val="10000">Rp 10k</button>
@@ -325,16 +325,16 @@ export const HarianModule = {
         type: 'amber'
       },
       {
-        title: 'Dana Taktis & Receh Harian',
+        title: 'Biaya Tak Terduga Harian',
         value: formatRupiah(total_taktis_bulan),
-        note: `@ ${formatRupiah(dana_taktis)} / Hari (${countHariKerja} Hari Kerja)`,
-        icon: 'fa-coins',
+        note: `Toilet, Fotokopi, Tips (@ ${formatRupiah(dana_taktis)}/Hari)`,
+        icon: 'fa-hand-holding-dollar',
         type: 'sky'
       },
       {
-        title: 'Celengan Tabungan Harian',
+        title: 'Tabungan Celengan Harian',
         value: formatRupiah(total_tabungan_bulan),
-        note: `Sisihan ${formatRupiah(tabungan_harian)} / Hari x ${totalHariSebulan} Hari`,
+        note: `Disimpan ke Celengan (${formatRupiah(tabungan_harian)}/Hari x ${totalHariSebulan} Hari)`,
         icon: 'fa-piggy-bank',
         type: 'violet'
       }
@@ -349,7 +349,7 @@ export const HarianModule = {
       { label: '1 Tahun (12 Bulan)', dKerja: countHariKerja * 12, dLibur: countHariLibur * 12 }
     ];
 
-    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Dana Taktis', 'Uang Libur', 'Celengan Tabungan', 'Total Budget'];
+    const tableHeaders = ['Periode Waktu', 'Makan Siang', 'Kopi & Jajan', 'Biaya Tak Terduga', 'Uang Libur', 'Tabungan Celengan', 'Total Budget'];
     const tableRows = periods.map(p => {
       const m = makan_siang * p.dKerja;
       const j = jajan_kopi * p.dKerja;
@@ -375,7 +375,7 @@ export const HarianModule = {
     // Tabel Sekunder: Komposisi Alokasi Uang Saku & Tabungan Harian
     const secondaryTable = {
       title: 'Komposisi Alokasi Uang Saku & Tabungan Harian',
-      subtitle: `Rincian alokasi biaya per hari kerja, hari libur, dan akumulasi celengan tabungan receh bulanan.`,
+      subtitle: `Rincian jatah operasional hari kerja, uang libur, dan akumulasi uang yang disimpan ke celengan bulanan.`,
       headers: [
         'Komponen Pengeluaran Harian',
         'Jatah Harian',
@@ -404,10 +404,10 @@ export const HarianModule = {
         {
           isCurrent: false,
           cells: [
-            '<strong>Dana Taktis & Keperluan Receh</strong>',
+            '<strong>Biaya Tak Terduga Harian</strong>',
             formatRupiah(dana_taktis),
             formatRupiah(total_taktis_bulan),
-            `Uang receh tak terduga harian (tips, fotokopi, toilet umum, atau sumbangan kecil)`
+            `Uang keluar tak terduga: bayar toilet umum, fotokopi dokumen, tips kecil, dan biaya admin e-wallet`
           ]
         },
         ...(pola_hari === 'split' ? [
@@ -424,10 +424,10 @@ export const HarianModule = {
         {
           isCurrent: false,
           cells: [
-            '<strong>Celengan Tabungan Receh</strong>',
+            '<strong>Tabungan Celengan Harian</strong>',
             formatRupiah(tabungan_harian),
             formatRupiah(total_tabungan_bulan),
-            `Disisihkan setiap hari sebagai dana cadangan mikro / tabungan koin`
+            `Uang saku yang disisihkan dan disimpan ke celengan/tabungan pribadi (bukan dibelanjakan)`
           ]
         },
         {
@@ -452,9 +452,9 @@ export const HarianModule = {
         labels: [
           'Makan Siang',
           'Kopi & Jajan',
-          'Dana Taktis Harian',
+          'Biaya Tak Terduga',
           ...(pola_hari === 'split' ? ['Hari Libur'] : []),
-          'Celengan Tabungan'
+          'Tabungan Celengan'
         ],
         datasets: [
           {
