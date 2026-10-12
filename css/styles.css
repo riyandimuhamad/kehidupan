@@ -670,13 +670,27 @@ body.dark-mode .nav-btn:hover {
 /* Calculator Grid - Autofit Architecture */
 .calculator-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(350px, 440px) minmax(0, 1fr);
+  gap: 26px;
   margin-bottom: 32px;
   align-items: start;
   width: 100%;
   max-width: 100%;
   min-width: 0;
+}
+
+@media (min-width: 1536px) {
+  .calculator-grid {
+    grid-template-columns: 460px minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .calculator-grid {
+    grid-template-columns: 480px minmax(0, 1fr);
+    gap: 32px;
+  }
 }
 
 .calculator-grid > * {
@@ -829,12 +843,6 @@ body.dark-mode .nav-btn:hover {
   background: var(--primary-light);
 }
 
-/* Results Column Layout */
-.results-column {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
 
 /* Summary Cards Grid - Auto Adaptive Layout (Semua Menu) */
 .summary-cards-grid {
