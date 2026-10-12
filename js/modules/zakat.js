@@ -77,7 +77,7 @@ export const ZakatModule = {
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">
-            <i class="fa-briefcase fa-solid" style="margin-right: 5px; color: var(--primary);"></i> Zakat Penghasilan / Profesi
+            Zakat Penghasilan / Profesi
           </span>
           <label style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; cursor: pointer; margin: 0;">
             <input type="checkbox" id="enable_penghasilan" ${data.enable_penghasilan ? 'checked' : ''}>
@@ -136,7 +136,7 @@ export const ZakatModule = {
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">
-            <i class="fa-vault fa-solid" style="margin-right: 5px; color: var(--accent-amber);"></i> Zakat Maal (Harta Simpanan 1 Tahun)
+            Zakat Maal (Harta Simpanan 1 Tahun)
           </span>
           <label style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; cursor: pointer; margin: 0;">
             <input type="checkbox" id="enable_maal" ${data.enable_maal ? 'checked' : ''}>
@@ -183,7 +183,7 @@ export const ZakatModule = {
       <!-- Section 3: Zakat Fitrah (Ramadan) & Infak -->
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
         <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          <i class="fa-bowl-rice fa-solid" style="margin-right: 5px; color: var(--accent-emerald);"></i> Zakat Fitrah & Sedekah Rutin
+          Zakat Fitrah & Sedekah Rutin
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
@@ -357,8 +357,8 @@ export const ZakatModule = {
         title: 'Zakat Penghasilan / Bln',
         value: formatRupiah(zakatProfesiBulan),
         note: wajibZakatProfesi 
-          ? `🟢 Wajib Zakat 2.5% (Gaji >= Nisab ${formatRupiah(nisabBulanan)})` 
-          : `⚪ Belum Nisab (${formatRupiah(totalPenghasilanBulan)} < ${formatRupiah(nisabBulanan)})`,
+          ? `Wajib Zakat 2.5% (Gaji >= Nisab ${formatRupiah(nisabBulanan)})` 
+          : `Belum Nisab (${formatRupiah(totalPenghasilanBulan)} < ${formatRupiah(nisabBulanan)})`,
         icon: 'fa-briefcase',
         type: wajibZakatProfesi ? 'emerald' : 'sky'
       },
@@ -366,8 +366,8 @@ export const ZakatModule = {
         title: 'Zakat Maal (Tahunan)',
         value: formatRupiah(zakatMaalTahun),
         note: wajibZakatMaal 
-          ? `🟢 Wajib Zakat Maal (Cadangan ${formatRupiah(zakatMaalSinkingBulan)}/bln)` 
-          : `⚪ Belum Capai Nisab (${formatRupiah(totalHartaMaal)} < ${formatRupiah(nisabTahunan)})`,
+          ? `Wajib Zakat Maal (Cadangan ${formatRupiah(zakatMaalSinkingBulan)}/bln)` 
+          : `Belum Capai Nisab (${formatRupiah(totalHartaMaal)} < ${formatRupiah(nisabTahunan)})`,
         icon: 'fa-vault',
         type: wajibZakatMaal ? 'emerald' : 'amber'
       },
@@ -386,7 +386,7 @@ export const ZakatModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>💼 Zakat Penghasilan (Profesi)</strong>`,
+          `<strong>Zakat Penghasilan (Profesi)</strong>`,
           `${formatRupiah(nisabBulanan)}/Bulan (85 gr Emas)`,
           formatRupiah(totalPenghasilanBulan),
           formatRupiah(zakatProfesiBulan * 12),
@@ -399,7 +399,7 @@ export const ZakatModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🏦 Zakat Maal (Harta Simpanan)</strong>`,
+          `<strong>Zakat Maal (Harta Simpanan)</strong>`,
           `${formatRupiah(nisabTahunan)} (85 gr Emas Haul 1 Thn)`,
           formatRupiah(totalHartaMaal),
           formatRupiah(zakatMaalTahun),
@@ -412,7 +412,7 @@ export const ZakatModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🌾 Zakat Fitrah (${jumlah_jiwa} Jiwa)</strong>`,
+          `<strong>Zakat Fitrah (${jumlah_jiwa} Jiwa)</strong>`,
           `2.5 kg Beras / Jiwa (Ramadan)`,
           `${jumlah_jiwa} Jiwa × ${formatRupiah(tarif_fitrah_per_jiwa)}`,
           formatRupiah(totalFitrahTahun),
@@ -423,7 +423,7 @@ export const ZakatModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>❤️ Infak & Sedekah Rutin</strong>`,
+          `<strong>Infak & Sedekah Rutin</strong>`,
           `Sukarela Tanpa Batas Nisab`,
           formatRupiah(infakBulan),
           formatRupiah(infakBulan * 12),
