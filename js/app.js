@@ -433,6 +433,18 @@ class KehidupanApp {
     };
 
     if (!isRadial) {
+      let maxVal = 0;
+      if (chartData && chartData.datasets) {
+        chartData.datasets.forEach(ds => {
+          if (Array.isArray(ds.data)) {
+            ds.data.forEach(v => {
+              const num = typeof v === 'number' ? v : (v?.y || 0);
+              if (num > maxVal) maxVal = num;
+            });
+          }
+        });
+      }
+
       chartOptions.scales = {
         x: {
           ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } },
@@ -446,14 +458,22 @@ class KehidupanApp {
           }
         },
         y: {
+          beginAtZero: true,
+          suggestedMin: 0,
+          suggestedMax: maxVal > 0 ? undefined : 100000,
           ticks: {
             color: textColor,
             font: { family: 'Plus Jakarta Sans' },
+            precision: 0,
             callback: function(value) {
+              if (value === 0) return 'Rp 0';
               if (value >= 1000000) {
-                return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + ' Jt';
+                return 'Rp ' + (value / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' Jt';
               }
-              return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+              if (value >= 1000) {
+                return 'Rp ' + (value / 1000).toLocaleString('id-ID', { maximumFractionDigits: 0 }) + 'k';
+              }
+              return 'Rp ' + Math.round(value).toLocaleString('id-ID');
             }
           },
           grid: {

@@ -2,14 +2,13 @@
  * Modul Kalkulator Hunian & Tempat Tinggal (Sewa, Kos, Kontrakan, KPR, Rumah Sendiri)
  * Kehidupan App Suite
  * 
- * Parameter Realistis & Bebas Duplikasi:
- * 1. Tipe Tempat Tinggal & Siklus Pembayaran: Kos, Kontrakan, KPR, Rumah Pribadi (Siklus Bulanan vs Tahunan).
- * 2. Sistem Patungan (Sharing Cost): Pembagian beban sewa jika tinggal bersama teman/keluarga (50:50, 33%, 25%).
- * 3. Biaya Awal / Deposit Jaminan: Uang jaminan sewa (deposit kerusakan/kunci) yang disiapkan di awal.
- * 4. Cadangan Perawatan & Pemeliharaan Rumah: Sinking fund servis AC, cat, genteng, pompa, dan perbaikan berkala.
- * 5. Status Utilitas Terkait: Opsi paket sewa All-In (listrik/air termasuk) vs bayar terpisah di modul masing-masing.
- * 6. Kenaikan Sewa Tahunan: Proyeksi inflasi biaya sewa saat perpanjangan tahun berikutnya (+0%, +5%, +10%).
- * 7. Bebas Duplikasi PBB: Pajak Bumi & Bangunan tetap dikelola terpusat di Modul Pajak & Administrasi.
+ * Parameter Realistis & Fleksibel (Mendukung Input Angka 0):
+ * 1. Tipe Tempat Tinggal & Siklus Pembayaran: Kos, Kontrakan, KPR, Rumah Pribadi (Siklus Bulanan vs Tahunan, bisa Rp 0 jika bebas sewa).
+ * 2. Sistem Patungan (Sharing Cost): Opsi 0 (tanpa patungan/sendiri) atau 2, 3, 4 orang bagi beban sewa & IPL.
+ * 3. Biaya Awal / Deposit Jaminan: Uang jaminan sewa (deposit kerusakan/kunci, bisa Rp 0).
+ * 4. Cadangan Perawatan & Pemeliharaan Rumah: Sinking fund servis AC, cat, genteng, pompa (bisa Rp 0).
+ * 5. Proyeksi Inflasi / Kenaikan Tahunan: Kenaikan sewa berkala (0%, 5%, 10%).
+ * 6. Bebas Duplikasi: Listrik & Air dihitung di modul mandiri masing-masing, PBB dikelola di Modul Pajak.
  */
 
 import { formatRupiah, formatNumber, getFromStorage, saveToStorage } from '../utils/formatters.js';
@@ -20,12 +19,11 @@ const STORAGE_KEY_SEWA = 'kehidupan_sewa_data';
 const DEFAULT_SEWA_DATA = {
   tipe_hunian: 'kontrakan',        // 'kos', 'kontrakan', 'kpr', 'sendiri'
   siklus_bayar: 'bulanan',          // 'bulanan', 'tahunan'
-  biaya_nominal: 1500000,          // Nominal sewa/KPR sesuai siklus
-  jumlah_sharing: 1,               // 1 (Sendiri), 2 (50:50), 3, 4 orang
-  deposit_awal: 500000,            // Uang jaminan / DP awal (satu kali)
-  iuran_ipl: 50000,                // Iuran sampah/keamanan/RT per bulan
-  biaya_perawatan: 100000,         // Sinking fund perawatan/servis rumah per bulan
-  status_utilitas: 'pisah',        // 'pisah' (bayar mandiri di modul listrik/air), 'all_in' (sudah termasuk)
+  biaya_nominal: 1500000,          // Nominal sewa/KPR sesuai siklus (bisa 0)
+  jumlah_sharing: 0,               // 0 (Tanpa Patungan / Sendiri), 2 (50:50), 3, 4 orang
+  deposit_awal: 0,                 // Uang jaminan / DP awal (satu kali)
+  iuran_ipl: 50000,                // Iuran sampah/keamanan/RT per bulan (bisa 0)
+  biaya_perawatan: 100000,         // Sinking fund perawatan/servis rumah per bulan (bisa 0)
   kenaikan_tahunan_persen: 5       // 0%, 5%, 10% inflasi sewa
 };
 
@@ -94,11 +92,11 @@ export const SewaModule = {
         </div>
 
         <div id="sewa_presets_wrapper" class="form-options" style="margin-top: 0;">
-          <!-- Dynamically populated or default chips based on tipe_hunian -->
-          <button type="button" class="option-chip" data-target="biaya_nominal" data-val="850000">Kos (Rp 850k)</button>
-          <button type="button" class="option-chip active" data-target="biaya_nominal" data-val="1500000">Kontrakan (Rp 1.5 Jt)</button>
-          <button type="button" class="option-chip" data-target="biaya_nominal" data-val="3000000">KPR (Rp 3.0 Jt)</button>
-          <button type="button" class="option-chip" data-target="biaya_nominal" data-val="18000000">Tahunan (Rp 18 Jt)</button>
+          <button type="button" class="option-chip ${data.biaya_nominal === 0 ? 'active' : ''}" data-target="biaya_nominal" data-val="0">Rp 0 (Bebas Sewa)</button>
+          <button type="button" class="option-chip ${data.biaya_nominal === 850000 ? 'active' : ''}" data-target="biaya_nominal" data-val="850000">Kos (Rp 850k)</button>
+          <button type="button" class="option-chip ${data.biaya_nominal === 1500000 ? 'active' : ''}" data-target="biaya_nominal" data-val="1500000">Kontrakan (Rp 1.5 Jt)</button>
+          <button type="button" class="option-chip ${data.biaya_nominal === 3000000 ? 'active' : ''}" data-target="biaya_nominal" data-val="3000000">KPR (Rp 3.0 Jt)</button>
+          <button type="button" class="option-chip ${data.biaya_nominal === 18000000 ? 'active' : ''}" data-target="biaya_nominal" data-val="18000000">Tahunan (Rp 18 Jt)</button>
         </div>
       </div>
 
@@ -114,10 +112,10 @@ export const SewaModule = {
           <label for="jumlah_sharing">Patungan Biaya Sewa (Sharing Cost) <span class="unit">(Orang)</span></label>
           <div class="input-wrapper">
             <i class="fa-users fa-solid input-icon"></i>
-            <input type="number" id="jumlah_sharing" class="form-control" min="1" max="10" value="${data.jumlah_sharing}">
+            <input type="number" id="jumlah_sharing" class="form-control" min="0" max="10" value="${data.jumlah_sharing}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.jumlah_sharing === 1 ? 'active' : ''}" data-target="jumlah_sharing" data-val="1">1 Orang (Sendiri)</button>
+            <button type="button" class="option-chip ${(data.jumlah_sharing === 0 || data.jumlah_sharing === 1) ? 'active' : ''}" data-target="jumlah_sharing" data-val="0">0 (Tanpa Patungan / Sendiri)</button>
             <button type="button" class="option-chip ${data.jumlah_sharing === 2 ? 'active' : ''}" data-target="jumlah_sharing" data-val="2">2 Orang (50:50)</button>
             <button type="button" class="option-chip ${data.jumlah_sharing === 3 ? 'active' : ''}" data-target="jumlah_sharing" data-val="3">3 Orang</button>
             <button type="button" class="option-chip ${data.jumlah_sharing === 4 ? 'active' : ''}" data-target="jumlah_sharing" data-val="4">4 Orang</button>
@@ -154,6 +152,7 @@ export const SewaModule = {
             <input type="number" id="iuran_ipl" class="form-control" step="5000" min="0" value="${data.iuran_ipl}">
           </div>
           <div class="form-options">
+            <button type="button" class="option-chip ${data.iuran_ipl === 0 ? 'active' : ''}" data-target="iuran_ipl" data-val="0">Rp 0 (Bebas IPL)</button>
             <button type="button" class="option-chip ${data.iuran_ipl === 25000 ? 'active' : ''}" data-target="iuran_ipl" data-val="25000">Rp 25k (Kos/RT)</button>
             <button type="button" class="option-chip ${data.iuran_ipl === 50000 ? 'active' : ''}" data-target="iuran_ipl" data-val="50000">Rp 50k (Standar)</button>
             <button type="button" class="option-chip ${data.iuran_ipl === 150000 ? 'active' : ''}" data-target="iuran_ipl" data-val="150000">Rp 150k (Cluster)</button>
@@ -167,7 +166,7 @@ export const SewaModule = {
             <input type="number" id="biaya_perawatan" class="form-control" step="10000" min="0" value="${data.biaya_perawatan}">
           </div>
           <div class="form-options">
-            <button type="button" class="option-chip ${data.biaya_perawatan === 0 ? 'active' : ''}" data-target="biaya_perawatan" data-val="0">Rp 0</button>
+            <button type="button" class="option-chip ${data.biaya_perawatan === 0 ? 'active' : ''}" data-target="biaya_perawatan" data-val="0">Rp 0 (Tanpa Perawatan)</button>
             <button type="button" class="option-chip ${data.biaya_perawatan === 50000 ? 'active' : ''}" data-target="biaya_perawatan" data-val="50000">Rp 50k (Ringan)</button>
             <button type="button" class="option-chip ${data.biaya_perawatan === 100000 ? 'active' : ''}" data-target="biaya_perawatan" data-val="100000">Rp 100k (Standar)</button>
             <button type="button" class="option-chip ${data.biaya_perawatan === 250000 ? 'active' : ''}" data-target="biaya_perawatan" data-val="250000">Rp 250k (AC/Lengkap)</button>
@@ -175,36 +174,23 @@ export const SewaModule = {
         </div>
       </div>
 
-      <!-- Section 4: Status Utilitas & Estimasi Kenaikan Sewa -->
+      <!-- Section 4: Estimasi Kenaikan Sewa Tahunan -->
       <div style="margin-bottom: 22px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-            Status Utilitas & Kenaikan Tahunan
+            Proyeksi Kenaikan Sewa Tahunan
           </span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="status_utilitas">Status Listrik & Air</label>
-            <div class="input-wrapper">
-              <i class="fa-bolt fa-solid input-icon"></i>
-              <select id="status_utilitas" class="form-control">
-                <option value="pisah" ${data.status_utilitas === 'pisah' ? 'selected' : ''}>Pisah (Bayar Mandiri)</option>
-                <option value="all_in" ${data.status_utilitas === 'all_in' ? 'selected' : ''}>Paket All-In (Termasuk)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="kenaikan_tahunan_persen">Kenaikan Sewa / Thn <span class="unit">(%)</span></label>
-            <div class="input-wrapper">
-              <i class="fa-arrow-trend-up fa-solid input-icon"></i>
-              <select id="kenaikan_tahunan_persen" class="form-control">
-                <option value="0" ${data.kenaikan_tahunan_persen === 0 ? 'selected' : ''}>0% (Harga Tetap)</option>
-                <option value="5" ${data.kenaikan_tahunan_persen === 5 ? 'selected' : ''}>5% (Standar Wajar)</option>
-                <option value="10" ${data.kenaikan_tahunan_persen === 10 ? 'selected' : ''}>10% (Area Favorit)</option>
-              </select>
-            </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="kenaikan_tahunan_persen">Estimasi Inflasi / Kenaikan Sewa Tahunan <span class="unit">(%)</span></label>
+          <div class="input-wrapper">
+            <i class="fa-arrow-trend-up fa-solid input-icon"></i>
+            <select id="kenaikan_tahunan_persen" class="form-control">
+              <option value="0" ${data.kenaikan_tahunan_persen === 0 ? 'selected' : ''}>0% (Harga Tetap / Bebas Kenaikan)</option>
+              <option value="5" ${data.kenaikan_tahunan_persen === 5 ? 'selected' : ''}>5% (Standar Wajar Tahunan)</option>
+              <option value="10" ${data.kenaikan_tahunan_persen === 10 ? 'selected' : ''}>10% (Area Favorit / Kawasan Ramai)</option>
+            </select>
           </div>
         </div>
       </div>
@@ -223,35 +209,68 @@ export const SewaModule = {
     const nominalInput = container.querySelector('#biaya_nominal');
     const siklusSelect = container.querySelector('#siklus_bayar');
 
+    const updateActiveChipsForInput = (inputId, valueStr) => {
+      const chipsForInput = container.querySelectorAll(`.option-chip[data-target="${inputId}"]`);
+      chipsForInput.forEach(c => {
+        const valAttr = c.getAttribute('data-val');
+        if (inputId === 'jumlah_sharing') {
+          if ((valueStr === '0' || valueStr === '1') && (valAttr === '0' || valAttr === '1')) {
+            c.classList.add('active');
+          } else if (valAttr === valueStr) {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        } else {
+          if (valAttr === valueStr) {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        }
+      });
+    };
+
     tipeSelect.addEventListener('change', () => {
       const val = tipeSelect.value;
       if (val === 'kos') {
-        if (nominalInput) nominalInput.value = '850000';
+        if (nominalInput) {
+          nominalInput.value = '850000';
+          updateActiveChipsForInput('biaya_nominal', '850000');
+        }
         if (siklusSelect) siklusSelect.value = 'bulanan';
       } else if (val === 'kontrakan') {
-        if (nominalInput) nominalInput.value = '1500000';
+        if (nominalInput) {
+          nominalInput.value = '1500000';
+          updateActiveChipsForInput('biaya_nominal', '1500000');
+        }
         if (siklusSelect) siklusSelect.value = 'bulanan';
       } else if (val === 'kpr') {
-        if (nominalInput) nominalInput.value = '3000000';
+        if (nominalInput) {
+          nominalInput.value = '3000000';
+          updateActiveChipsForInput('biaya_nominal', '3000000');
+        }
         if (siklusSelect) siklusSelect.value = 'bulanan';
       } else if (val === 'sendiri') {
-        if (nominalInput) nominalInput.value = '0';
+        if (nominalInput) {
+          nominalInput.value = '0';
+          updateActiveChipsForInput('biaya_nominal', '0');
+        }
       }
       SewaModule.saveCurrentData(container);
       onInputChange();
     });
 
-    // Event listeners for inputs
+    // Event listeners for inputs & dynamic chip active state synchronization
     const inputs = container.querySelectorAll('input, select');
     inputs.forEach(input => {
-      input.addEventListener('input', () => {
+      const handleInput = () => {
+        updateActiveChipsForInput(input.id, input.value.trim());
         SewaModule.saveCurrentData(container);
         onInputChange();
-      });
-      input.addEventListener('change', () => {
-        SewaModule.saveCurrentData(container);
-        onInputChange();
-      });
+      };
+      input.addEventListener('input', handleInput);
+      input.addEventListener('change', handleInput);
     });
 
     // Chip buttons
@@ -310,12 +329,11 @@ export const SewaModule = {
       tipe_hunian: container.querySelector('#tipe_hunian')?.value || 'kontrakan',
       siklus_bayar: container.querySelector('#siklus_bayar')?.value || 'bulanan',
       biaya_nominal: parseFloat(container.querySelector('#biaya_nominal')?.value || '0'),
-      jumlah_sharing: parseInt(container.querySelector('#jumlah_sharing')?.value || '1', 10),
+      jumlah_sharing: parseInt(container.querySelector('#jumlah_sharing')?.value || '0', 10),
       deposit_awal: parseFloat(container.querySelector('#deposit_awal')?.value || '0'),
       iuran_ipl: parseFloat(container.querySelector('#iuran_ipl')?.value || '0'),
       biaya_perawatan: parseFloat(container.querySelector('#biaya_perawatan')?.value || '0'),
-      status_utilitas: container.querySelector('#status_utilitas')?.value || 'pisah',
-      kenaikan_tahunan_persen: parseFloat(container.querySelector('#kenaikan_tahunan_persen')?.value || '5')
+      kenaikan_tahunan_persen: parseFloat(container.querySelector('#kenaikan_tahunan_persen')?.value || '0')
     };
   },
 
@@ -328,18 +346,19 @@ export const SewaModule = {
       deposit_awal,
       iuran_ipl,
       biaya_perawatan,
-      status_utilitas,
       kenaikan_tahunan_persen
     } = inputs;
 
-    const sharing = Math.max(1, jumlah_sharing);
+    // Pembagian patungan: Jika 0 atau 1, pembagi adalah 1 (100% pribadi)
+    const isSharing = jumlah_sharing > 1;
+    const sharingDivisor = isSharing ? jumlah_sharing : 1;
 
     // 1. Hitung biaya sewa bruto per bulan (amortisasi jika tahunan)
     const sewa_bruto_bulan = siklus_bayar === 'tahunan' ? (biaya_nominal / 12) : biaya_nominal;
 
     // 2. Beban sewa dan IPL yang ditanggung pribadi setelah patungan
-    const sewa_pribadi_bulan = sewa_bruto_bulan / sharing;
-    const ipl_pribadi_bulan = iuran_ipl / sharing;
+    const sewa_pribadi_bulan = sewa_bruto_bulan / sharingDivisor;
+    const ipl_pribadi_bulan = iuran_ipl / sharingDivisor;
     const perawatan_bulan = biaya_perawatan;
 
     // 3. Total beban bulanan reguler untuk budgeting
@@ -357,28 +376,36 @@ export const SewaModule = {
       {
         title: 'Sewa / KPR (Porsi Pribadi)',
         value: formatRupiah(Math.round(sewa_pribadi_bulan)),
-        note: sharing > 1 ? `Patungan ${sharing} Orang (Total ${formatRupiah(Math.round(sewa_bruto_bulan))}/bln)` : `${tipeLabel} (${siklus_bayar === 'tahunan' ? 'Amortisasi Tahunan' : 'Bulanan'})`,
+        note: sewa_pribadi_bulan === 0 
+          ? 'Bebas Sewa (Milik Sendiri / Lunas)' 
+          : (isSharing ? `Patungan ${jumlah_sharing} Orang (Total ${formatRupiah(Math.round(sewa_bruto_bulan))}/bln)` : `${tipeLabel} (${siklus_bayar === 'tahunan' ? 'Amortisasi Tahunan' : 'Bulanan'})`),
         icon: 'fa-house-user',
         type: 'emerald'
       },
       {
         title: 'Iuran Lingkungan & IPL',
         value: formatRupiah(Math.round(ipl_pribadi_bulan)),
-        note: `Keamanan, Sampah & RT/RW${sharing > 1 ? ` (Bagi ${sharing})` : ''}`,
+        note: ipl_pribadi_bulan === 0 
+          ? 'Bebas Iuran Lingkungan / IPL' 
+          : `Keamanan, Sampah & RT/RW${isSharing ? ` (Bagi ${jumlah_sharing})` : ''}`,
         icon: 'fa-shield-halved',
         type: 'sky'
       },
       {
         title: 'Cadangan Perawatan Rumah',
         value: formatRupiah(perawatan_bulan),
-        note: `Maintenance AC, Cat, Pompa & Perbaikan`,
+        note: perawatan_bulan === 0 
+          ? 'Tanpa Alokasi Perawatan Bulanan' 
+          : 'Maintenance AC, Cat, Pompa & Perbaikan',
         icon: 'fa-screwdriver-wrench',
         type: 'amber'
       },
       {
         title: 'Total Beban Hunian Bulanan',
         value: formatRupiah(total_biaya),
-        note: `± ${formatRupiah(Math.round(biayaHarian))} / Hari siap dianggarkan`,
+        note: total_biaya === 0 
+          ? 'Bebas seluruh biaya hunian bulanan' 
+          : `± ${formatRupiah(Math.round(biayaHarian))} / Hari siap dianggarkan`,
         icon: 'fa-money-bill-wave',
         type: 'violet'
       }
@@ -418,7 +445,7 @@ export const SewaModule = {
     // Tabel Sekunder: Komposisi & Struktur Hunian
     const secondaryTable = {
       title: 'Komposisi & Struktur Hunian Rumah Tangga',
-      subtitle: 'Rincian pembagian patungan, amortisasi sewa, cadangan perawatan, deposit awal, dan status utilitas.',
+      subtitle: 'Rincian pembagian patungan, amortisasi sewa, cadangan perawatan, deposit awal, dan status beban.',
       headers: [
         'Komponen Hunian',
         'Alokasi Riil',
@@ -429,16 +456,24 @@ export const SewaModule = {
           isCurrent: false,
           cells: [
             '<strong>Tipe & Siklus Pembayaran</strong>',
-            `${tipeLabel} (${siklus_bayar === 'tahunan' ? 'Bayar Tahunan' : 'Bayar Bulanan'})`,
-            siklus_bayar === 'tahunan' ? `Sewa bruto ${formatRupiah(biaya_nominal)} / tahun diamortisasi menjadi ${formatRupiah(Math.round(sewa_bruto_bulan))} / bulan` : `Pembayaran reguler per bulan sebesar ${formatRupiah(biaya_nominal)}`
+            sewa_bruto_bulan === 0 
+              ? `${tipeLabel} (Bebas Biaya)` 
+              : `${tipeLabel} (${siklus_bayar === 'tahunan' ? 'Bayar Tahunan' : 'Bayar Bulanan'})`,
+            sewa_bruto_bulan === 0 
+              ? 'Tidak ada biaya sewa atau cicilan KPR yang dibayarkan' 
+              : (siklus_bayar === 'tahunan' 
+                  ? `Sewa bruto ${formatRupiah(biaya_nominal)} / tahun diamortisasi menjadi ${formatRupiah(Math.round(sewa_bruto_bulan))} / bulan` 
+                  : `Pembayaran reguler per bulan sebesar ${formatRupiah(biaya_nominal)}`)
           ]
         },
         {
           isCurrent: false,
           cells: [
             '<strong>Sistem Patungan (Sharing Cost)</strong>',
-            sharing > 1 ? `Dibagi ${sharing} Orang (${formatNumber(100 / sharing, 0)}%)` : 'Dibiayai Mandiri (100%)',
-            sharing > 1 ? `Beban sewa pribadi menjadi ${formatRupiah(Math.round(sewa_pribadi_bulan))} / bulan (hemat ${formatRupiah(Math.round(sewa_bruto_bulan - sewa_pribadi_bulan))})` : 'Seluruh biaya sewa dan iuran ditanggung sendiri tanpa pembagian beban'
+            isSharing ? `Dibagi ${jumlah_sharing} Orang (${formatNumber(100 / jumlah_sharing, 0)}%)` : 'Tanpa Patungan (100% Mandiri)',
+            isSharing 
+              ? `Beban sewa pribadi menjadi ${formatRupiah(Math.round(sewa_pribadi_bulan))} / bulan (hemat ${formatRupiah(Math.round(sewa_bruto_bulan - sewa_pribadi_bulan))})` 
+              : 'Biaya sewa ditanggung sendiri tanpa sistem patungan'
           ]
         },
         {
@@ -446,31 +481,23 @@ export const SewaModule = {
           cells: [
             '<strong>Uang Jaminan / Deposit Awal</strong>',
             deposit_awal > 0 ? formatRupiah(deposit_awal) : 'Rp 0 (Tanpa Deposit)',
-            deposit_awal > 0 ? 'Dana jaminan kunci/kerusakan satu kali di awal sewa (bersifat refundable/dapat kembali)' : 'Bebas uang jaminan di awal sewa'
+            deposit_awal > 0 ? 'Dana jaminan kunci/kerusakan satu kali di awal sewa (bersifat refundable/dapat kembali)' : 'Bebas uang jaminan / DP di awal sewa'
           ]
         },
         {
           isCurrent: false,
           cells: [
             '<strong>Iuran Lingkungan & IPL</strong>',
-            formatRupiah(Math.round(ipl_pribadi_bulan)),
-            `Iuran kebersihan sampah, keamanan satpam, dan kas RT/RW per bulan`
+            ipl_pribadi_bulan > 0 ? formatRupiah(Math.round(ipl_pribadi_bulan)) : 'Rp 0 (Bebas IPL)',
+            ipl_pribadi_bulan > 0 ? `Iuran kebersihan sampah, keamanan satpam, dan kas RT/RW per bulan` : 'Tidak ada iuran lingkungan atau IPL yang dibebankan'
           ]
         },
         {
           isCurrent: false,
           cells: [
             '<strong>Cadangan Perawatan Rumah</strong>',
-            formatRupiah(perawatan_bulan),
-            perawatan_bulan > 0 ? 'Sinking fund bulanan untuk antisipasi servis AC berkala, atap bocor, pompa air, dan perbaikan kecil' : 'Tanpa alokasi dana perbaikan rumah rutin'
-          ]
-        },
-        {
-          isCurrent: false,
-          cells: [
-            '<strong>Status Utilitas (Listrik & Air)</strong>',
-            status_utilitas === 'all_in' ? 'Paket All-In (Termasuk Sewa)' : 'Pisah (Bayar Mandiri)',
-            status_utilitas === 'all_in' ? 'Biaya sewa sudah termasuk pemakaian listrik & air bersih' : 'Pemakaian listrik PLN dan air PAM dihitung terpisah di modul Listrik & Air Bersih'
+            perawatan_bulan > 0 ? formatRupiah(perawatan_bulan) : 'Rp 0 (Tanpa Perawatan)',
+            perawatan_bulan > 0 ? 'Sinking fund bulanan untuk antisipasi servis AC berkala, atap bocor, pompa air, dan perbaikan kecil' : 'Tanpa alokasi dana perbaikan rumah berkala'
           ]
         },
         {
@@ -484,6 +511,37 @@ export const SewaModule = {
       ]
     };
 
+    // Chart Komposisi Biaya Hunian:
+    // Hanya menampilkan komponen yang memiliki nilai biaya > 0
+    const chartLabels = [];
+    const chartDataValues = [];
+    const chartColors = [];
+
+    if (Math.round(sewa_pribadi_bulan) > 0) {
+      chartLabels.push('Sewa / KPR Pribadi');
+      chartDataValues.push(Math.round(sewa_pribadi_bulan));
+      chartColors.push('#10b981');
+    }
+
+    if (Math.round(ipl_pribadi_bulan) > 0) {
+      chartLabels.push('Iuran IPL Lingkungan');
+      chartDataValues.push(Math.round(ipl_pribadi_bulan));
+      chartColors.push('#06b6d4');
+    }
+
+    if (Math.round(perawatan_bulan) > 0) {
+      chartLabels.push('Cadangan Perawatan');
+      chartDataValues.push(Math.round(perawatan_bulan));
+      chartColors.push('#f59e0b');
+    }
+
+    // Jika seluruh komponen bernilai 0 (misal numpang / rumah sendiri tanpa IPL & perawatan)
+    if (chartLabels.length === 0) {
+      chartLabels.push('Bebas Biaya Hunian');
+      chartDataValues.push(0);
+      chartColors.push('#10b981');
+    }
+
     return {
       total_biaya,
       summaryCards,
@@ -491,29 +549,17 @@ export const SewaModule = {
       tableRows,
       secondaryTable,
       chartData: {
-        labels: [
-          'Sewa / KPR Pribadi',
-          'Iuran IPL Lingkungan',
-          'Cadangan Perawatan'
-        ],
+        labels: chartLabels,
         datasets: [
           {
             label: 'Alokasi Biaya Hunian Bulanan (Rp)',
-            data: [
-              Math.round(sewa_pribadi_bulan),
-              Math.round(ipl_pribadi_bulan),
-              Math.round(perawatan_bulan)
-            ],
-            backgroundColor: [
-              '#10b981', // emerald
-              '#06b6d4', // sky
-              '#f59e0b'  // amber
-            ]
+            data: chartDataValues,
+            backgroundColor: chartColors
           }
         ]
       },
       quickStats: {
-        totalQty: `${tipeLabel}${sharing > 1 ? ` (${sharing} org)` : ''}`,
+        totalQty: isSharing ? `${tipeLabel} (${jumlah_sharing} org)` : tipeLabel,
         totalCost: formatRupiah(total_biaya)
       }
     };
