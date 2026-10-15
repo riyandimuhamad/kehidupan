@@ -557,7 +557,7 @@ export const TransportModule = {
           isCurrent: false,
           cells: [
             `<strong>Pribadi</strong>`,
-            `${vc.nama || 'Kendaraan'} <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
+            `${vc.nama || 'Kendaraan'} <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? 'Mobil' : 'Motor'}</span>`,
             `${formatRupiah(vc.bbmBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(${formatNumber(vc.literBulanan, 1)} L)</span>`,
             `${formatRupiah(vc.totalPajakBulanan + vc.asuransiBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Pajak ${formatRupiah(vc.totalPajakBulanan)}${vc.asuransiBulanan > 0 ? ` + Asuransi ${formatRupiah(vc.asuransiBulanan)}` : ''})</span>`,
             `${formatRupiah(vc.perawatanBulanan + vc.parkirTolBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Servis ${formatRupiah(vc.perawatanBulanan)}${vc.parkirTolBulanan > 0 ? ` + Parkir/Tol ${formatRupiah(vc.parkirTolBulanan)}` : ''})</span>`,
@@ -612,7 +612,7 @@ export const TransportModule = {
       rows: vehicleCalculations.map(vc => ({
         isCurrent: false,
         cells: [
-          `<strong>${vc.nama || 'Kendaraan'}</strong> <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? '🚗 Mobil' : '🛵 Motor'}</span>`,
+          `<strong>${vc.nama || 'Kendaraan'}</strong> <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? 'Mobil' : 'Motor'}</span>`,
           formatRupiah(vc.bbmBulanan),
           `${formatRupiah(vc.totalPajakBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.pajak_tahunan || 0)}/thn)</span>`,
           `${formatRupiah(vc.asuransiBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.asuransi_tahunan || 0)}/thn)</span>`,
