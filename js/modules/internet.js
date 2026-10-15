@@ -76,9 +76,28 @@ export const InternetModule = {
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="font-size: 0.74rem;">Nominal Paket Data per Bulan <span style="color: var(--text-muted);">(Rp/Bulan)</span></label>
-            <input type="number" class="form-control hp-input-nominal" data-hpid="${hp.id}" value="${hp.nominal}" step="5000" placeholder="Ketik biaya paket data (misal: 75000)" style="font-size: 0.8rem; padding: 6px 10px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.74rem;">Masa Aktif Paket</label>
+              <select class="form-control hp-input-siklus" data-hpid="${hp.id}" style="font-size: 0.8rem; padding: 6px 10px;">
+                <option value="30" ${(!hp.masa_aktif_hari || hp.masa_aktif_hari == 30) ? 'selected' : ''}>Bulanan (30 Hari)</option>
+                <option value="7" ${hp.masa_aktif_hari == 7 ? 'selected' : ''}>Mingguan (7 Hari)</option>
+                <option value="14" ${hp.masa_aktif_hari == 14 ? 'selected' : ''}>2 Minggu (14 Hari)</option>
+                <option value="custom" ${hp.masa_aktif_hari != 30 && hp.masa_aktif_hari != 7 && hp.masa_aktif_hari != 14 && hp.masa_aktif_hari ? 'selected' : ''}>Custom Hari</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.74rem;">Harga Beli per Paket <span style="color: var(--text-muted);">(Rp)</span></label>
+              <input type="number" class="form-control hp-input-nominal" data-hpid="${hp.id}" value="${hp.nominal}" step="1000" placeholder="0" style="font-size: 0.8rem; padding: 6px 10px;">
+            </div>
+          </div>
+
+          <div class="hp-custom-hari-box" style="display: ${(hp.masa_aktif_hari && hp.masa_aktif_hari != 30 && hp.masa_aktif_hari != 7 && hp.masa_aktif_hari != 14) ? 'block' : 'none'}; margin-top: 6px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.72rem;">Jumlah Hari Masa Aktif Paket</label>
+              <input type="number" class="form-control hp-input-custom-hari" data-hpid="${hp.id}" value="${hp.masa_aktif_hari || 30}" min="1" max="365" style="font-size: 0.8rem; padding: 6px 10px;">
+            </div>
           </div>
         </div>
       `;
@@ -189,12 +208,16 @@ export const InternetModule = {
         const id = card.getAttribute('data-hpid');
         const nama = card.querySelector('.hp-input-nama')?.value.trim() || '';
         const provider = card.querySelector('.hp-input-provider')?.value || 'Telkomsel';
+        const siklus = card.querySelector('.hp-input-siklus')?.value || '30';
+        const customHariVal = parseFloat(card.querySelector('.hp-input-custom-hari')?.value || 30);
+        const masa_aktif_hari = siklus === 'custom' ? customHariVal : parseFloat(siklus);
         const nominal = parseFloat(card.querySelector('.hp-input-nominal')?.value || 0);
 
         updatedHpList.push({
           id,
           nama,
           provider,
+          masa_aktif_hari,
           nominal
         });
       });
@@ -202,6 +225,18 @@ export const InternetModule = {
       InternetModule.saveHpList(updatedHpList);
       onInputChange();
     };
+
+    // Toggle custom hari listener
+    container.addEventListener('change', (e) => {
+      if (e.target.classList.contains('hp-input-siklus')) {
+        const card = e.target.closest('.hp-item-card');
+        const customBox = card?.querySelector('.hp-custom-hari-box');
+        if (customBox) {
+          customBox.style.display = e.target.value === 'custom' ? 'block' : 'none';
+        }
+        bindInputs();
+      }
+    });
 
     container.querySelectorAll('input, select').forEach(elem => {
       elem.addEventListener('input', bindInputs);
@@ -274,14 +309,27 @@ export const InternetModule = {
 
     const total_wifi = s.enable_wifi ? (s.biaya_wifi || 0) : 0;
     
-    let total_hp_data = 0;
+    let total_hp_data_bulanan = 0;
+    const hpCalculations = [];
+
     if (s.enable_hp) {
       hpList.forEach(hp => {
-        total_hp_data += (hp.nominal || 0);
+        const masaAktif = hp.masa_aktif_hari > 0 ? hp.masa_aktif_hari : 30;
+        const hargaBeli = hp.nominal || 0;
+        // Normalisasi biaya sebulan (30 hari)
+        const biayaBulanan = masaAktif > 0 ? (hargaBeli / masaAktif) * 30 : hargaBeli;
+        total_hp_data_bulanan += biayaBulanan;
+
+        hpCalculations.push({
+          ...hp,
+          masaAktif,
+          hargaBeli,
+          biayaBulanan
+        });
       });
     }
 
-    const total_biaya = total_wifi + total_hp_data;
+    const total_biaya = total_wifi + total_hp_data_bulanan;
 
     const summaryCards = [
       {
@@ -293,28 +341,22 @@ export const InternetModule = {
       },
       {
         title: 'Total Paket Data Seluler',
-        value: s.enable_hp ? formatRupiah(total_hp_data) : 'Non-Aktif',
-        note: s.enable_hp ? `${hpList.length} Nomor HP Active` : 'Mode HP Dimatikan',
+        value: s.enable_hp ? formatRupiah(total_hp_data_bulanan) : 'Non-Aktif',
+        note: s.enable_hp ? `${hpList.length} Nomor HP Active (Est. Bulanan)` : 'Mode HP Dimatikan',
         icon: 'fa-mobile-screen',
         type: s.enable_hp ? 'amber' : 'sky'
       },
       {
         title: 'Total Biaya Komunikasi',
         value: formatRupiah(total_biaya),
-        note: `Pengeluaran Bulanan`,
+        note: `Pengeluaran Normalisasi 1 Bulan`,
         icon: 'fa-money-bill-wave',
         type: 'emerald'
       }
     ];
 
-    const periods = [
-      { label: '1 Bulan', d: 1 },
-      { label: '3 Bulan', d: 3 },
-      { label: '6 Bulan', d: 6 },
-      { label: '12 Bulan (1 Tahun)', d: 12 }
-    ];
-
-    const tableHeaders = ['Komponen / Nomor', 'Provider / Kategori', 'Alokasi Bulanan (Rp)', 'Total Proyeksi (1 Thn)'];
+    // Primary Breakdown Table: Rincian per Komponen
+    const tableHeaders = ['Komponen / Nomor', 'Provider / Paket', 'Siklus Beli', 'Nominal Beli', 'Alokasi Bulanan (Rp)'];
     const tableRows = [];
 
     if (s.enable_wifi) {
@@ -323,21 +365,24 @@ export const InternetModule = {
         cells: [
           `<strong>WiFi Rumah</strong>`,
           `${s.provider_wifi || 'Fixed Broadband'}`,
+          `Bulanan (30h)`,
           `${formatRupiah(total_wifi)}`,
-          `${formatRupiah(total_wifi * 12)}`
+          `${formatRupiah(total_wifi)}`
         ]
       });
     }
 
     if (s.enable_hp) {
-      hpList.forEach(hp => {
+      hpCalculations.forEach(hp => {
+        const siklusLabel = hp.masaAktif == 7 ? 'Mingguan (7h)' : hp.masaAktif == 14 ? '2 Minggu (14h)' : hp.masaAktif == 30 ? 'Bulanan (30h)' : `${hp.masaAktif} Hari`;
         tableRows.push({
           isCurrent: false,
           cells: [
             `<strong>${hp.nama || 'HP'}</strong>`,
             `<span class="badge" style="font-size:0.68rem;">${hp.provider || 'Seluler'}</span>`,
-            `${formatRupiah(hp.nominal)}`,
-            `${formatRupiah((hp.nominal || 0) * 12)}`
+            `${siklusLabel}`,
+            `${formatRupiah(hp.hargaBeli)}`,
+            `<span class="highlight">${formatRupiah(hp.biayaBulanan)}</span>`
           ]
         });
       });
@@ -347,12 +392,68 @@ export const InternetModule = {
     tableRows.push({
       isCurrent: true,
       cells: [
-        `<strong>TOTAL INTERNET & DATA</strong>`,
+        `<strong>TOTAL BIAYA KOMUNIKASI</strong>`,
         `<strong>-</strong>`,
-        `<strong class="highlight" style="font-size: 1rem; color: var(--accent-emerald);">${formatRupiah(total_biaya)}</strong>`,
-        `<strong class="highlight">${formatRupiah(total_biaya * 12)}</strong>`
+        `<strong>-</strong>`,
+        `<strong>-</strong>`,
+        `<strong class="highlight" style="font-size: 1rem; color: var(--accent-emerald);">${formatRupiah(total_biaya)}</strong>`
       ]
     });
+
+    // Secondary Projection Table: Proyeksi Berdasarkan Periode Waktu (1 Bulan, 3 Bulan, 6 Bulan, 1 Tahun)
+    const secondaryTable = {
+      title: 'Proyeksi Anggaran Komunikasi & Internet Jangka Panjang',
+      subtitle: 'Akumulasi estimasi langganan WiFi dan paket data seluler berdasarkan periode waktu keuangan.',
+      headers: [
+        'Periode Proyeksi',
+        'Durasi Waktu',
+        'WiFi Rumah',
+        'Paket Data Seluler',
+        'Total Proyeksi Komunikasi'
+      ],
+      rows: [
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>1 Bulan</strong>`,
+            `30 Hari (1 Bulan)`,
+            formatRupiah(total_wifi),
+            formatRupiah(total_hp_data_bulanan),
+            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya)}</strong>`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>3 Bulan (Kuartal)</strong>`,
+            `90 Hari (3 Bulan)`,
+            formatRupiah(total_wifi * 3),
+            formatRupiah(total_hp_data_bulanan * 3),
+            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya * 3)}</strong>`
+          ]
+        },
+        {
+          isCurrent: false,
+          cells: [
+            `<strong>6 Bulan (Semester)</strong>`,
+            `180 Hari (6 Bulan)`,
+            formatRupiah(total_wifi * 6),
+            formatRupiah(total_hp_data_bulanan * 6),
+            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya * 6)}</strong>`
+          ]
+        },
+        {
+          isCurrent: true,
+          cells: [
+            `<strong>1 Tahun Penuh</strong>`,
+            `365 Hari (12 Bulan)`,
+            formatRupiah(total_wifi * 12),
+            formatRupiah(total_hp_data_bulanan * 12),
+            `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.98rem;">${formatRupiah(total_biaya * 12)}</strong>`
+          ]
+        }
+      ]
+    };
 
     const chartLabels = [];
     const chartDataValues = [];
@@ -375,6 +476,7 @@ export const InternetModule = {
       summaryCards,
       tableHeaders,
       tableRows,
+      secondaryTable,
       chartData: {
         labels: chartLabels,
         datasets: [
