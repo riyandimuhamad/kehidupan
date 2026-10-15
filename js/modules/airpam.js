@@ -512,7 +512,6 @@ export const AirPamModule = {
       subtitle: `Akumulasi biaya air bersih (${sumber === 'sumur' ? 'Sumur Bor' : sumber === 'kombinasi' ? 'Kombinasi PAM + Sumur' : 'PDAM / PAM'}) berdasarkan periode waktu.`,
       headers: [
         'Periode Proyeksi',
-        'Durasi Waktu',
         'Estimasi Volume (m³)',
         colPemakaianLabel,
         colPerawatanLabel,
@@ -522,8 +521,7 @@ export const AirPamModule = {
         {
           isCurrent: false,
           cells: [
-            `<strong>Proyeksi 1 Semester</strong>`,
-            `6 Bulan (Semester)`,
+            `<strong>1 Semester (6 Bulan)</strong>`,
             `${formatNumber(m3_1bln * 6, 1)} m³`,
             formatRupiah(pemakaian_1bln * 6),
             formatRupiah(perawatan_1bln * 6),
@@ -533,8 +531,7 @@ export const AirPamModule = {
         {
           isCurrent: true,
           cells: [
-            `<strong>Proyeksi 1 Tahun Penuh</strong>`,
-            `12 Bulan (1 Tahun Penuh)`,
+            `<strong>1 Tahun Penuh (12 Bulan)</strong>`,
             `${formatNumber(m3_1bln * 12, 1)} m³`,
             formatRupiah(pemakaian_1bln * 12),
             formatRupiah(perawatan_1bln * 12),

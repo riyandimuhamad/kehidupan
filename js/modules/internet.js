@@ -400,13 +400,12 @@ export const InternetModule = {
       ]
     });
 
-    // Secondary Projection Table: Proyeksi Berdasarkan Periode Waktu (1 Bulan, 3 Bulan, 6 Bulan, 1 Tahun)
+    // Secondary Projection Table: Proyeksi Berdasarkan Periode Waktu (3 Bulan, 6 Bulan, 1 Tahun)
     const secondaryTable = {
       title: 'Proyeksi Anggaran Komunikasi & Internet Jangka Panjang',
       subtitle: 'Akumulasi estimasi langganan WiFi dan paket data seluler berdasarkan periode waktu keuangan.',
       headers: [
-        'Periode Proyeksi',
-        'Durasi Waktu',
+        'Periode Waktu',
         'WiFi Rumah',
         'Paket Data Seluler',
         'Total Proyeksi Komunikasi'
@@ -415,18 +414,7 @@ export const InternetModule = {
         {
           isCurrent: false,
           cells: [
-            `<strong>1 Bulan</strong>`,
-            `30 Hari (1 Bulan)`,
-            formatRupiah(total_wifi),
-            formatRupiah(total_hp_data_bulanan),
-            `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya)}</strong>`
-          ]
-        },
-        {
-          isCurrent: false,
-          cells: [
             `<strong>3 Bulan (Kuartal)</strong>`,
-            `90 Hari (3 Bulan)`,
             formatRupiah(total_wifi * 3),
             formatRupiah(total_hp_data_bulanan * 3),
             `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya * 3)}</strong>`
@@ -436,7 +424,6 @@ export const InternetModule = {
           isCurrent: false,
           cells: [
             `<strong>6 Bulan (Semester)</strong>`,
-            `180 Hari (6 Bulan)`,
             formatRupiah(total_wifi * 6),
             formatRupiah(total_hp_data_bulanan * 6),
             `<strong class="highlight" style="color: var(--primary); font-size: 0.92rem;">${formatRupiah(total_biaya * 6)}</strong>`
@@ -445,8 +432,7 @@ export const InternetModule = {
         {
           isCurrent: true,
           cells: [
-            `<strong>1 Tahun Penuh</strong>`,
-            `365 Hari (12 Bulan)`,
+            `<strong>1 Tahun Penuh (12 Bulan)</strong>`,
             formatRupiah(total_wifi * 12),
             formatRupiah(total_hp_data_bulanan * 12),
             `<strong class="highlight" style="color: var(--accent-emerald); font-size: 0.98rem;">${formatRupiah(total_biaya * 12)}</strong>`

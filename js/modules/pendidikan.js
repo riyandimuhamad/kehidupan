@@ -537,7 +537,6 @@ export const PendidikanModule = {
       subtitle: 'Akumulasi estimasi anggaran seluruh anak berdasarkan durasi masa studi.',
       headers: [
         'Periode Proyeksi',
-        'Durasi Waktu',
         'Akumulasi SPP / UKT',
         'Akumulasi Uang Saku',
         'Transport, Tugas & Les',
@@ -547,8 +546,7 @@ export const PendidikanModule = {
         {
           isCurrent: false,
           cells: [
-            `<strong>Proyeksi 1 Semester</strong>`,
-            `6 Bulan (1 Semester)`,
+            `<strong>1 Semester (6 Bulan)</strong>`,
             formatRupiah(grandTotalSPP * 6),
             formatRupiah(grandTotalUangSaku * 6),
             formatRupiah(totalOperasionalSemuaAnak * 6),
@@ -558,8 +556,7 @@ export const PendidikanModule = {
         {
           isCurrent: true,
           cells: [
-            `<strong>Proyeksi 1 Tahun Ajaran</strong>`,
-            `12 Bulan (Penuh / 2 Sem)`,
+            `<strong>1 Tahun Ajaran (12 Bulan)</strong>`,
             formatRupiah(grandTotalSPP * 12),
             formatRupiah(grandTotalUangSaku * 12),
             formatRupiah(totalOperasionalSemuaAnak * 12),

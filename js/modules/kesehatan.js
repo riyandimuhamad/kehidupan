@@ -536,7 +536,6 @@ export const KesehatanModule = {
       subtitle: 'Akumulasi estimasi proteksi kesehatan seluruh anggota keluarga berdasarkan durasi jangka menengah dan panjang.',
       headers: [
         'Periode Proyeksi',
-        'Durasi Waktu',
         'Akumulasi BPJS & Asuransi',
         'Akumulasi Vitamin & Suplemen',
         'Akumulasi Obat & Check-Up',
@@ -546,8 +545,7 @@ export const KesehatanModule = {
         {
           isCurrent: false,
           cells: [
-            `<strong>Proyeksi 1 Semester</strong>`,
-            `6 Bulan (Semester)`,
+            `<strong>1 Semester (6 Bulan)</strong>`,
             formatRupiah(totalBPJSAsuransi * 6),
             formatRupiah(grandTotalVitamin * 6),
             formatRupiah(totalKuratifCheckup * 6),
@@ -557,8 +555,7 @@ export const KesehatanModule = {
         {
           isCurrent: true,
           cells: [
-            `<strong>Proyeksi 1 Tahun Penuh</strong>`,
-            `12 Bulan (1 Tahun Penuh)`,
+            `<strong>1 Tahun Penuh (12 Bulan)</strong>`,
             formatRupiah(totalBPJSAsuransi * 12),
             formatRupiah(grandTotalVitamin * 12),
             formatRupiah(totalKuratifCheckup * 12),
