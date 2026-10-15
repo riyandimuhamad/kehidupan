@@ -157,11 +157,11 @@
         </div>
         <div class="hero-stats" id="quickStatsSummary">
           <div class="mini-stat-card">
-            <span class="stat-label">Total Konsumsi</span>
+            <span class="stat-label" id="quickStatLabel1">Total Konsumsi</span>
             <span class="stat-value" id="quickTotalQty">0 kg</span>
           </div>
           <div class="mini-stat-card primary">
-            <span class="stat-label">Total Biaya / Sisa</span>
+            <span class="stat-label" id="quickStatLabel2">Total Biaya / Sisa</span>
             <span class="stat-value" id="quickTotalCost">Rp 0</span>
           </div>
         </div>
@@ -173,8 +173,8 @@
         <!-- Form Card (Left Column) -->
         <div class="card form-card">
           <div class="card-header">
-            <h3><i class="fa-sliders fa-solid"></i> Parameter Perhitungan</h3>
-            <span class="sub-text">Isi data di bawah untuk estimasi akurat</span>
+            <h3 id="formCardTitle"><i class="fa-sliders fa-solid"></i> Parameter Perhitungan</h3>
+            <span class="sub-text" id="formCardSubText">Isi data di bawah untuk estimasi akurat</span>
           </div>
           <div class="card-body">
             <form id="calculatorForm">
@@ -194,7 +194,7 @@
           <!-- Interactive Visualization Card -->
           <div class="card chart-card">
             <div class="card-header">
-              <h3><i class="fa-chart-pie fa-solid"></i> Analisis & Distribusi</h3>
+              <h3 id="chartCardTitle"><i class="fa-chart-pie fa-solid"></i> Analisis & Distribusi</h3>
             </div>
             <div class="card-body chart-body">
               <canvas id="analysisChart"></canvas>
@@ -205,8 +205,8 @@
           <section class="card table-card">
             <div class="card-header">
               <div>
-                <h3><i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran</h3>
-                <p class="sub-text">Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan</p>
+                <h3 id="tableCardTitle"><i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran</h3>
+                <p class="sub-text" id="tableCardSubText">Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan</p>
               </div>
               <div class="table-actions">
                 <button class="outline-btn" id="exportCsvBtn">

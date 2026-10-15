@@ -215,6 +215,33 @@ class KehidupanApp {
     this.moduleTitle.innerText = activeModule.title;
     this.moduleSubtitle.innerText = activeModule.subtitle;
 
+    // Update Card Section Titles & Labels
+    const formCardTitle = document.getElementById('formCardTitle');
+    const formCardSubText = document.getElementById('formCardSubText');
+    const chartCardTitle = document.getElementById('chartCardTitle');
+    const tableCardTitle = document.getElementById('tableCardTitle');
+    const tableCardSubText = document.getElementById('tableCardSubText');
+    const quickStatLabel1 = document.getElementById('quickStatLabel1');
+    const quickStatLabel2 = document.getElementById('quickStatLabel2');
+
+    if (moduleId === 'dashboard') {
+      if (formCardTitle) formCardTitle.innerHTML = '<i class="fa-sliders fa-solid"></i> Pengaturan Anggaran & Periode';
+      if (formCardSubText) formCardSubText.innerText = 'Atur pemasukan, dana cadangan & uji simulasi';
+      if (chartCardTitle) chartCardTitle.innerHTML = '<i class="fa-chart-pie fa-solid"></i> Distribusi Kategori Anggaran';
+      if (tableCardTitle) tableCardTitle.innerHTML = '<i class="fa-table-list fa-solid"></i> Rincian Seluruh Pos Anggaran Bulanan';
+      if (tableCardSubText) tableCardSubText.innerText = 'Daftar akumulasi biaya per pos terintegrasi dari seluruh modul kalkulator';
+      if (quickStatLabel1) quickStatLabel1.innerText = 'Rasio Anggaran';
+      if (quickStatLabel2) quickStatLabel2.innerText = 'Surplus / Sisa Gaji';
+    } else {
+      if (formCardTitle) formCardTitle.innerHTML = '<i class="fa-sliders fa-solid"></i> Parameter Perhitungan';
+      if (formCardSubText) formCardSubText.innerText = 'Isi data di bawah untuk estimasi akurat';
+      if (chartCardTitle) chartCardTitle.innerHTML = '<i class="fa-chart-pie fa-solid"></i> Analisis & Distribusi';
+      if (tableCardTitle) tableCardTitle.innerHTML = '<i class="fa-table-list fa-solid"></i> Rincian Proyeksi / Pos Anggaran';
+      if (tableCardSubText) tableCardSubText.innerText = 'Tabel proyeksi otomatis berdasarkan variasi durasi & alokasi keuangan';
+      if (quickStatLabel1) quickStatLabel1.innerText = 'Total Konsumsi';
+      if (quickStatLabel2) quickStatLabel2.innerText = 'Total Biaya / Sisa';
+    }
+
     // Render Form Fields
     activeModule.renderForm(this.dynamicFormFields, () => this.calculateActiveModule());
 
