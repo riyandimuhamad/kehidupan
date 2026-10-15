@@ -234,6 +234,12 @@ export const BerasModule = {
       const dailyCostWithWaste = (res.total_biaya / (currentInputs.hari || 1));
       const monthlyBudgetCost = dailyCostWithWaste * 30;
 
+      if (monthlyBudgetCost <= 0 || (currentInputs.dewasa === 0 && currentInputs.anak === 0)) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Jumlah anggota keluarga masih 0 jiwa. Silakan isi jumlah Dewasa atau Anak terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('beras', {
         id: 'beras',
         name: 'Beras & Pangan Utama',
