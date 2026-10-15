@@ -61,7 +61,7 @@ class KehidupanApp {
   }
 
   checkInitialCleanState() {
-    const CLEAN_KEY = 'kehidupan_clean_init_v2';
+    const CLEAN_KEY = 'kehidupan_clean_init_v3';
     if (!localStorage.getItem(CLEAN_KEY)) {
       // List of storage keys that held dummy demo data in earlier sessions
       const keysToClean = [

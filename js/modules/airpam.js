@@ -102,7 +102,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-users fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="orang" class="form-control" min="1" max="100" value="${data.orang}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="orang" class="form-control" min="0" max="100" value="${data.orang}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
 
@@ -112,7 +112,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-glass-water-droplet fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="liter_per_hari" class="form-control" step="10" value="${data.liter_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="liter_per_hari" class="form-control" min="0" step="10" value="${data.liter_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
         </div>
@@ -138,7 +138,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="tarif_per_m3" class="form-control" step="250" value="${data.tarif_per_m3}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="tarif_per_m3" class="form-control" min="0" step="250" value="${data.tarif_per_m3}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
 
@@ -148,7 +148,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-receipt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="admin_fee" class="form-control" step="1000" value="${data.admin_fee}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="admin_fee" class="form-control" min="0" step="1000" value="${data.admin_fee}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-bolt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="biaya_listrik_pompa" class="form-control" step="5000" value="${data.biaya_listrik_pompa}" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="biaya_listrik_pompa" class="form-control" min="0" step="5000" value="${data.biaya_listrik_pompa}" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
 
@@ -183,7 +183,7 @@ export const AirPamModule = {
             </label>
             <div class="input-wrapper">
               <i class="fa-filter fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="perawatan_filter_bulan" class="form-control" step="5000" value="${data.perawatan_filter_bulan}" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+              <input type="number" id="perawatan_filter_bulan" class="form-control" min="0" step="5000" value="${data.perawatan_filter_bulan}" placeholder="0" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export const AirPamModule = {
           </label>
           <div class="input-wrapper">
             <i class="fa-screwdriver-wrench fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-            <input type="number" id="dana_servis_pompa" class="form-control" step="5000" value="${data.dana_servis_pompa}" placeholder="0 (Tabungan servis pompa/kuras toren)" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            <input type="number" id="dana_servis_pompa" class="form-control" min="0" step="5000" value="${data.dana_servis_pompa}" placeholder="0 (Tabungan servis pompa/kuras toren)" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
           </div>
         </div>
         <p style="font-size: 0.73rem; color: var(--text-muted); margin: 0;">*Sumur bor bebas biaya kubikasi air, pengeluaran utama meliputi listrik pompa, filter sedimen/karbon, dan servis pompa.</p>
@@ -208,7 +208,7 @@ export const AirPamModule = {
           </label>
           <div class="input-wrapper">
             <i class="fa-percent fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-            <input type="number" id="porsi_pdam_persen" class="form-control" min="10" max="90" step="5" value="${data.porsi_pdam_persen}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            <input type="number" id="porsi_pdam_persen" class="form-control" min="0" max="100" step="5" value="${data.porsi_pdam_persen}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
           </div>
           <p style="font-size: 0.73rem; color: var(--text-muted); margin-top: 4px;">*Contoh: 50% PDAM untuk mandi & memasak, 50% Sumur Bor untuk cuci baju, siram tanaman, dan kendaraan.</p>
         </div>
@@ -222,9 +222,10 @@ export const AirPamModule = {
           </label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-            <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            <input type="number" id="hari" class="form-control" min="0" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
           </div>
           <div class="form-options" style="margin-top: 8px; margin-bottom: 0;">
+            <button type="button" class="option-chip ${data.hari === 0 ? 'active' : ''}" data-target="hari" data-val="0">0 Hari</button>
             <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7">1 Minggu (7h)</button>
             <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30">1 Bulan (30h)</button>
             <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90">3 Bulan (90h)</button>
@@ -336,30 +337,44 @@ export const AirPamModule = {
   },
 
   getFormInputs: (container) => {
+    const parseVal = (sel, def = 0) => {
+      const el = container.querySelector(sel);
+      if (!el || el.value === '') return def;
+      const v = parseFloat(el.value);
+      return isNaN(v) ? def : v;
+    };
+
     return {
       sumber_air: container.querySelector('#sumber_air')?.value || 'pdam',
-      orang: parseInt(container.querySelector('#orang')?.value || 4, 10),
-      liter_per_hari: parseFloat(container.querySelector('#liter_per_hari')?.value || 150),
-      hari: parseInt(container.querySelector('#hari')?.value || 30, 10),
+      orang: parseVal('#orang', 0),
+      liter_per_hari: parseVal('#liter_per_hari', 0),
+      hari: parseVal('#hari', 0),
 
-      tarif_per_m3: parseFloat(container.querySelector('#tarif_per_m3')?.value || 4500),
-      admin_fee: parseFloat(container.querySelector('#admin_fee')?.value || 15000),
+      tarif_per_m3: parseVal('#tarif_per_m3', 0),
+      admin_fee: parseVal('#admin_fee', 0),
 
-      biaya_listrik_pompa: parseFloat(container.querySelector('#biaya_listrik_pompa')?.value || 35000),
-      perawatan_filter_bulan: parseFloat(container.querySelector('#perawatan_filter_bulan')?.value || 30000),
-      dana_servis_pompa: parseFloat(container.querySelector('#dana_servis_pompa')?.value || 20000),
+      biaya_listrik_pompa: parseVal('#biaya_listrik_pompa', 0),
+      perawatan_filter_bulan: parseVal('#perawatan_filter_bulan', 0),
+      dana_servis_pompa: parseVal('#dana_servis_pompa', 0),
 
-      porsi_pdam_persen: parseFloat(container.querySelector('#porsi_pdam_persen')?.value || 50)
+      porsi_pdam_persen: parseVal('#porsi_pdam_persen', 50)
     };
   },
 
   calculate: (inputs) => {
     const s = inputs || AirPamModule.getData();
 
-    const orang = s.orang || 4;
-    const liter_per_hari = s.liter_per_hari || 150;
-    const hari = s.hari || 30;
+    const orang = (s.orang !== undefined && s.orang !== null) ? Number(s.orang) : 0;
+    const liter_per_hari = (s.liter_per_hari !== undefined && s.liter_per_hari !== null) ? Number(s.liter_per_hari) : 0;
+    const hari = (s.hari !== undefined && s.hari !== null) ? Number(s.hari) : 0;
     const sumber = s.sumber_air || 'pdam';
+
+    const tarif_per_m3 = (s.tarif_per_m3 !== undefined && s.tarif_per_m3 !== null) ? Number(s.tarif_per_m3) : 0;
+    const admin_fee = (s.admin_fee !== undefined && s.admin_fee !== null) ? Number(s.admin_fee) : 0;
+    const biaya_listrik_pompa = (s.biaya_listrik_pompa !== undefined && s.biaya_listrik_pompa !== null) ? Number(s.biaya_listrik_pompa) : 0;
+    const perawatan_filter_bulan = (s.perawatan_filter_bulan !== undefined && s.perawatan_filter_bulan !== null) ? Number(s.perawatan_filter_bulan) : 0;
+    const dana_servis_pompa = (s.dana_servis_pompa !== undefined && s.dana_servis_pompa !== null) ? Number(s.dana_servis_pompa) : 0;
+    const porsi_pdam_persen = (s.porsi_pdam_persen !== undefined && s.porsi_pdam_persen !== null) ? Number(s.porsi_pdam_persen) : 50;
 
     const total_liter = orang * liter_per_hari * hari;
     const total_m3 = total_liter / 1000;
@@ -368,26 +383,30 @@ export const AirPamModule = {
     let biaya_pemakaian = 0;
     let biaya_tetap_perawatan = 0;
 
-    if (sumber === 'pdam') {
-      biaya_pemakaian = total_m3 * (s.tarif_per_m3 || 4500);
-      biaya_tetap_perawatan = (hari / 30) * (s.admin_fee || 15000);
+    if (hari <= 0 || (orang <= 0 && admin_fee <= 0 && biaya_listrik_pompa <= 0 && perawatan_filter_bulan <= 0 && dana_servis_pompa <= 0)) {
+      total_biaya = 0;
+      biaya_pemakaian = 0;
+      biaya_tetap_perawatan = 0;
+    } else if (sumber === 'pdam') {
+      biaya_pemakaian = total_m3 * tarif_per_m3;
+      biaya_tetap_perawatan = (hari / 30) * admin_fee;
       total_biaya = biaya_pemakaian + biaya_tetap_perawatan;
     } else if (sumber === 'sumur') {
-      biaya_pemakaian = (hari / 30) * (s.biaya_listrik_pompa || 35000); // Listrik pompa
-      biaya_tetap_perawatan = (hari / 30) * ((s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000));
+      biaya_pemakaian = (hari / 30) * biaya_listrik_pompa; // Listrik pompa
+      biaya_tetap_perawatan = (hari / 30) * (perawatan_filter_bulan + dana_servis_pompa);
       total_biaya = biaya_pemakaian + biaya_tetap_perawatan;
     } else if (sumber === 'kombinasi') {
-      const porsiPdam = (s.porsi_pdam_persen || 50) / 100;
+      const porsiPdam = porsi_pdam_persen / 100;
       const porsiSumur = 1 - porsiPdam;
 
       const m3Pdam = total_m3 * porsiPdam;
-      const costPdam = (m3Pdam * (s.tarif_per_m3 || 4500)) + ((hari / 30) * (s.admin_fee || 15000));
+      const costPdam = (m3Pdam * tarif_per_m3) + ((hari / 30) * admin_fee);
 
-      const costSumurListrik = ((hari / 30) * (s.biaya_listrik_pompa || 35000)) * porsiSumur;
-      const costSumurPerawatan = (hari / 30) * ((s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000));
+      const costSumurListrik = ((hari / 30) * biaya_listrik_pompa) * porsiSumur;
+      const costSumurPerawatan = (hari / 30) * (perawatan_filter_bulan + dana_servis_pompa);
 
-      biaya_pemakaian = (m3Pdam * (s.tarif_per_m3 || 4500)) + costSumurListrik;
-      biaya_tetap_perawatan = ((hari / 30) * (s.admin_fee || 15000)) + costSumurPerawatan;
+      biaya_pemakaian = (m3Pdam * tarif_per_m3) + costSumurListrik;
+      biaya_tetap_perawatan = ((hari / 30) * admin_fee) + costSumurPerawatan;
       total_biaya = costPdam + costSumurListrik + costSumurPerawatan;
     }
 
@@ -444,25 +463,29 @@ export const AirPamModule = {
       let pPerawatan = 0;
       let pTotal = 0;
 
-      if (sumber === 'pdam') {
-        pPemakaian = pM3 * (s.tarif_per_m3 || 4500);
-        pPerawatan = (p.d / 30) * (s.admin_fee || 15000);
+      if (p.d <= 0 || (orang <= 0 && admin_fee <= 0 && biaya_listrik_pompa <= 0 && perawatan_filter_bulan <= 0 && dana_servis_pompa <= 0)) {
+        pPemakaian = 0;
+        pPerawatan = 0;
+        pTotal = 0;
+      } else if (sumber === 'pdam') {
+        pPemakaian = pM3 * tarif_per_m3;
+        pPerawatan = (p.d / 30) * admin_fee;
         pTotal = pPemakaian + pPerawatan;
       } else if (sumber === 'sumur') {
-        pPemakaian = (p.d / 30) * (s.biaya_listrik_pompa || 35000);
-        pPerawatan = (p.d / 30) * ((s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000));
+        pPemakaian = (p.d / 30) * biaya_listrik_pompa;
+        pPerawatan = (p.d / 30) * (perawatan_filter_bulan + dana_servis_pompa);
         pTotal = pPemakaian + pPerawatan;
       } else if (sumber === 'kombinasi') {
-        const porsiPdam = (s.porsi_pdam_persen || 50) / 100;
+        const porsiPdam = porsi_pdam_persen / 100;
         const porsiSumur = 1 - porsiPdam;
 
         const m3Pdam = pM3 * porsiPdam;
-        const costPdam = (m3Pdam * (s.tarif_per_m3 || 4500)) + ((p.d / 30) * (s.admin_fee || 15000));
-        const costSumurListrik = ((p.d / 30) * (s.biaya_listrik_pompa || 35000)) * porsiSumur;
-        const costSumurPerawatan = (p.d / 30) * ((s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000));
+        const costPdam = (m3Pdam * tarif_per_m3) + ((p.d / 30) * admin_fee);
+        const costSumurListrik = ((p.d / 30) * biaya_listrik_pompa) * porsiSumur;
+        const costSumurPerawatan = (p.d / 30) * (perawatan_filter_bulan + dana_servis_pompa);
 
-        pPemakaian = (m3Pdam * (s.tarif_per_m3 || 4500)) + costSumurListrik;
-        pPerawatan = ((p.d / 30) * (s.admin_fee || 15000)) + costSumurPerawatan;
+        pPemakaian = (m3Pdam * tarif_per_m3) + costSumurListrik;
+        pPerawatan = ((p.d / 30) * admin_fee) + costSumurPerawatan;
         pTotal = costPdam + costSumurListrik + costSumurPerawatan;
       }
 
@@ -480,9 +503,9 @@ export const AirPamModule = {
 
     // Secondary Table: Proyeksi Jangka Panjang
     const m3_1bln = (orang * liter_per_hari * 30) / 1000;
-    const cost_1bln = (total_biaya / hari) * 30;
-    const pemakaian_1bln = (biaya_pemakaian / hari) * 30;
-    const perawatan_1bln = (biaya_tetap_perawatan / hari) * 30;
+    const cost_1bln = hari > 0 ? (total_biaya / hari) * 30 : (orang <= 0 && admin_fee <= 0 && biaya_listrik_pompa <= 0 ? 0 : total_biaya);
+    const pemakaian_1bln = hari > 0 ? (biaya_pemakaian / hari) * 30 : 0;
+    const perawatan_1bln = hari > 0 ? (biaya_tetap_perawatan / hari) * 30 : 0;
 
     const secondaryTable = {
       title: 'Proyeksi Pengeluaran Air Bersih Jangka Panjang',
@@ -526,15 +549,18 @@ export const AirPamModule = {
     const chartData = [7, 30, 90, 365].map(d => {
       const liter = orang * liter_per_hari * d;
       const m3 = liter / 1000;
+      if (orang <= 0 && admin_fee <= 0 && biaya_listrik_pompa <= 0 && perawatan_filter_bulan <= 0 && dana_servis_pompa <= 0) {
+        return 0;
+      }
       if (sumber === 'pdam') {
-        return (m3 * (s.tarif_per_m3 || 4500)) + ((d / 30) * (s.admin_fee || 15000));
+        return (m3 * tarif_per_m3) + ((d / 30) * admin_fee);
       } else if (sumber === 'sumur') {
-        return ((d / 30) * (s.biaya_listrik_pompa || 35000)) + ((d / 30) * ((s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000)));
+        return ((d / 30) * biaya_listrik_pompa) + ((d / 30) * (perawatan_filter_bulan + dana_servis_pompa));
       } else {
-        const porsiPdam = (s.porsi_pdam_persen || 50) / 100;
+        const porsiPdam = porsi_pdam_persen / 100;
         const porsiSumur = 1 - porsiPdam;
-        const costPdam = (m3 * porsiPdam * (s.tarif_per_m3 || 4500)) + ((d / 30) * (s.admin_fee || 15000));
-        const costSumur = ((d / 30) * ((s.biaya_listrik_pompa || 35000) + (s.perawatan_filter_bulan || 30000) + (s.dana_servis_pompa || 20000))) * porsiSumur;
+        const costPdam = (m3 * porsiPdam * tarif_per_m3) + ((d / 30) * admin_fee);
+        const costSumur = ((d / 30) * (biaya_listrik_pompa + perawatan_filter_bulan + dana_servis_pompa)) * porsiSumur;
         return costPdam + costSumur;
       }
     });

@@ -130,9 +130,10 @@ export const GasModule = {
           <label for="hari">Lama Waktu <span class="unit">(Hari)</span></label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon"></i>
-            <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}">
+            <input type="number" id="hari" class="form-control" min="0" max="365" value="${data.hari}">
           </div>
           <div class="form-options">
+            <button type="button" class="option-chip ${data.hari === 0 ? 'active' : ''}" data-target="hari" data-val="0">0 Hari</button>
             <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7">1 Minggu (7h)</button>
             <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30">1 Bulan (30h)</button>
             <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90">3 Bulan (90h)</button>
@@ -215,10 +216,10 @@ export const GasModule = {
   getFormInputs: (container) => {
     return {
       tipe_gas: container.querySelector('#tipe_gas')?.value || '3kg',
-      jumlah_anggota: Math.max(1, parseInt(container.querySelector('#jumlah_anggota')?.value || 3, 10)),
-      intensitas_masak: Math.max(0.5, parseFloat(container.querySelector('#intensitas_masak')?.value || 2.0)),
-      harga_per_tabung: Math.max(0, parseFloat(container.querySelector('#harga_per_tabung')?.value || 22000)),
-      hari: Math.max(1, parseInt(container.querySelector('#hari')?.value || 30, 10))
+      jumlah_anggota: Math.max(0, parseInt(container.querySelector('#jumlah_anggota')?.value || 0, 10)),
+      intensitas_masak: Math.max(0, parseFloat(container.querySelector('#intensitas_masak')?.value || 0)),
+      harga_per_tabung: Math.max(0, parseFloat(container.querySelector('#harga_per_tabung')?.value || 0)),
+      hari: Math.max(0, parseInt(container.querySelector('#hari')?.value || 0, 10))
     };
   },
 
@@ -248,12 +249,12 @@ export const GasModule = {
     // Akumulasi jam dan tabung untuk periode pilihan
     const totalJamPeriode = intensitas_masak * hari;
     const totalTabungPeriode = totalJamPeriode / jamKapasitasTabung;
-    const totalTabungPembelian = Math.ceil(totalTabungPeriode);
+    const totalTabungPembelian = totalJamPeriode > 0 ? Math.ceil(totalTabungPeriode) : 0;
     const totalBiayaPeriode = totalTabungPembelian * harga_per_tabung;
 
     // Estimasi standar bulanan 30 hari untuk Budget Store
     const totalJamBulanan = intensitas_masak * 30;
-    const totalTabungBulanan = Math.ceil(totalJamBulanan / jamKapasitasTabung);
+    const totalTabungBulanan = totalJamBulanan > 0 ? Math.ceil(totalJamBulanan / jamKapasitasTabung) : 0;
     const monthlyCost = totalTabungBulanan * harga_per_tabung;
 
     // Biaya pemakaian harian (est.)

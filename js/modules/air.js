@@ -62,9 +62,10 @@ export const AirModule = {
             <label for="dewasa">Dewasa (>12 Thn) <span class="unit">(Jiwa)</span></label>
             <div class="input-wrapper">
               <i class="fa-user fa-solid input-icon"></i>
-              <input type="number" id="dewasa" class="form-control" min="1" max="50" value="${data.dewasa}">
+              <input type="number" id="dewasa" class="form-control" min="0" max="50" value="${data.dewasa}">
             </div>
             <div class="form-options" style="margin-top: 6px;">
+              <button type="button" class="option-chip ${data.dewasa === 0 ? 'active' : ''}" data-target="dewasa" data-val="0">0</button>
               <button type="button" class="option-chip ${data.dewasa === 1 ? 'active' : ''}" data-target="dewasa" data-val="1">1</button>
               <button type="button" class="option-chip ${data.dewasa === 2 ? 'active' : ''}" data-target="dewasa" data-val="2">2</button>
               <button type="button" class="option-chip ${data.dewasa === 3 ? 'active' : ''}" data-target="dewasa" data-val="3">3</button>
@@ -192,9 +193,10 @@ export const AirModule = {
           <label for="hari">Lama Waktu <span class="unit">(Hari)</span></label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon"></i>
-            <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}">
+            <input type="number" id="hari" class="form-control" min="0" max="365" value="${data.hari}">
           </div>
           <div class="form-options">
+            <button type="button" class="option-chip ${data.hari === 0 ? 'active' : ''}" data-target="hari" data-val="0">0 Hari</button>
             <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7">1 Minggu (7h)</button>
             <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30">1 Bulan (30h)</button>
             <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90">3 Bulan (90h)</button>
@@ -262,15 +264,15 @@ export const AirModule = {
 
   getFormInputs: (container) => {
     return {
-      dewasa: Math.max(1, parseInt(container.querySelector('#dewasa')?.value || 1, 10)),
+      dewasa: Math.max(0, parseInt(container.querySelector('#dewasa')?.value || 0, 10)),
       anak: Math.max(0, parseInt(container.querySelector('#anak')?.value || 0, 10)),
-      liter_dewasa: Math.max(0.5, parseFloat(container.querySelector('#liter_dewasa')?.value || 2.0)),
+      liter_dewasa: Math.max(0, parseFloat(container.querySelector('#liter_dewasa')?.value || 0)),
       liter_anak: 1.1,
-      air_masak_liter: Math.max(0, parseFloat(container.querySelector('#air_masak_liter')?.value || 1.5)),
-      cadangan_percent: Math.max(0, parseFloat(container.querySelector('#cadangan_percent')?.value || 5)),
-      harga_per_galon: Math.max(0, parseFloat(container.querySelector('#harga_per_galon')?.value || 20000)),
+      air_masak_liter: Math.max(0, parseFloat(container.querySelector('#air_masak_liter')?.value || 0)),
+      cadangan_percent: Math.max(0, parseFloat(container.querySelector('#cadangan_percent')?.value || 0)),
+      harga_per_galon: Math.max(0, parseFloat(container.querySelector('#harga_per_galon')?.value || 0)),
       ongkir_per_galon: Math.max(0, parseFloat(container.querySelector('#ongkir_per_galon')?.value || 0)),
-      hari: Math.max(1, parseInt(container.querySelector('#hari')?.value || 30, 10))
+      hari: Math.max(0, parseInt(container.querySelector('#hari')?.value || 0, 10))
     };
   },
 
@@ -294,7 +296,7 @@ export const AirModule = {
     const biayaPerGalonTotal = harga_per_galon + ongkir_per_galon;
     const totalLiterPeriode = totalHarianBruto * hari;
     const totalGalonPeriode = totalLiterPeriode / 19;
-    const totalGalonPembelian = Math.ceil(totalGalonPeriode);
+    const totalGalonPembelian = totalLiterPeriode > 0 ? Math.ceil(totalGalonPeriode) : 0;
     const totalBiayaPeriode = totalGalonPembelian * biayaPerGalonTotal;
 
     // Siklus ketahanan 1 galon (berapa hari 1 galon bertahan)

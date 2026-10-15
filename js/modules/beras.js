@@ -174,9 +174,10 @@ export const BerasModule = {
           <label for="hari">Lama Kebutuhan <span class="unit">(Hari)</span></label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon"></i>
-            <input type="number" id="hari" class="form-control" min="1" max="3650" value="${data.hari}">
+            <input type="number" id="hari" class="form-control" min="0" max="3650" value="${data.hari}">
           </div>
           <div class="form-options">
+            <button type="button" class="option-chip ${data.hari === 0 ? 'active' : ''}" data-target="hari" data-val="0">0 Hari</button>
             <button type="button" class="option-chip ${data.hari === 7 ? 'active' : ''}" data-target="hari" data-val="7">1 Minggu (7h)</button>
             <button type="button" class="option-chip ${data.hari === 30 ? 'active' : ''}" data-target="hari" data-val="30">1 Bulan (30h)</button>
             <button type="button" class="option-chip ${data.hari === 90 ? 'active' : ''}" data-target="hari" data-val="90">3 Bulan (90h)</button>
@@ -256,13 +257,13 @@ export const BerasModule = {
 
   getFormInputs: (container) => {
     return {
-      dewasa: parseInt(container.querySelector('#dewasa')?.value || 2, 10),
+      dewasa: parseInt(container.querySelector('#dewasa')?.value || 0, 10),
       anak: parseInt(container.querySelector('#anak')?.value || 0, 10),
-      makan_per_hari: parseFloat(container.querySelector('#makan_per_hari')?.value || 3),
-      porsi_dewasa_gram: parseFloat(container.querySelector('#porsi_dewasa_gram')?.value || 115),
-      waste_percent: parseFloat(container.querySelector('#waste_percent')?.value || 5),
-      harga_per_kg: parseFloat(container.querySelector('#harga_per_kg')?.value || 15000),
-      hari: parseInt(container.querySelector('#hari')?.value || 30, 10)
+      makan_per_hari: parseFloat(container.querySelector('#makan_per_hari')?.value || 0),
+      porsi_dewasa_gram: parseFloat(container.querySelector('#porsi_dewasa_gram')?.value || 0),
+      waste_percent: parseFloat(container.querySelector('#waste_percent')?.value || 0),
+      harga_per_kg: parseFloat(container.querySelector('#harga_per_kg')?.value || 0),
+      hari: parseInt(container.querySelector('#hari')?.value || 0, 10)
     };
   },
 
