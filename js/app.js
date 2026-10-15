@@ -233,9 +233,9 @@ class KehidupanApp {
     });
 
     // Add Module Modal
-    this.addModuleModalBtn.addEventListener('click', () => this.openModal(this.addModuleModal));
-    this.closeAddModuleModal.addEventListener('click', () => this.closeModal(this.addModuleModal));
-    this.closeAddModuleModalBtn.addEventListener('click', () => this.closeModal(this.addModuleModal));
+    this.addModuleModalBtn?.addEventListener('click', () => this.openModal(this.addModuleModal));
+    this.closeAddModuleModal?.addEventListener('click', () => this.closeModal(this.addModuleModal));
+    this.closeAddModuleModalBtn?.addEventListener('click', () => this.closeModal(this.addModuleModal));
   }
 
   loadModule(moduleId) {
