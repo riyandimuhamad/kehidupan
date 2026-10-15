@@ -19,12 +19,12 @@ const STORAGE_KEY_SEWA = 'kehidupan_sewa_data';
 const DEFAULT_SEWA_DATA = {
   tipe_hunian: 'kontrakan',        // 'kos', 'kontrakan', 'kpr', 'sendiri'
   siklus_bayar: 'bulanan',          // 'bulanan', 'tahunan'
-  biaya_nominal: 1500000,          // Nominal sewa/KPR sesuai siklus (bisa 0)
+  biaya_nominal: 0,                // Nominal sewa/KPR sesuai siklus (bisa 0)
   jumlah_sharing: 0,               // 0 (Tanpa Patungan / Sendiri), 2 (50:50), 3, 4 orang
   deposit_awal: 0,                 // Uang jaminan / DP awal (satu kali)
-  iuran_ipl: 50000,                // Iuran sampah/keamanan/RT per bulan (bisa 0)
-  biaya_perawatan: 100000,         // Sinking fund perawatan/servis rumah per bulan (bisa 0)
-  kenaikan_tahunan_persen: 5       // 0%, 5%, 10% inflasi sewa
+  iuran_ipl: 0,                    // Iuran sampah/keamanan/RT per bulan (bisa 0)
+  biaya_perawatan: 0,              // Sinking fund perawatan/servis rumah per bulan (bisa 0)
+  kenaikan_tahunan_persen: 0       // 0%, 5%, 10% inflasi sewa
 };
 
 export const SewaModule = {

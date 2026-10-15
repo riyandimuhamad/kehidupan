@@ -15,8 +15,8 @@ import { BudgetStore } from '../services/budgetStore.js';
 const STORAGE_KEY_BERAS = 'kehidupan_beras_data';
 
 const DEFAULT_BERAS_DATA = {
-  dewasa: 2,
-  anak: 1,
+  dewasa: 0,
+  anak: 0,
   makan_per_hari: 3,
   porsi_dewasa_gram: 115, // Gram beras mentah per makan dewasa (~115g = ~250g nasi matang)
   waste_percent: 5,        // Cadangan nasi basi / susut / sisa (5%)
@@ -59,12 +59,12 @@ export const BerasModule = {
             <label for="dewasa">Dewasa (>12 Thn) <span class="unit">(Jiwa)</span></label>
             <div class="input-wrapper">
               <i class="fa-user fa-solid input-icon"></i>
-              <input type="number" id="dewasa" class="form-control" min="1" max="50" value="${data.dewasa}">
+              <input type="number" id="dewasa" class="form-control" min="0" max="50" value="${data.dewasa}">
             </div>
             <div class="form-options">
+              <button type="button" class="option-chip ${data.dewasa === 0 ? 'active' : ''}" data-target="dewasa" data-val="0">0</button>
               <button type="button" class="option-chip ${data.dewasa === 1 ? 'active' : ''}" data-target="dewasa" data-val="1">1</button>
               <button type="button" class="option-chip ${data.dewasa === 2 ? 'active' : ''}" data-target="dewasa" data-val="2">2</button>
-              <button type="button" class="option-chip ${data.dewasa === 3 ? 'active' : ''}" data-target="dewasa" data-val="3">3</button>
               <button type="button" class="option-chip ${data.dewasa === 4 ? 'active' : ''}" data-target="dewasa" data-val="4">4</button>
             </div>
           </div>
@@ -299,6 +299,9 @@ export const BerasModule = {
     // 4. Smart Karung Optimizer (Rekomendasi Paket Pembelian Karung)
     // Karung standar di Indonesia: 25 kg, 10 kg, 5 kg
     const getKarungCombination = (targetKg) => {
+      if (!targetKg || targetKg <= 0) {
+        return { teks: '0 Karung', totalKg: 0, sisaKg: 0, biaya: 0 };
+      }
       let remaining = targetKg;
       let k25 = 0;
       let k10 = 0;

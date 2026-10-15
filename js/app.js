@@ -54,9 +54,46 @@ class KehidupanApp {
     this.history = getFromStorage('history', []);
 
     this.initElements();
+    this.checkInitialCleanState();
     this.initTheme();
     this.bindEvents();
     this.loadModule(this.activeModuleId);
+  }
+
+  checkInitialCleanState() {
+    const CLEAN_KEY = 'kehidupan_clean_init_v2';
+    if (!localStorage.getItem(CLEAN_KEY)) {
+      // List of storage keys that held dummy demo data in earlier sessions
+      const keysToClean = [
+        'saved_budgets',
+        'monthly_income',
+        'extra_topups',
+        'buffer_percent',
+        'budget_monthly_history',
+        'kehidupan_beras_data',
+        'kehidupan_air_data',
+        'kehidupan_gas_data',
+        'kehidupan_sembako_data',
+        'kehidupan_harian_data',
+        'kehidupan_sewa_data',
+        'kehidupan_listrik_data',
+        'kehidupan_airpam_data',
+        'kehidupan_sandang_data',
+        'kehidupan_kesehatan_members',
+        'kehidupan_pendidikan_children',
+        'transport_settings',
+        'vehicles_list',
+        'internet_settings',
+        'hp_list',
+        'hiburan_data',
+        'investasi_data',
+        'pajak_data',
+        'zakat_data',
+        'history'
+      ];
+      keysToClean.forEach(k => localStorage.removeItem(k));
+      localStorage.setItem(CLEAN_KEY, 'true');
+    }
   }
 
   initElements() {

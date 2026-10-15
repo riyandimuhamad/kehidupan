@@ -17,12 +17,12 @@ export const HiburanModule = {
   subtitle: 'Hitung estimasi pengeluaran langganan digital, nongkrong di cafe, kuliner luar, liburan/weekend, dan kegiatan sosial.',
 
   defaults: {
-    streaming_digital: 150000, // Netflix, Spotify, Youtube, iCloud
-    nongkrong_per_minggu: 2,   // Kali per minggu
-    biaya_per_nongkrong: 50000,// Biaya ngopi/cafe per sesi
-    kuliner_luar_bulan: 300000,// Makan di resto keluarga/weekend
-    rekreasi_liburan_bulan: 400000, // Bioskop, jalan-jalan, wisata bulanan
-    sosial_hobi_bulan: 200000, // Kado, arisan, hobi, komunitas
+    streaming_digital: 0, // Netflix, Spotify, Youtube, iCloud
+    nongkrong_per_minggu: 0,   // Kali per minggu
+    biaya_per_nongkrong: 0,    // Biaya ngopi/cafe per sesi
+    kuliner_luar_bulan: 0,     // Makan di resto keluarga/weekend
+    rekreasi_liburan_bulan: 0, // Bioskop, jalan-jalan, wisata bulanan
+    sosial_hobi_bulan: 0,      // Kado, arisan, hobi, komunitas
     hari: 30
   },
 

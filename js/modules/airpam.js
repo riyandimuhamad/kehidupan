@@ -15,18 +15,18 @@ const STORAGE_KEY_AIRPAM = 'kehidupan_airpam_data';
 
 const DEFAULT_AIRPAM_DATA = {
   sumber_air: 'pdam', // 'pdam', 'sumur', 'kombinasi'
-  orang: 4,
+  orang: 0,
   liter_per_hari: 150,
   hari: 30,
 
   // PDAM Specific
   tarif_per_m3: 4500,
-  admin_fee: 15000,
+  admin_fee: 0,
 
   // Sumur Bor Specific
-  biaya_listrik_pompa: 35000, // Biaya listrik operasional pompa air / bulan
-  perawatan_filter_bulan: 30000, // Penggantian cartridge filter air, kuras toren berkala
-  dana_servis_pompa: 20000, // Dana cadangan pemeliharaan pompa & pipa
+  biaya_listrik_pompa: 0, // Biaya listrik operasional pompa air / bulan
+  perawatan_filter_bulan: 0, // Penggantian cartridge filter air, kuras toren berkala
+  dana_servis_pompa: 0, // Dana cadangan pemeliharaan pompa & pipa
 
   // Kombinasi Specific
   porsi_pdam_persen: 50 // 50% PDAM, 50% Sumur Bor

@@ -25,25 +25,25 @@ export const ZakatModule = {
   defaults: {
     // 1. Zakat Penghasilan
     enable_penghasilan: true,
-    penghasilan_pokok_bulan: 8500000,
+    penghasilan_pokok_bulan: 0,
     pendapatan_lain_bulan: 0,
     harga_emas_per_gram: 1400000, // Harga emas acuan BAZNAS (Rp 1.400.000/gram)
     nisab_bulanan_override: 7640144, // SK BAZNAS terbaru: Rp 7.640.144/bulan
 
     // 2. Zakat Maal (Tabungan & Emas Simpanan Haul 1 Tahun)
     enable_maal: true,
-    tabungan_deposito: 25000000,
+    tabungan_deposito: 0,
     emas_simpanan_gram: 0,
     utang_jatuh_tempo: 0,
 
     // 3. Zakat Fitrah (Ramadan Tahunan)
     enable_fitrah: true,
-    jumlah_jiwa: 3,
+    jumlah_jiwa: 0,
     tarif_fitrah_per_jiwa: 50000, // Standar SK BAZNAS per jiwa (Rp 45k - Rp 55k)
 
     // 4. Infak & Sedekah Rutin
     enable_infak: true,
-    infak_sedekah_bulan: 100000,
+    infak_sedekah_bulan: 0,
 
     hari: 30
   },

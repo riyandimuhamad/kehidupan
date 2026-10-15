@@ -15,47 +15,7 @@ import { BudgetStore } from '../services/budgetStore.js';
 
 const STORAGE_KEY_MEMBERS = 'kehidupan_kesehatan_members';
 
-const DEFAULT_MEMBERS = [
-  {
-    id: 'member_1',
-    nama: 'Ayah',
-    peran: 'ayah',
-    usia: 42,
-    kondisi: 'Sehat & Aktif Bekerja',
-    bpjs_tipe: 'kelas2',
-    bpjs_nominal: 100000,
-    asuransi_tambahan: 0,
-    vitamin_suplemen: 75000,
-    obat_rutin: 0,
-    checkup_rawat_jalan: 50000
-  },
-  {
-    id: 'member_2',
-    nama: 'Ibu',
-    peran: 'ibu',
-    usia: 39,
-    kondisi: 'Sehat',
-    bpjs_tipe: 'kelas2',
-    bpjs_nominal: 100000,
-    asuransi_tambahan: 0,
-    vitamin_suplemen: 85000,
-    obat_rutin: 0,
-    checkup_rawat_jalan: 50000
-  },
-  {
-    id: 'member_3',
-    nama: 'Anak (Sekolah)',
-    peran: 'anak',
-    usia: 14,
-    kondisi: 'Masa Pertumbuhan',
-    bpjs_tipe: 'kelas2',
-    bpjs_nominal: 100000,
-    asuransi_tambahan: 0,
-    vitamin_suplemen: 50000,
-    obat_rutin: 0,
-    checkup_rawat_jalan: 35000
-  }
-];
+const DEFAULT_MEMBERS = [];
 
 export const KesehatanModule = {
   id: 'kesehatan',
@@ -281,7 +241,13 @@ export const KesehatanModule = {
 
       <!-- Container List Kartu Anggota -->
       <div id="membersListContainer">
-        ${members.map((m, idx) => renderMemberFormItem(m, idx)).join('')}
+        ${members.length > 0 ? members.map((m, idx) => renderMemberFormItem(m, idx)).join('') : `
+          <div style="text-align: center; padding: 24px 12px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px dashed var(--border-color); margin-bottom: 16px;">
+            <i class="fa-user-plus fa-solid" style="font-size: 1.8rem; color: var(--text-muted); margin-bottom: 8px; display: inline-block;"></i>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 4px 0;">Belum ada anggota keluarga yang didaftarkan.</p>
+            <p style="font-size: 0.74rem; color: var(--text-muted); margin: 0;">Klik tombol di bawah untuk menambahkan profil anggota pertama.</p>
+          </div>
+        `}
       </div>
 
       <!-- Tombol Tambah Anggota Baru -->
@@ -400,10 +366,6 @@ export const KesehatanModule = {
         if (delBtn) {
           delBtn.addEventListener('click', () => {
             const currentMembers = KesehatanModule.getMembers();
-            if (currentMembers.length <= 1) {
-              alert('Minimal harus ada 1 anggota keluarga dalam daftar.');
-              return;
-            }
             const updated = currentMembers.filter(m => m.id !== mid);
             KesehatanModule.saveMembers(updated);
             KesehatanModule.renderForm(container, onInputChange);

@@ -15,10 +15,10 @@ const STORAGE_KEY_HARIAN = 'kehidupan_harian_data';
 
 const DEFAULT_HARIAN_DATA = {
   hari_dalam_bulan: 30,           // 22 (Hari Kerja), 26, 30 (Full Bulan)
-  makan_siang: 20000,             // Makan siang / sarapan kantor/luar
-  jajan_kopi: 10000,              // Kopi, es teh, camilan, jajan santai
-  dana_taktis: 5000,              // Biaya tak terduga harian (toilet, fotokopi, tips, admin)
-  tabungan_harian: 5000           // Tabungan celengan harian (uang disimpan ke celengan)
+  makan_siang: 0,                 // Makan siang / sarapan kantor/luar
+  jajan_kopi: 0,                  // Kopi, es teh, camilan, jajan santai
+  dana_taktis: 0,                 // Biaya tak terduga harian (toilet, fotokopi, tips, admin)
+  tabungan_harian: 0              // Tabungan celengan harian (uang disimpan ke celengan)
 };
 
 export const HarianModule = {

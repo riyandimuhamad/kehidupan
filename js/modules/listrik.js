@@ -52,11 +52,11 @@ export const ListrikModule = {
   defaults: {
     sistem_listrik: 'prabayar', // 'prabayar' | 'pascabayar'
     daya_va: '1300',
-    kwh_per_hari: 10,
+    kwh_per_hari: 0,
     tarif_per_kwh: 1444.70,
     ppj_persen: 5, // Pajak Penerangan Jalan (3% - 10%, rata-rata 5%)
     admin_per_transaksi: 2500, // Biaya admin bank/top-up token atau loket tagihan
-    nominal_token_pilihan: 200000, // Pilihan nominal token favorit (50k, 100k, 200k, 500k, 1jt)
+    nominal_token_pilihan: 0, // Pilihan nominal token favorit (50k, 100k, 200k, 500k, 1jt)
     hari: 30,
 
     // Parameter PLTS Surya (Energi Terbarukan)

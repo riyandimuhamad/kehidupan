@@ -13,36 +13,7 @@ import { BudgetStore } from '../services/budgetStore.js';
 
 const STORAGE_KEY_CHILDREN = 'kehidupan_pendidikan_children';
 
-const DEFAULT_CHILDREN = [
-  {
-    id: 'child_1',
-    nama: 'Kakak (SMA)',
-    usia: 16,
-    jenjang: 'sma',
-    kelas: 'Kelas 12 (3 SMA)',
-    spp_bulan: 400000,
-    uang_saku_hari: 25000,
-    hari_aktif: 22,
-    transport_bulan: 200000,
-    tugas_kelompok_bulan: 150000,
-    les_kursus_bulan: 300000,
-    kebutuhan_lain: 0
-  },
-  {
-    id: 'child_2',
-    nama: 'Adik (SMP)',
-    usia: 13,
-    jenjang: 'smp',
-    kelas: 'Kelas 7 (1 SMP)',
-    spp_bulan: 300000,
-    uang_saku_hari: 15000,
-    hari_aktif: 22,
-    transport_bulan: 150000,
-    tugas_kelompok_bulan: 100000,
-    les_kursus_bulan: 200000,
-    kebutuhan_lain: 0
-  }
-];
+const DEFAULT_CHILDREN = [];
 
 export const PendidikanModule = {
   id: 'pendidikan',
@@ -272,7 +243,13 @@ export const PendidikanModule = {
 
       <!-- Container List Kartu Anak -->
       <div id="childrenListContainer">
-        ${children.map((c, idx) => renderChildFormItem(c, idx)).join('')}
+        ${children.length > 0 ? children.map((c, idx) => renderChildFormItem(c, idx)).join('') : `
+          <div style="text-align: center; padding: 24px 12px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px dashed var(--border-color); margin-bottom: 16px;">
+            <i class="fa-graduation-cap fa-solid" style="font-size: 1.8rem; color: var(--text-muted); margin-bottom: 8px; display: inline-block;"></i>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 4px 0;">Belum ada profil anak yang didaftarkan.</p>
+            <p style="font-size: 0.74rem; color: var(--text-muted); margin: 0;">Klik tombol di bawah untuk menambahkan anak pertama.</p>
+          </div>
+        `}
       </div>
 
       <!-- Tombol Tambah Anak Baru -->
@@ -382,10 +359,6 @@ export const PendidikanModule = {
         if (delBtn) {
           delBtn.addEventListener('click', () => {
             const currentChildren = PendidikanModule.getChildren();
-            if (currentChildren.length <= 1) {
-              alert('Minimal harus ada 1 anak dalam daftar.');
-              return;
-            }
             const updated = currentChildren.filter(c => c.id !== cid);
             PendidikanModule.saveChildren(updated);
             PendidikanModule.renderForm(container, onInputChange);

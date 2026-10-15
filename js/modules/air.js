@@ -16,11 +16,11 @@ import { BudgetStore } from '../services/budgetStore.js';
 const STORAGE_KEY_AIR = 'kehidupan_air_data';
 
 const DEFAULT_AIR_DATA = {
-  dewasa: 2,
-  anak: 1,
+  dewasa: 0,
+  anak: 0,
   liter_dewasa: 2.0,      // Liter air minum per orang dewasa per hari
   liter_anak: 1.1,        // Liter air minum per anak per hari
-  air_masak_liter: 1.5,   // Liter air galon untuk masak nasi & dapur per hari
+  air_masak_liter: 0,     // Liter air galon untuk masak nasi & dapur per hari
   cadangan_percent: 5,    // Cadangan tumpah & sisa dasar dispenser (5%)
   harga_per_galon: 20000, // Harga refill per galon (19 Liter)
   ongkir_per_galon: 0,    // Ongkos delivery antar abang galon per galon

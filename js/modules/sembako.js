@@ -20,19 +20,19 @@ import { BudgetStore } from '../services/budgetStore.js';
 const STORAGE_KEY_SEMBAKO = 'kehidupan_sembako_data';
 
 const DEFAULT_SEMBAKO_DATA = {
-  jumlah_anggota: 4,
-  minyak_liter: 4,
+  jumlah_anggota: 0,
+  minyak_liter: 0,
   harga_minyak: 17500,
-  gula_kg: 2,
+  gula_kg: 0,
   harga_gula: 18000,
-  kopi_teh_susu: 50000,
-  telur_kg: 3,
+  kopi_teh_susu: 0,
+  telur_kg: 0,
   harga_telur: 28500,
-  mie_instan: 45000,
-  bumbu_dapur: 85000,
-  budget_lauk: 600000,
+  mie_instan: 0,
+  bumbu_dapur: 0,
+  budget_lauk: 0,
   profil_protein: 'seimbang',     // 'seimbang', 'hemat_nabati', 'tinggi_hewani'
-  kebersihan_dapur: 75000,        // Cuci piring, spons, pembersih lantai & tisu dapur
+  kebersihan_dapur: 0,            // Cuci piring, spons, pembersih lantai & tisu dapur
   waste_factor: 5,                // 0, 5, 10 persen
   kondisi_musim: 0                // 0 (Normal), 15 (Peak Season +15%), 25 (Paceklik/Inflasi +25%)
 };

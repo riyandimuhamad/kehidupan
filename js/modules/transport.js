@@ -11,44 +11,13 @@ const STORAGE_KEY_VEHICLES = 'vehicles_list';
 
 const DEFAULT_SETTINGS = {
   enable_pribadi: true,
-  enable_umum: true,
-  biaya_umum_harian: 25000,
-  hari_umum_per_bulan: 22,
+  enable_umum: false,
+  biaya_umum_harian: 0,
+  hari_umum_per_bulan: 0,
   langganan_umum_per_bulan: 0
 };
 
-const DEFAULT_VEHICLES = [
-  {
-    id: 'v_1710000000001',
-    nama: 'Mobil Honda Brio',
-    jenis: 'mobil',
-    jenis_bbm: 'Pertamax',
-    harga_bbm: 12950,
-    jarak_km_per_hari: 25,
-    efisiensi_km_per_liter: 14,
-    pajak_tahunan: 2400000,
-    pajak_5_tahunan: 1200000,
-    biaya_servis_oli_bulan: 250000,
-    asuransi_tahunan: 2500000, // TLO / All Risk Rp 2,5 jt/tahun
-    parkir_tol_bulan: 200000,  // Parkir kantor & e-Toll bulanan
-    hari_per_bulan: 30
-  },
-  {
-    id: 'v_1710000000002',
-    nama: 'Motor Honda Vario 160',
-    jenis: 'motor',
-    jenis_bbm: 'Pertalite',
-    harga_bbm: 10000,
-    jarak_km_per_hari: 20,
-    efisiensi_km_per_liter: 42,
-    pajak_tahunan: 350000,
-    pajak_5_tahunan: 500000,
-    biaya_servis_oli_bulan: 80000,
-    asuransi_tahunan: 0,       // Motor non-asuransi (SWDKLLJ STNK)
-    parkir_tol_bulan: 50000,   // Parkir harian / minimarket
-    hari_per_bulan: 30
-  }
-];
+const DEFAULT_VEHICLES = [];
 
 export const TransportModule = {
   id: 'transport',
@@ -230,7 +199,13 @@ export const TransportModule = {
         </h4>
 
         <div id="vehiclesListContainer">
-          ${vehicles.map((v, idx) => renderVehicleFormItem(v, idx)).join('')}
+          ${vehicles.length > 0 ? vehicles.map((v, idx) => renderVehicleFormItem(v, idx)).join('') : `
+            <div style="text-align: center; padding: 20px 12px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px dashed var(--border-color); margin-bottom: 14px;">
+              <i class="fa-car fa-solid" style="font-size: 1.6rem; color: var(--text-muted); margin-bottom: 6px; display: inline-block;"></i>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 4px 0;">Belum ada kendaraan pribadi yang didaftarkan.</p>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">Klik tombol di bawah untuk menambahkan motor atau mobil.</p>
+            </div>
+          `}
         </div>
 
         <button type="button" id="addVehicleBtn" class="outline-btn" style="width: 100%; justify-content: center; padding: 8px; font-size: 0.82rem;">
@@ -419,10 +394,6 @@ export const TransportModule = {
       if (delBtn) {
         const vid = delBtn.getAttribute('data-vid');
         const currentV = TransportModule.getVehicles();
-        if (currentV.length <= 1) {
-          alert('Minimal harus ada 1 kendaraan di daftar kendaraan pribadi.');
-          return;
-        }
         const updated = currentV.filter(v => v.id !== vid);
         TransportModule.saveVehicles(updated);
         TransportModule.renderForm(container, onInputChange);

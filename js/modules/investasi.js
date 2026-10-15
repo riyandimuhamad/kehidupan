@@ -17,13 +17,13 @@ export const InvestasiModule = {
   subtitle: 'Rencanakan target dana darurat (3-6x pengeluaran bulanan), tabungan rencana, dan simulasi investasi rutin masa depan.',
 
   defaults: {
-    pengeluaran_bulanan_dasar: 4500000, // Basis pengeluaran sebulan
-    multiplier_darurat: 6,              // Target 3, 6, 9, 12 bulan
-    darurat_terkumpul: 5000000,         // Saldo darurat saat ini
-    alokasi_darurat_bulan: 500000,      // Sisihan bulanan menuju target
-    tabungan_rencana_bulan: 300000,     // Tabungan bank/tujuan jangka pendek
-    investasi_rutin_bulan: 500000,      // Reksa dana, SBN, emas, saham
-    estimasi_return_persen: 7,          // 7% p.a rata-rata reksa dana/SBN
+    pengeluaran_bulanan_dasar: 0, // Basis pengeluaran sebulan
+    multiplier_darurat: 6,         // Target 3, 6, 9, 12 bulan
+    darurat_terkumpul: 0,         // Saldo darurat saat ini
+    alokasi_darurat_bulan: 0,     // Sisihan bulanan menuju target
+    tabungan_rencana_bulan: 0,    // Tabungan bank/tujuan jangka pendek
+    investasi_rutin_bulan: 0,     // Reksa dana, SBN, emas, saham
+    estimasi_return_persen: 7,     // 7% p.a rata-rata reksa dana/SBN
     hari: 30
   },
 

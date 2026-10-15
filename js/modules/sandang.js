@@ -17,31 +17,31 @@ import { BudgetStore } from '../services/budgetStore.js';
 const STORAGE_KEY_SANDANG = 'kehidupan_sandang_data';
 
 const DEFAULT_SANDANG_DATA = {
-  jumlah_jiwa: 3,
+  jumlah_jiwa: 0,
   gaya_hidup: 'standar', // 'hemat', 'standar', 'urban'
   
   // 1. Fashion & Alas Kaki
-  pakaian_harian: 200000,
-  sepatu_sandal_tas: 100000,
-  busana_hari_raya: 75000, // Amortisasi tabungan baju hari raya/kondangan
+  pakaian_harian: 0,
+  sepatu_sandal_tas: 0,
+  busana_hari_raya: 0, // Amortisasi tabungan baju hari raya/kondangan
   
   // 2. Laundry & Perawatan Pakaian
   tipe_laundry: 'kombinasi', // 'mandiri', 'kombinasi', 'kiloan'
-  deterjen_softener: 60000,
-  jasa_laundry: 120000,
-  cuci_sepatu_dryclean: 40000,
+  deterjen_softener: 0,
+  jasa_laundry: 0,
+  cuci_sepatu_dryclean: 0,
   
   // 3. Kebersihan Tubuh (Hygiene & Toiletries)
-  toiletries_mandi: 85000, // Sabun, sampo, pasta gigi, sikat gigi, deodorant
-  sanitasi_pembalut: 40000, // Pembalut wanita & sanitasi
+  toiletries_mandi: 0, // Sabun, sampo, pasta gigi, sikat gigi, deodorant
+  sanitasi_pembalut: 0, // Pembalut wanita & sanitasi
   
   // 4. Skincare & Kosmetik
-  skincare_sunscreen: 120000, // Sunscreen, facial wash, moisturizer, serum
-  kosmetik_makeup: 60000, // Bedak, lipstik, cushion
+  skincare_sunscreen: 0, // Sunscreen, facial wash, moisturizer, serum
+  kosmetik_makeup: 0, // Bedak, lipstik, cushion
   
   // 5. Grooming & Perawatan Rambut
-  potong_rambut_salon: 60000, // Barbershop / salon
-  parfum_styling: 45000 // Parfum/cologne, pomade, shaving
+  potong_rambut_salon: 0, // Barbershop / salon
+  parfum_styling: 0 // Parfum/cologne, pomade, shaving
 };
 
 export const SandangModule = {

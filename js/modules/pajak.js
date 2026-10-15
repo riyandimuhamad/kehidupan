@@ -21,11 +21,11 @@ export const PajakModule = {
   subtitle: 'Hitung estimasi PBB Properti, iuran lingkungan, dan biaya administrasi tahunan, lalu alokasikan otomatis sebagai cadangan bulanan (Sinking Fund).',
 
   defaults: {
-    pbb_rumah_tahunan: 500000,    // Pajak Bumi & Bangunan (PBB) rumah/tanah
-    iuran_lingkungan_bulan: 100000,// Iuran RT/RW/Satpam/Sampah
-    admin_kartu_tahunan: 240000,  // Admin kartu bank / keanggotaan tahunan
-    legalitas_tahunan: 200000,    // Perpanjangan dokumen (Paspor, SIM, legalitas, meterai)
-    pph_tahunan: 0,               // Pajak Penghasilan SPT / Kurang Bayar (opsional)
+    pbb_rumah_tahunan: 0,    // Pajak Bumi & Bangunan (PBB) rumah/tanah
+    iuran_lingkungan_bulan: 0,// Iuran RT/RW/Satpam/Sampah
+    admin_kartu_tahunan: 0,  // Admin kartu bank / keanggotaan tahunan
+    legalitas_tahunan: 0,    // Perpanjangan dokumen (Paspor, SIM, legalitas, meterai)
+    pph_tahunan: 0,          // Pajak Penghasilan SPT / Kurang Bayar (opsional)
     hari: 30
   },
 

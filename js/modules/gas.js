@@ -16,8 +16,8 @@ const STORAGE_KEY_GAS = 'kehidupan_gas_data';
 
 const DEFAULT_GAS_DATA = {
   tipe_gas: '3kg',
-  jumlah_anggota: 3,
-  intensitas_masak: 2.0,   // Jam nyala kompor per hari
+  jumlah_anggota: 0,
+  intensitas_masak: 0,   // Jam nyala kompor per hari
   harga_per_tabung: 22000, // Harga refill
   hari: 30                 // Periode perhitungan (hari)
 };

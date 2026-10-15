@@ -10,26 +10,13 @@ const STORAGE_KEY_INTERNET_SETTINGS = 'internet_settings';
 const STORAGE_KEY_HP_LIST = 'hp_list';
 
 const DEFAULT_SETTINGS = {
-  enable_wifi: true,
-  enable_hp: true,
+  enable_wifi: false,
+  enable_hp: false,
   provider_wifi: 'IndiHome / Biznet',
-  biaya_wifi: 275000
+  biaya_wifi: 0
 };
 
-const DEFAULT_HP_LIST = [
-  {
-    id: 'hp_1710000000001',
-    nama: 'HP Utama / Ayah',
-    provider: 'Telkomsel / by.U',
-    nominal: 100000
-  },
-  {
-    id: 'hp_1710000000002',
-    nama: 'HP Ibu',
-    provider: 'Indosat IM3 / Tri (3)',
-    nominal: 75000
-  }
-];
+const DEFAULT_HP_LIST = [];
 
 export const InternetModule = {
   id: 'internet',
@@ -142,7 +129,13 @@ export const InternetModule = {
         </h4>
 
         <div id="hpListContainer">
-          ${hpList.map((hp, idx) => renderHpItem(hp, idx)).join('')}
+          ${hpList.length > 0 ? hpList.map((hp, idx) => renderHpItem(hp, idx)).join('') : `
+            <div style="text-align: center; padding: 18px 12px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px dashed var(--border-color); margin-bottom: 14px;">
+              <i class="fa-mobile-screen-button fa-solid" style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 6px; display: inline-block;"></i>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 4px 0;">Belum ada nomor HP yang didaftarkan.</p>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">Klik tombol di bawah untuk menambahkan nomor pertama.</p>
+            </div>
+          `}
         </div>
 
         <button type="button" id="addHpBtn" class="outline-btn" style="width: 100%; justify-content: center; padding: 8px; font-size: 0.82rem;">
@@ -220,10 +213,6 @@ export const InternetModule = {
       if (delBtn) {
         const hpid = delBtn.getAttribute('data-hpid');
         const currentHp = InternetModule.getHpList();
-        if (currentHp.length <= 1) {
-          alert('Minimal harus ada 1 nomor HP di dalam daftar paket data.');
-          return;
-        }
         const updated = currentHp.filter(h => h.id !== hpid);
         InternetModule.saveHpList(updated);
         InternetModule.renderForm(container, onInputChange);
