@@ -246,7 +246,7 @@ export const PajakModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🏡 PBB Properti (Rumah & Tanah)</strong>`,
+          `<strong>PBB Properti (Rumah & Tanah)</strong>`,
           `Tahunan`,
           formatRupiah(totalPbbTahun),
           formatRupiah(sinkingPbbBulan),
@@ -256,7 +256,7 @@ export const PajakModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🏘️ Iuran Warga (RT/RW & Kebersihan)</strong>`,
+          `<strong>Iuran Warga (RT/RW & Kebersihan)</strong>`,
           `Bulanan`,
           formatRupiah(totalIuranLingkunganTahun),
           formatRupiah(sinkingIuranBulan),
@@ -266,7 +266,7 @@ export const PajakModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>💳 Biaya Admin Bank & Kartu</strong>`,
+          `<strong>Biaya Admin Bank & Kartu</strong>`,
           `Tahunan`,
           formatRupiah(totalAdminBankTahun),
           formatRupiah(sinkingAdminBulan),
@@ -276,7 +276,7 @@ export const PajakModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>📑 Dokumen Legalitas & Paspor</strong>`,
+          `<strong>Dokumen Legalitas & Paspor</strong>`,
           `Tahunan`,
           formatRupiah(totalLegalitasTahun),
           formatRupiah(sinkingLegalitasBulan),
@@ -289,7 +289,7 @@ export const PajakModule = {
       tableRows.push({
         isCurrent: false,
         cells: [
-          `<strong>📋 PPh / SPT Tahunan</strong>`,
+          `<strong>PPh / SPT Tahunan</strong>`,
           `Tahunan`,
           formatRupiah(totalPphTahun),
           formatRupiah(sinkingPphBulan),
