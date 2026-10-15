@@ -463,7 +463,18 @@ export const ListrikModule = {
         name: `Listrik PLN (${sistemLabel}${pltsNote})`,
         amount: monthlyRes.total_biaya,
         category: 'Pokok',
-        source: `Kalkulator Listrik (${dayaLabel})`
+        source: `Kalkulator Listrik (${dayaLabel})`,
+        details: {
+          sistem: currentInputs.sistem_listrik,
+          daya: currentInputs.daya_va,
+          dayaLabel,
+          kwhBulanan: monthlyRes.total_kwh_bersih || monthlyRes.total_kwh,
+          tarifPerKwh: monthlyRes.tarif_per_kwh,
+          tagihanPLN: monthlyRes.biaya_pln_bersih || monthlyRes.biaya_pln,
+          pltsAktif: currentInputs.enable_plts,
+          pltsBiaya: currentInputs.enable_plts ? (monthlyRes.plts_amortisasi_bulanan + monthlyRes.plts_opex_bulanan) : 0,
+          timestamp: new Date().toISOString()
+        }
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyRes.total_biaya)} telah disinkronkan ke Dashboard Keuangan.`;

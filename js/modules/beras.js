@@ -238,7 +238,15 @@ export const BerasModule = {
         name: 'Beras & Pangan Utama',
         amount: monthlyBudgetCost,
         category: 'Pokok',
-        source: `Kalkulator Beras (${currentInputs.dewasa} Dewasa, ${currentInputs.anak} Anak, Waste ${currentInputs.waste_percent}%)`
+        source: `Kalkulator Beras (${currentInputs.dewasa} Dewasa, ${currentInputs.anak} Anak, Waste ${currentInputs.waste_percent}%)`,
+        details: {
+          dewasa: currentInputs.dewasa,
+          anak: currentInputs.anak,
+          kebutuhanKgBulanan: (res.total_kg / (currentInputs.hari || 1)) * 30,
+          hargaPerKg: currentInputs.harga_per_kg,
+          wastePercent: currentInputs.waste_percent,
+          timestamp: new Date().toISOString()
+        }
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyBudgetCost)} telah disinkronkan ke Dashboard Keuangan.`;

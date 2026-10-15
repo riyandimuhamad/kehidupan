@@ -21,17 +21,24 @@ export const SpreadsheetService = {
     const payload = {
       timestamp: new Date().toISOString(),
       formattedDate: formatDate(new Date()),
+      periode: summary.selectedPeriod,
+      periodeLabel: summary.periodLabel,
       pemasukanBulanan: summary.income,
       totalPengeluaran: summary.totalPengeluaranTotal,
       totalKebutuhanPokok: summary.totalPokok,
       totalTabungan: summary.totalTabungan,
       sisaUang: summary.sisaUang,
+      isSurplus: summary.isSurplus,
+      bufferSafety: summary.danaBufferSafety,
+      dampakInflasi: summary.dampakInflasi,
       detailBudgets: summary.budgetsList.map(b => ({
         id: b.id,
         nama: b.name,
         kategori: b.category,
         jumlahBiaya: b.amount,
-        sumber: b.source || 'Kehidupan App'
+        sumber: b.source || 'Kehidupan App',
+        rincianTeks: b.details ? JSON.stringify(b.details) : '-',
+        terakhirDiupdate: b.updatedAt || new Date().toISOString()
       }))
     };
 
@@ -48,7 +55,7 @@ export const SpreadsheetService = {
 
       return {
         success: true,
-        message: 'Berhasil mengirimkan data estimasi anggaran ke Google Sheets!',
+        message: `Berhasil mengirimkan data periode ${summary.periodLabel} ke Google Sheets!`,
         timestamp: formatDate(new Date())
       };
     } catch (error) {
@@ -65,67 +72,86 @@ export const SpreadsheetService = {
     return `// =======================================================
 // SKRIP GOOGLE APPS SCRIPT DATABASE - KEHIDUPAN SUITE
 // Pasang di Google Sheets: Menu Extensions -> Apps Script
+// Deploy as Web App -> Execute as: Me -> Who has access: Anyone
 // =======================================================
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    // Sheet 1: Ringkasan Cashflow Bulanan
+    // SHEET 1: Ringkasan Cashflow Bulanan
     var sheetSummary = ss.getSheetByName("Ringkasan Cashflow") || ss.getActiveSheet();
     sheetSummary.setName("Ringkasan Cashflow");
     
     if (sheetSummary.getLastRow() === 0) {
-      sheetSummary.appendRow(["Tanggal Sync", "Pemasukan", "Total Pengeluaran", "Total Pokok", "Total Tabungan", "Sisa Uang Net", "Rincian Pos Ringkas"]);
-      sheetSummary.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#6366f1").setFontColor("#ffffff");
+      sheetSummary.appendRow([
+        "Waktu Simpan (Timestamp)", 
+        "Periode", 
+        "Pemasukan Bulanan", 
+        "Total Pengeluaran", 
+        "Total Pokok", 
+        "Total Tabungan", 
+        "Buffer Cadangan", 
+        "Sisa Uang (Surplus/Defisit)", 
+        "Status"
+      ]);
+      sheetSummary.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#4f46e5").setFontColor("#ffffff");
     }
     
-    var detailText = data.detailBudgets ? data.detailBudgets.map(function(b) {
-      return b.nama + ": Rp " + Number(b.jumlahBiaya).toLocaleString('id-ID');
-    }).join(" | ") : "";
-    
     sheetSummary.appendRow([
-      data.formattedDate || new Date().toLocaleDateString('id-ID'),
+      data.timestamp || new Date().toISOString(),
+      data.periodeLabel || data.periode || "-",
       data.pemasukanBulanan || 0,
       data.totalPengeluaran || 0,
       data.totalKebutuhanPokok || 0,
       data.totalTabungan || 0,
+      data.bufferSafety || 0,
       data.sisaUang || 0,
-      detailText
+      data.isSurplus ? "SURPLUS" : "DEFISIT"
     ]);
     
-    // Format mata uang Rupiah untuk kolom angka
-    var lastRow = sheetSummary.getLastRow();
-    if (lastRow > 1) {
-      sheetSummary.getRange(lastRow, 2, 1, 5).setNumberFormat('"Rp "#,##0');
+    var lastRowSummary = sheetSummary.getLastRow();
+    if (lastRowSummary > 1) {
+      sheetSummary.getRange(lastRowSummary, 3, 1, 6).setNumberFormat('"Rp "#,##0');
     }
     
-    // Sheet 2: Detail Pos Anggaran (Breakdown Rinci)
-    var sheetDetail = ss.getSheetByName("Detail Pos Anggaran");
+    // SHEET 2: Rincian Detail Pos & Tabel Kalkulator
+    var sheetDetail = ss.getSheetByName("Rincian Detail Pos");
     if (!sheetDetail) {
-      sheetDetail = ss.insertSheet("Detail Pos Anggaran");
+      sheetDetail = ss.insertSheet("Rincian Detail Pos");
     }
     if (sheetDetail.getLastRow() === 0) {
-      sheetDetail.appendRow(["Tanggal Sync", "ID Pos", "Nama Pos", "Kategori", "Jumlah Alokasi (Rp)", "Sumber"]);
-      sheetDetail.getRange(1, 1, 1, 6).setFontWeight("bold").setBackground("#10b981").setFontColor("#ffffff");
+      sheetDetail.appendRow([
+        "Waktu Simpan", 
+        "Periode", 
+        "ID Modul", 
+        "Nama Pos Anggaran", 
+        "Kategori", 
+        "Alokasi Bulanan (Rp)", 
+        "Sumber & Catatan Parameter", 
+        "Detail JSON Parameter"
+      ]);
+      sheetDetail.getRange(1, 1, 1, 8).setFontWeight("bold").setBackground("#059669").setFontColor("#ffffff");
     }
     
     if (data.detailBudgets && data.detailBudgets.length > 0) {
       data.detailBudgets.forEach(function(item) {
         sheetDetail.appendRow([
-          data.formattedDate || new Date().toLocaleDateString('id-ID'),
+          data.timestamp || new Date().toISOString(),
+          data.periodeLabel || data.periode || "-",
           item.id,
           item.nama,
           item.kategori,
           item.jumlahBiaya,
-          item.sumber
+          item.sumber,
+          item.rincianTeks || "-"
         ]);
         var dLastRow = sheetDetail.getLastRow();
-        sheetDetail.getRange(dLastRow, 5).setNumberFormat('"Rp "#,##0');
+        sheetDetail.getRange(dLastRow, 6).setNumberFormat('"Rp "#,##0');
       });
     }
     
-    return ContentService.createTextOutput(JSON.stringify({result: "success", message: "Data berhasil disimpan!"}))
+    return ContentService.createTextOutput(JSON.stringify({result: "success", message: "Data tersimpan lengkap!"}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({result: "error", error: err.toString()}))

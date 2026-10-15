@@ -14,7 +14,71 @@ const STORAGE_KEY_PROFILE = 'user_profile';
 const STORAGE_KEY_INFLATION = 'inflation_rate';
 const STORAGE_KEY_CHART_MODE = 'dashboard_chart_mode';
 
+const STORAGE_KEY_SELECTED_PERIOD = 'selected_budget_period';
+const STORAGE_KEY_BUDGET_HISTORY = 'budget_monthly_history';
+
+// Helper to get formatted current month key: YYYY-MM (e.g. 2026-10)
+export const getCurrentPeriodKey = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+};
+
+export const formatPeriodLabel = (periodKey) => {
+  if (!periodKey) return '-';
+  const [year, month] = periodKey.split('-');
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+  const idx = parseInt(month, 10) - 1;
+  return `${monthNames[idx] || month} ${year}`;
+};
+
 export const BudgetStore = {
+  // Periode Aktif (Bulan & Tahun)
+  getSelectedPeriod: () => {
+    return getFromStorage(STORAGE_KEY_SELECTED_PERIOD, getCurrentPeriodKey());
+  },
+
+  setSelectedPeriod: (periodKey) => {
+    saveToStorage(STORAGE_KEY_SELECTED_PERIOD, periodKey);
+  },
+
+  // Riwayat Catatan Bulanan (Multi-Bulan Snapshots)
+  getHistory: () => {
+    return getFromStorage(STORAGE_KEY_BUDGET_HISTORY, {});
+  },
+
+  saveHistorySnapshot: (periodKey, data) => {
+    const history = BudgetStore.getHistory();
+    history[periodKey] = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      periodKey
+    };
+    saveToStorage(STORAGE_KEY_BUDGET_HISTORY, history);
+    return history;
+  },
+
+  getAvailablePeriods: () => {
+    const history = BudgetStore.getHistory();
+    const currentPeriod = BudgetStore.getSelectedPeriod();
+    const periodSet = new Set(Object.keys(history));
+    periodSet.add(currentPeriod);
+    periodSet.add(getCurrentPeriodKey());
+
+    // Hitung juga 3 bulan ke belakang secara otomatis
+    const d = new Date();
+    for (let i = 0; i < 6; i++) {
+      const past = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      const pastKey = `${past.getFullYear()}-${String(past.getMonth() + 1).padStart(2, '0')}`;
+      periodSet.add(pastKey);
+    }
+
+    return Array.from(periodSet).sort().reverse();
+  },
   getIncome: () => {
     return getFromStorage(STORAGE_KEY_INCOME, 6000000);
   },
@@ -78,13 +142,70 @@ export const BudgetStore = {
 
   saveBudgetItem: (id, data) => {
     const current = BudgetStore.getBudgets();
+    const nowIso = new Date().toISOString();
+    const periodKey = data.period || BudgetStore.getSelectedPeriod();
+
     current[id] = {
       ...current[id],
       ...data,
-      updatedAt: new Date().toISOString()
+      period: periodKey,
+      updatedAt: nowIso
     };
     saveToStorage(STORAGE_KEY_BUDGETS, current);
+
+    // Otomatis sinkronkan snapshot ke Riwayat Bulanan (Monthly Ledger)
+    const history = BudgetStore.getHistory();
+    const periodEntry = history[periodKey] || {
+      periodKey,
+      income: BudgetStore.getIncome(),
+      items: {},
+      createdAt: nowIso
+    };
+
+    periodEntry.items = periodEntry.items || {};
+    periodEntry.items[id] = {
+      ...current[id]
+    };
+    periodEntry.updatedAt = nowIso;
+    history[periodKey] = periodEntry;
+    saveToStorage(STORAGE_KEY_BUDGET_HISTORY, history);
+
     return current;
+  },
+
+  // Mendapatkan ringkasan riwayat bulan tertentu (untuk perbandingan)
+  getPeriodSummary: (targetPeriodKey) => {
+    const history = BudgetStore.getHistory();
+    const entry = history[targetPeriodKey];
+    if (!entry || !entry.items) return null;
+
+    let totalPokok = 0;
+    let totalTabungan = 0;
+    let totalLainnya = 0;
+
+    Object.values(entry.items).forEach(b => {
+      const amt = Number(b.amount) || 0;
+      if (b.category === 'Tabungan') totalTabungan += amt;
+      else if (b.category === 'Lainnya') totalLainnya += amt;
+      else totalPokok += amt;
+    });
+
+    const income = Number(entry.income) || BudgetStore.getIncome();
+    const totalPengeluaran = totalPokok + totalTabungan + totalLainnya;
+    const sisaUang = income - totalPengeluaran;
+
+    return {
+      periodKey: targetPeriodKey,
+      income,
+      totalPokok,
+      totalTabungan,
+      totalLainnya,
+      totalPengeluaran,
+      sisaUang,
+      isSurplus: sisaUang >= 0,
+      items: entry.items,
+      updatedAt: entry.updatedAt
+    };
   },
 
   removeBudgetItem: (id) => {
@@ -209,6 +330,46 @@ export const BudgetStore = {
     // 5. Smart Financial Insights & Rekomendasi Efisiensi
     const smartInsights = [];
 
+    // Perbandingan dengan Bulan Sebelumnya (Comparison with previous month)
+    const selectedPeriod = BudgetStore.getSelectedPeriod();
+    const [currY, currM] = selectedPeriod.split('-').map(Number);
+    const prevDate = new Date(currY, currM - 2, 1);
+    const prevPeriodKey = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+    const prevSummary = BudgetStore.getPeriodSummary(prevPeriodKey);
+
+    let comparison = null;
+    if (prevSummary) {
+      const diffPengeluaran = totalPengeluaranTotal - prevSummary.totalPengeluaran;
+      const pctChange = prevSummary.totalPengeluaran > 0 
+        ? ((diffPengeluaran / prevSummary.totalPengeluaran) * 100).toFixed(1)
+        : 0;
+      
+      comparison = {
+        prevPeriodKey,
+        prevPeriodLabel: formatPeriodLabel(prevPeriodKey),
+        prevPengeluaran: prevSummary.totalPengeluaran,
+        diffPengeluaran,
+        pctChange,
+        isHigher: diffPengeluaran > 0
+      };
+
+      if (diffPengeluaran > 0) {
+        smartInsights.push({
+          type: 'warning',
+          icon: 'fa-arrow-trend-up',
+          title: `Pengeluaran Naik vs ${comparison.prevPeriodLabel}`,
+          desc: `Total estimasi anggaran bulan ini lebih tinggi <strong>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.abs(diffPengeluaran))}</strong> (+${pctChange}%) dibandingkan bulan lalu.`
+        });
+      } else if (diffPengeluaran < 0) {
+        smartInsights.push({
+          type: 'success',
+          icon: 'fa-arrow-trend-down',
+          title: `Pengeluaran Lebih Hemat vs ${comparison.prevPeriodLabel}`,
+          desc: `Bagus! Pengeluaran berhasil ditekan hemat sebesar <strong>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.abs(diffPengeluaran))}</strong> (${pctChange}%) dari bulan lalu.`
+        });
+      }
+    }
+
     if (!isSurplus) {
       smartInsights.push({
         type: 'danger',
@@ -269,6 +430,9 @@ export const BudgetStore = {
     }
 
     return {
+      selectedPeriod,
+      periodLabel: formatPeriodLabel(selectedPeriod),
+      comparison,
       income,
       profile,
       inflationPercent,

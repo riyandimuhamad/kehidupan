@@ -36,7 +36,51 @@ export const DashboardModule = {
 
     const isDoughnut = summary.chartMode === 'doughnut';
 
+    const periods = BudgetStore.getAvailablePeriods();
+    const currentPeriod = BudgetStore.getSelectedPeriod();
+
     container.innerHTML = `
+      <!-- Section 0: Periode Anggaran & Perbandingan Multi-Bulan -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--primary); background: rgba(99, 102, 241, 0.05); border-radius: var(--radius-md); padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary);">
+            <i class="fa-calendar-days fa-solid" style="margin-right: 5px;"></i> Periode Anggaran
+          </span>
+          <span class="badge" style="background: var(--primary); color: #ffffff; font-size: 0.72rem; padding: 2px 8px;">
+            ${summary.periodLabel}
+          </span>
+        </div>
+        <div class="form-group" style="margin-bottom: 6px;">
+          <label style="font-size: 0.74rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">
+            Pilih Periode Bulan untuk Melihat / Membandingkan:
+          </label>
+          <div class="input-wrapper">
+            <i class="fa-clock-rotate-left fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+            <select id="budget_period_select" class="form-control" style="font-size: 0.82rem; padding: 7px 10px 7px 34px;">
+              ${periods.map(p => {
+                const label = formatPeriodLabel(p);
+                const isSelected = p === currentPeriod;
+                return `<option value="${p}" ${isSelected ? 'selected' : ''}>${label} (${p})</option>`;
+              }).join('')}
+            </select>
+          </div>
+        </div>
+        ${summary.comparison ? `
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 0.73rem; margin-top: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Vs ${summary.comparison.prevPeriodLabel}:</span>
+              <strong style="color: ${summary.comparison.isHigher ? 'var(--accent-rose)' : 'var(--accent-emerald)'};">
+                ${summary.comparison.isHigher ? '+' : ''}${formatRupiah(summary.comparison.diffPengeluaran)} (${summary.comparison.pctChange}%)
+              </strong>
+            </div>
+          </div>
+        ` : `
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+            *Bulan sebelumnya belum memiliki riwayat tersimpan untuk perbandingan otomatis.
+          </div>
+        `}
+      </div>
+
       <!-- Section 1: Mode Profil Pengguna -->
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
         <div class="form-group" style="margin-bottom: 0;">
@@ -182,10 +226,10 @@ export const DashboardModule = {
       <!-- Section 7: Spreadsheet Sync -->
       <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.25); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); padding: 12px;">
         <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 6px;">
-          <i class="fa-file-excel fa-solid" style="margin-right: 4px;"></i> Google Sheets Integration
+          <i class="fa-file-excel fa-solid" style="margin-right: 4px;"></i> Google Sheets Integration (Database Pribadi)
         </div>
         <p style="font-size: 0.73rem; color: var(--text-muted); margin-bottom: 8px;">
-          Kirim seluruh data anggaran ke Google Spreadsheet via Apps Script.
+          Simpan riwayat detail tabel & timestamp ke Google Sheets Anda tanpa perlu backend server rumit.
         </p>
         <div class="input-wrapper" style="margin-bottom: 8px;">
           <i class="fa-link fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
@@ -196,12 +240,21 @@ export const DashboardModule = {
             Simpan URL
           </button>
           <button type="button" id="syncSpreadsheetBtn" class="primary-btn" style="background: linear-gradient(135deg, var(--accent-emerald), #059669); padding: 6px 12px; font-size: 0.75rem; flex: 1; justify-content: center;">
-            <i class="fa-rotate fa-solid" style="margin-right: 4px;"></i> Sync Data
+            <i class="fa-rotate fa-solid" style="margin-right: 4px;"></i> Sync ke Sheets
           </button>
         </div>
         <div id="syncStatusMsg" style="font-size: 0.73rem; margin-top: 6px;"></div>
       </div>
     `;
+
+    // 0. Period Selector listener
+    const periodSelect = container.querySelector('#budget_period_select');
+    if (periodSelect) {
+      periodSelect.addEventListener('change', (e) => {
+        BudgetStore.setSelectedPeriod(e.target.value);
+        onInputChange();
+      });
+    }
 
     // 1. Profile Mode Chips listener
     const profileChips = container.querySelectorAll('.profile-chip');
@@ -385,18 +438,36 @@ export const DashboardModule = {
     ];
 
     // Primary Table Headers & Rows
-    const tableHeaders = ['Pos Anggaran', 'Kategori', 'Sumber / Kalkulator', 'Alokasi Bulanan (Rp)', 'Aksi'];
+    const tableHeaders = ['Pos Anggaran', 'Kategori', 'Parameter & Rincian Detail', 'Update Terakhir', 'Alokasi Bulanan (Rp)', 'Aksi'];
     
-    const tableRows = summary.budgetsList.map(b => ({
-      isCurrent: false,
-      cells: [
-        `<strong>${b.name}</strong>`,
-        `<span class="badge" style="font-size:0.7rem; padding: 2px 8px;">${b.category || 'Pokok'}</span>`,
-        `${b.source || 'Kehidupan App'}`,
-        `<span class="highlight">${formatRupiah(b.amount)}</span>`,
-        `<button type="button" class="sm-btn delete-budget-btn" data-id="${b.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3);"><i class="fa-trash fa-solid"></i> Hapus</button>`
-      ]
-    }));
+    const tableRows = summary.budgetsList.map(b => {
+      let detailSnippet = b.source || 'Kehidupan App';
+      if (b.details) {
+        if (b.id === 'listrik') {
+          detailSnippet = `Daya ${b.details.dayaLabel || b.details.daya + ' VA'} • ${formatNumber(b.details.kwhBulanan, 1)} kWh @ ${formatRupiah(b.details.tarifPerKwh)}/kWh${b.details.pltsAktif ? ' • +PLTS Surya' : ''}`;
+        } else if (b.id === 'beras') {
+          detailSnippet = `${b.details.dewasa} Dewasa, ${b.details.anak} Anak • ${formatNumber(b.details.kebutuhanKgBulanan, 1)} kg @ ${formatRupiah(b.details.hargaPerKg)}/kg`;
+        } else if (b.id === 'sewa') {
+          detailSnippet = `Tipe: ${b.details.tipeHunian ? b.details.tipeHunian.toUpperCase() : '-'} • Dasar: ${formatRupiah(b.details.biayaDasar)}${b.details.jumlahSharing > 1 ? ` (Sharing ${b.details.jumlahSharing} orang)` : ''}`;
+        }
+      }
+
+      const timeFormatted = b.updatedAt ? new Date(b.updatedAt).toLocaleDateString('id-ID', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+      }) : '-';
+
+      return {
+        isCurrent: false,
+        cells: [
+          `<strong>${b.name}</strong>`,
+          `<span class="badge" style="font-size:0.7rem; padding: 2px 8px;">${b.category || 'Pokok'}</span>`,
+          `<span style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.35;">${detailSnippet}</span>`,
+          `<span style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;"><i class="fa-regular fa-clock" style="margin-right: 3px;"></i>${timeFormatted}</span>`,
+          `<span class="highlight">${formatRupiah(b.amount)}</span>`,
+          `<button type="button" class="sm-btn delete-budget-btn" data-id="${b.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3);"><i class="fa-trash fa-solid"></i> Hapus</button>`
+        ]
+      };
+    });
 
     // Buffer Safety Net Row
     if (summary.danaBufferSafety > 0) {
@@ -405,7 +476,8 @@ export const DashboardModule = {
         cells: [
           `<strong>🛡️ Buffer Cadangan Safety (${summary.bufferPercent}%)</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">Safety Net</span>`,
-          `Proteksi Habis Awal`,
+          `<span style="font-size: 0.75rem; color: var(--text-muted);">Proteksi Kebutuhan Pokok Habis Awal</span>`,
+          `<span style="font-size: 0.72rem; color: var(--text-muted);">-</span>`,
           `<span class="highlight" style="color: var(--accent-amber);">${formatRupiah(summary.danaBufferSafety)}</span>`,
           `-`
         ]
@@ -419,7 +491,8 @@ export const DashboardModule = {
         cells: [
           `<strong>📈 Simulasi Inflasi Kebutuhan (+${summary.inflationPercent}%)</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(239, 68, 68, 0.15); color: var(--accent-rose);">Sensitivitas Harga</span>`,
-          `Uji Kenaikan Harga`,
+          `<span style="font-size: 0.75rem; color: var(--text-muted);">Uji Kenaikan Harga Pangan & Utilitas</span>`,
+          `<span style="font-size: 0.72rem; color: var(--text-muted);">-</span>`,
           `<span class="highlight" style="color: var(--accent-rose);">${formatRupiah(summary.dampakInflasi)}</span>`,
           `-`
         ]
@@ -433,7 +506,8 @@ export const DashboardModule = {
         cells: [
           `<strong>⚡ ${t.name} (Top-Up Dadakan)</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);">Top-Up Extra</span>`,
-          `Dicatat ${t.date}`,
+          `<span style="font-size: 0.75rem; color: var(--text-muted);">Catatan Pengeluaran Dadakan</span>`,
+          `<span style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;"><i class="fa-regular fa-calendar" style="margin-right: 3px;"></i>${t.date}</span>`,
           `<span class="highlight" style="color: var(--accent-rose);">${formatRupiah(t.amount)}</span>`,
           `<button type="button" class="sm-btn delete-topup-btn" data-id="${t.id}" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3);"><i class="fa-trash fa-solid"></i> Hapus</button>`
         ]

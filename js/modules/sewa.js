@@ -311,7 +311,17 @@ export const SewaModule = {
         name: 'Hunian & Tempat Tinggal',
         amount: monthlyCost,
         category: 'Pokok',
-        source: `Tempat Tinggal: ${currentInputs.tipe_hunian.toUpperCase()}${sharingInfo}`
+        source: `Tempat Tinggal: ${currentInputs.tipe_hunian.toUpperCase()}${sharingInfo}`,
+        details: {
+          tipeHunian: currentInputs.tipe_hunian,
+          biayaDasar: currentInputs.biaya_sewa,
+          iplBulanan: currentInputs.biaya_ipl || 0,
+          biayaPerawatan: currentInputs.biaya_maintenance || 0,
+          pbbTahunan: currentInputs.biaya_pbb || 0,
+          jumlahSharing: currentInputs.jumlah_sharing || 1,
+          totalTagihanKotor: res.total_biaya_kotor || monthlyCost,
+          timestamp: new Date().toISOString()
+        }
       });
 
       notice.innerHTML = `<i class="fa-circle-check fa-solid"></i> Tersimpan! Est. Bulanan ${formatRupiah(monthlyCost)} telah disinkronkan ke Dashboard Keuangan.`;
