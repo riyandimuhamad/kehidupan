@@ -49,7 +49,7 @@ class KehidupanApp {
       dashboard: DashboardModule
     };
 
-    this.activeModuleId = 'beras';
+    this.activeModuleId = 'dashboard';
     this.chartInstance = null;
     this.history = getFromStorage('history', []);
 
