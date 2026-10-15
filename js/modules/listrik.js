@@ -119,83 +119,7 @@ export const ListrikModule = {
         </div>
       </div>
 
-      <!-- Section 2: Daya Listrik & Tarif PLN -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Golongan Daya & Tarif PLN
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Daya Terpasang</span> <span class="unit">(VA)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-bolt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <select id="daya_va" class="form-control" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-                <option value="450" ${data.daya_va === '450' ? 'selected' : ''}>450 VA (R-1 Subsidi - Rp 415/kWh)</option>
-                <option value="900_sub" ${data.daya_va === '900_sub' ? 'selected' : ''}>900 VA (R-1 Subsidi - Rp 605/kWh)</option>
-                <option value="900_rtm" ${data.daya_va === '900_rtm' ? 'selected' : ''}>900 VA (R-1 Non-Subsidi - Rp 1.352/kWh)</option>
-                <option value="1300" ${data.daya_va === '1300' ? 'selected' : ''}>1.300 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
-                <option value="2200" ${data.daya_va === '2200' ? 'selected' : ''}>2.200 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
-                <option value="3500" ${data.daya_va === '3500' ? 'selected' : ''}>3.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
-                <option value="5500" ${data.daya_va === '5500' ? 'selected' : ''}>5.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
-                <option value="6600" ${data.daya_va === '6600' ? 'selected' : ''}>6.600 VA (R-3 Non-Subsidi - Rp 1.699,53/kWh)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Tarif per kWh</span> <span class="unit">(Rp/kWh)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="tarif_per_kwh" class="form-control" step="1" value="${data.tarif_per_kwh}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-          </div>
-        </div>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tarif otomatis terisi sesuai daya yang dipilih berdasarkan ketetapan resmi tarif listrik ESDM/PLN terbaru.</p>
-      </div>
-
-      <!-- Section 3: Konsumsi Listrik Harian -->
-      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          Estimasi Pemakaian Listrik Rumah Tangga
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Total Konsumsi Rumah</span> <span class="unit">(kWh/Hari)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-plug fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="kwh_per_hari" class="form-control" step="0.5" min="0" value="${data.kwh_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
-              <span>Lama Waktu</span> <span class="unit">(Hari)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-              <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
-            </div>
-          </div>
-        </div>
-
-        <div class="form-options" style="margin-bottom: 4px;">
-          <button type="button" class="option-chip ${data.kwh_per_hari === 5 ? 'active' : ''}" data-target="kwh_per_hari" data-val="5">Hemat (5 kWh)</button>
-          <button type="button" class="option-chip ${data.kwh_per_hari === 10 ? 'active' : ''}" data-target="kwh_per_hari" data-val="10">Sedang (10 kWh)</button>
-          <button type="button" class="option-chip ${data.kwh_per_hari === 18 ? 'active' : ''}" data-target="kwh_per_hari" data-val="18">1 AC (18 kWh)</button>
-          <button type="button" class="option-chip ${data.kwh_per_hari === 28 ? 'active' : ''}" data-target="kwh_per_hari" data-val="28">Multi AC (28 kWh)</button>
-        </div>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tip: 1 AC 1/2 PK menyala 8 jam ± 3-4 kWh; kulkas 24 jam ± 1-1.5 kWh; dispenser ± 1.5 kWh/hari.</p>
-      </div>
-
-      <!-- Section 4: PLTS Atap Surya (Energi Terbarukan) - Opsional Toggle On/Off -->
+      <!-- Section 2: PLTS Atap Surya (Energi Terbarukan) - Opsional Toggle On/Off -->
       <div class="card" style="margin-bottom: 14px; border: 1px solid ${isPltsEnabled ? 'rgba(16, 185, 129, 0.4)' : 'var(--border-color)'}; background: ${isPltsEnabled ? 'rgba(16, 185, 129, 0.03)' : 'var(--bg-card)'}; border-radius: var(--radius-md); padding: 12px; transition: all 0.2s ease;">
         <label for="togglePlts" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; user-select: none;">
           <div style="display: flex; align-items: center; gap: 10px;">
@@ -292,6 +216,83 @@ export const ListrikModule = {
           </p>
         </div>
       </div>
+
+      <!-- Section 3: Daya Listrik & Tarif PLN -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Golongan Daya & Tarif PLN
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Daya Terpasang</span> <span class="unit">(VA)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-bolt fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <select id="daya_va" class="form-control" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+                <option value="450" ${data.daya_va === '450' ? 'selected' : ''}>450 VA (R-1 Subsidi - Rp 415/kWh)</option>
+                <option value="900_sub" ${data.daya_va === '900_sub' ? 'selected' : ''}>900 VA (R-1 Subsidi - Rp 605/kWh)</option>
+                <option value="900_rtm" ${data.daya_va === '900_rtm' ? 'selected' : ''}>900 VA (R-1 Non-Subsidi - Rp 1.352/kWh)</option>
+                <option value="1300" ${data.daya_va === '1300' ? 'selected' : ''}>1.300 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
+                <option value="2200" ${data.daya_va === '2200' ? 'selected' : ''}>2.200 VA (R-1 Non-Subsidi - Rp 1.444,70/kWh)</option>
+                <option value="3500" ${data.daya_va === '3500' ? 'selected' : ''}>3.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
+                <option value="5500" ${data.daya_va === '5500' ? 'selected' : ''}>5.500 VA (R-2 Non-Subsidi - Rp 1.699,53/kWh)</option>
+                <option value="6600" ${data.daya_va === '6600' ? 'selected' : ''}>6.600 VA (R-3 Non-Subsidi - Rp 1.699,53/kWh)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Tarif per kWh</span> <span class="unit">(Rp/kWh)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-tag fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="tarif_per_kwh" class="form-control" step="1" value="${data.tarif_per_kwh}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tarif otomatis terisi sesuai daya yang dipilih berdasarkan ketetapan resmi tarif listrik ESDM/PLN terbaru.</p>
+      </div>
+
+      <!-- Section 4: Estimasi Pemakaian Listrik Rumah Tangga -->
+      <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          Estimasi Pemakaian Listrik Rumah Tangga
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Total Konsumsi Rumah</span> <span class="unit">(kWh/Hari)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-plug fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="kwh_per_hari" class="form-control" step="0.5" min="0" value="${data.kwh_per_hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; min-height: 18px; line-height: 18px; white-space: nowrap;">
+              <span>Lama Waktu</span> <span class="unit">(Hari)</span>
+            </label>
+            <div class="input-wrapper">
+              <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
+              <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-options" style="margin-bottom: 4px;">
+          <button type="button" class="option-chip ${data.kwh_per_hari === 5 ? 'active' : ''}" data-target="kwh_per_hari" data-val="5">Hemat (5 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 10 ? 'active' : ''}" data-target="kwh_per_hari" data-val="10">Sedang (10 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 18 ? 'active' : ''}" data-target="kwh_per_hari" data-val="18">1 AC (18 kWh)</button>
+          <button type="button" class="option-chip ${data.kwh_per_hari === 28 ? 'active' : ''}" data-target="kwh_per_hari" data-val="28">Multi AC (28 kWh)</button>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">*Tip: 1 AC 1/2 PK menyala 8 jam ± 3-4 kWh; kulkas 24 jam ± 1-1.5 kWh; dispenser ± 1.5 kWh/hari.</p>
+      </div>
+
 
       <!-- Section 5: Pajak Daerah (PPJ) & Biaya Administrasi -->
       <div class="card" style="margin-bottom: 14px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-md); padding: 12px;">
