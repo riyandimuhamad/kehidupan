@@ -12,7 +12,7 @@
  * - Integrasi Google Sheets Spreadsheet
  */
 
-import { BudgetStore } from '../services/budgetStore.js';
+import { BudgetStore, formatPeriodLabel } from '../services/budgetStore.js';
 import { SpreadsheetService } from '../services/spreadsheetService.js';
 import { formatRupiah, formatNumber } from '../utils/formatters.js';
 
