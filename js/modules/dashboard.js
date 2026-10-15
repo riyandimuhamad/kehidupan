@@ -224,7 +224,7 @@ export const DashboardModule = {
       </div>
 
       <!-- Section 7: Spreadsheet Sync -->
-      <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.25); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); padding: 12px;">
+      <div class="card" style="margin-bottom: 14px; border: 1px solid rgba(16, 185, 129, 0.25); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); padding: 12px;">
         <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 6px;">
           <i class="fa-file-excel fa-solid" style="margin-right: 4px;"></i> Google Sheets Integration (Database Pribadi)
         </div>
@@ -245,7 +245,36 @@ export const DashboardModule = {
         </div>
         <div id="syncStatusMsg" style="font-size: 0.73rem; margin-top: 6px;"></div>
       </div>
+
+      <!-- Section 8: Reset / Kosongkan Data -->
+      <div class="card" style="border: 1px solid rgba(244, 63, 94, 0.25); background: rgba(244, 63, 94, 0.04); border-radius: var(--radius-md); padding: 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-rose); margin-bottom: 4px;">
+          <i class="fa-trash-can fa-solid" style="margin-right: 4px;"></i> Reset Data Anggaran
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px;">
+          Kosongkan seluruh data pos anggaran untuk memulai perhitungan dari awal (0).
+        </p>
+        <button type="button" id="clearAllBudgetsBtn" class="outline-btn" style="width: 100%; justify-content: center; color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.4); font-size: 0.76rem; padding: 6px;">
+          <i class="fa-rotate-left fa-solid" style="margin-right: 5px;"></i> Kosongkan Semua Data ke 0
+        </button>
+      </div>
     `;
+
+    // 0. Reset All Budgets listener
+    const clearBtn = container.querySelector('#clearAllBudgetsBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('Kosongkan semua data anggaran dan mulai dari 0?')) {
+          BudgetStore.clearAllBudgets();
+          // Reset form input visual values
+          const incInput = container.querySelector('#monthly_income_input');
+          const bufInput = container.querySelector('#buffer_percent_input');
+          if (incInput) incInput.value = 0;
+          if (bufInput) bufInput.value = 0;
+          onInputChange();
+        }
+      });
+    }
 
     // 0. Period Selector listener
     const periodSelect = container.querySelector('#budget_period_select');
@@ -468,6 +497,20 @@ export const DashboardModule = {
         ]
       };
     });
+
+    if (tableRows.length === 0) {
+      tableRows.push({
+        isCurrent: false,
+        cells: [
+          `<span style="color: var(--text-muted); font-style: italic;">(Belum ada pos anggaran)</span>`,
+          `-`,
+          `<span style="font-size: 0.75rem; color: var(--text-muted);">Silakan hitung kalkulator (Beras, Listrik, Sewa, dll.) lalu klik tombol "Simpan ke Dashboard"</span>`,
+          `-`,
+          `Rp 0`,
+          `-`
+        ]
+      });
+    }
 
     // Buffer Safety Net Row
     if (summary.danaBufferSafety > 0) {

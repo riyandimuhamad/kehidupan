@@ -80,7 +80,7 @@ export const BudgetStore = {
     return Array.from(periodSet).sort().reverse();
   },
   getIncome: () => {
-    return getFromStorage(STORAGE_KEY_INCOME, 6000000);
+    return getFromStorage(STORAGE_KEY_INCOME, 0);
   },
 
   setIncome: (amount) => {
@@ -88,7 +88,7 @@ export const BudgetStore = {
   },
 
   getProfile: () => {
-    return getFromStorage(STORAGE_KEY_PROFILE, 'family_small'); // single | couple | family_small | family_large
+    return getFromStorage(STORAGE_KEY_PROFILE, 'single'); // single | couple | family_small | family_large
   },
 
   setProfile: (profile) => {
@@ -112,7 +112,7 @@ export const BudgetStore = {
   },
 
   getBufferPercent: () => {
-    return getFromStorage(STORAGE_KEY_BUFFER_PERCENT, 10); // Default 10% safety buffer
+    return getFromStorage(STORAGE_KEY_BUFFER_PERCENT, 0); // Default 0% (belum ada buffer jika belum diisi)
   },
 
   setBufferPercent: (percent) => {
@@ -120,24 +120,16 @@ export const BudgetStore = {
   },
 
   getBudgets: () => {
-    return getFromStorage(STORAGE_KEY_BUDGETS, {
-      beras: { id: 'beras', name: 'Beras & Pangan', amount: 300000, category: 'Pokok', group: 'pangan', source: 'Kalkulator Beras' },
-      air: { id: 'air', name: 'Air Galon Minum', amount: 80000, category: 'Pokok', group: 'pangan', source: 'Kalkulator Air' },
-      airpam: { id: 'airpam', name: 'Air PAM / PDAM', amount: 120000, category: 'Pokok', group: 'papan', source: 'Kalkulator Air PAM' },
-      listrik: { id: 'listrik', name: 'Listrik PLN', amount: 450000, category: 'Pokok', group: 'papan', source: 'Kalkulator Listrik' },
-      gas: { id: 'gas', name: 'Gas LPG Dapur', amount: 44000, category: 'Pokok', group: 'pangan', source: 'Kalkulator Gas' },
-      transport: { id: 'transport', name: 'BBM & Transportasi', amount: 300000, category: 'Pokok', group: 'mobilitas', source: 'Kalkulator Transport' },
-      internet: { id: 'internet', name: 'Internet & Paket Data', amount: 275000, category: 'Pokok', group: 'mobilitas', source: 'Kalkulator Internet' },
-      sembako: { id: 'sembako', name: 'Sembako & Kebersihan', amount: 350000, category: 'Pokok', group: 'pangan', source: 'Kalkulator Sembako' },
-      sewa: { id: 'sewa', name: 'Hunian & Tempat Tinggal', amount: 1500000, category: 'Pokok', group: 'papan', source: 'Kalkulator Sewa' },
-      sandang: { id: 'sandang', name: 'Sandang & Grooming', amount: 200000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Sandang' },
-      kesehatan: { id: 'kesehatan', name: 'Kesehatan & BPJS', amount: 350000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Kesehatan' },
-      pendidikan: { id: 'pendidikan', name: 'Pendidikan & Anak', amount: 680000, category: 'Pokok', group: 'keluarga', source: 'Kalkulator Pendidikan' },
-      hiburan: { id: 'hiburan', name: 'Hiburan & Gaya Hidup', amount: 250000, category: 'Lainnya', group: 'lifestyle', source: 'Kalkulator Hiburan' },
-      pajak: { id: 'pajak', name: 'PBB & Administrasi Tahunan', amount: 150000, category: 'Pokok', group: 'pajak', source: 'Kalkulator Pajak' },
-      zakat: { id: 'zakat', name: 'Zakat & Donasi Sosial', amount: 212500, category: 'Pokok', group: 'pajak', source: 'Kalkulator Zakat BAZNAS' },
-      tabungan: { id: 'tabungan', name: 'Tabungan & Dana Darurat', amount: 1000000, category: 'Tabungan', group: 'investasi', source: 'Kalkulator Tabungan' }
-    });
+    return getFromStorage(STORAGE_KEY_BUDGETS, {});
+  },
+
+  clearAllBudgets: () => {
+    saveToStorage(STORAGE_KEY_BUDGETS, {});
+    saveToStorage(STORAGE_KEY_INCOME, 0);
+    saveToStorage(STORAGE_KEY_BUFFER_PERCENT, 0);
+    saveToStorage(STORAGE_KEY_EXTRA_TOPUPS, []);
+    saveToStorage(STORAGE_KEY_BUDGET_HISTORY, {});
+    return {};
   },
 
   saveBudgetItem: (id, data) => {
