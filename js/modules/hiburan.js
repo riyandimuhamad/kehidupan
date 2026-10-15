@@ -143,7 +143,7 @@ export const HiburanModule = {
           </label>
           <div class="input-wrapper">
             <i class="fa-calendar-days fa-solid input-icon" style="left: 12px; font-size: 0.85rem;"></i>
-            <input type="number" id="hari" class="form-control" min="1" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
+            <input type="number" id="hari" class="form-control" min="0" max="365" value="${data.hari}" style="font-size: 0.82rem; padding: 8px 10px 8px 34px;">
           </div>
         </div>
       </div>
@@ -211,13 +211,13 @@ export const HiburanModule = {
 
   getFormInputs: (container) => {
     return {
-      streaming_digital: parseFloat(container.querySelector('#streaming_digital')?.value || 150000),
-      nongkrong_per_minggu: parseFloat(container.querySelector('#nongkrong_per_minggu')?.value || 2),
-      biaya_per_nongkrong: parseFloat(container.querySelector('#biaya_per_nongkrong')?.value || 50000),
-      kuliner_luar_bulan: parseFloat(container.querySelector('#kuliner_luar_bulan')?.value || 300000),
-      rekreasi_liburan_bulan: parseFloat(container.querySelector('#rekreasi_liburan_bulan')?.value || 400000),
-      sosial_hobi_bulan: parseFloat(container.querySelector('#sosial_hobi_bulan')?.value || 200000),
-      hari: parseInt(container.querySelector('#hari')?.value || 30, 10)
+      streaming_digital: parseFloat(container.querySelector('#streaming_digital')?.value || 0),
+      nongkrong_per_minggu: parseFloat(container.querySelector('#nongkrong_per_minggu')?.value || 0),
+      biaya_per_nongkrong: parseFloat(container.querySelector('#biaya_per_nongkrong')?.value || 0),
+      kuliner_luar_bulan: parseFloat(container.querySelector('#kuliner_luar_bulan')?.value || 0),
+      rekreasi_liburan_bulan: parseFloat(container.querySelector('#rekreasi_liburan_bulan')?.value || 0),
+      sosial_hobi_bulan: parseFloat(container.querySelector('#sosial_hobi_bulan')?.value || 0),
+      hari: parseInt(container.querySelector('#hari')?.value || 0, 10)
     };
   },
 
@@ -231,20 +231,29 @@ export const HiburanModule = {
 
   calculate: (inputs) => {
     const s = { ...HiburanModule.defaults, ...inputs };
-    const { streaming_digital, nongkrong_per_minggu, biaya_per_nongkrong, kuliner_luar_bulan, rekreasi_liburan_bulan, sosial_hobi_bulan, hari } = s;
+    const streaming_digital = Number(s.streaming_digital) || 0;
+    const nongkrong_per_minggu = Number(s.nongkrong_per_minggu) || 0;
+    const biaya_per_nongkrong = Number(s.biaya_per_nongkrong) || 0;
+    const kuliner_luar_bulan = Number(s.kuliner_luar_bulan) || 0;
+    const rekreasi_liburan_bulan = Number(s.rekreasi_liburan_bulan) || 0;
+    const sosial_hobi_bulan = Number(s.sosial_hobi_bulan) || 0;
+    const hari = Number(s.hari) || 0;
 
-    // Perhitungan bulanan (30 hari)
-    const biaya_nongkrong_bulan = nongkrong_per_minggu * 4.33 * biaya_per_nongkrong;
+    // Frekuensi mingguan ke harian yang akurat: 1 minggu = 7 hari
+    const biaya_nongkrong_per_minggu = nongkrong_per_minggu * biaya_per_nongkrong;
+    const biaya_nongkrong_harian = biaya_nongkrong_per_minggu / 7;
+    const biaya_nongkrong_bulan = Math.round(biaya_nongkrong_harian * 30);
+
+    // Biaya bulanan
     const biaya_total_sebulan = streaming_digital + biaya_nongkrong_bulan + kuliner_luar_bulan + rekreasi_liburan_bulan + sosial_hobi_bulan;
 
-    // Konversi proporsional ke durasi hari
-    const rasioHari = hari / 30;
-    const streaming_hari = streaming_digital * rasioHari;
-    const nongkrong_hari = biaya_nongkrong_bulan * rasioHari;
-    const kuliner_hari = kuliner_luar_bulan * rasioHari;
-    const rekreasi_hari = rekreasi_liburan_bulan * rasioHari;
-    const sosial_hari = sosial_hobi_bulan * rasioHari;
-    const total_biaya_akhir = biaya_total_sebulan * rasioHari;
+    // Konversi proporsional ke durasi hari yang dipilih
+    const streaming_hari = hari > 0 ? (streaming_digital / 30) * hari : 0;
+    const nongkrong_hari = hari === 7 ? biaya_nongkrong_per_minggu : (biaya_nongkrong_harian * hari);
+    const kuliner_hari = hari > 0 ? (kuliner_luar_bulan / 30) * hari : 0;
+    const rekreasi_hari = hari > 0 ? (rekreasi_liburan_bulan / 30) * hari : 0;
+    const sosial_hari = hari > 0 ? (sosial_hobi_bulan / 30) * hari : 0;
+    const total_biaya_akhir = streaming_hari + nongkrong_hari + kuliner_hari + rekreasi_hari + sosial_hari;
 
     // Summary Cards (4 Cards)
     const summaryCards = [
@@ -290,11 +299,10 @@ export const HiburanModule = {
     const tableHeaders = ['Periode', 'Streaming Digital', 'Nongkrong & Cafe', 'Kuliner & Resto', 'Liburan & Sosial', 'Total Pengeluaran (Rp)'];
 
     const tableRows = periods.map(p => {
-      const r = p.d / 30;
-      const pStreaming = streaming_digital * r;
-      const pNongkrong = biaya_nongkrong_bulan * r;
-      const pKuliner = kuliner_luar_bulan * r;
-      const pLiburan = (rekreasi_liburan_bulan + sosial_hobi_bulan) * r;
+      const pStreaming = p.d > 0 ? (streaming_digital / 30) * p.d : 0;
+      const pNongkrong = p.d === 7 ? biaya_nongkrong_per_minggu : (biaya_nongkrong_harian * p.d);
+      const pKuliner = p.d > 0 ? (kuliner_luar_bulan / 30) * p.d : 0;
+      const pLiburan = p.d > 0 ? ((rekreasi_liburan_bulan + sosial_hobi_bulan) / 30) * p.d : 0;
       const pTotal = pStreaming + pNongkrong + pKuliner + pLiburan;
 
       return {
