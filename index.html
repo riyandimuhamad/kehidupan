@@ -341,10 +341,22 @@
           <pre><code id="appsScriptCodeSnippet"></code></pre>
         </div>
 
-        <ol start="4" style="font-size: 0.85rem; padding-left: 20px; line-height: 1.6; color: var(--text-muted);">
-          <li>Klik <strong>Deploy &rarr; New deployment</strong></li>
-          <li>Pilih type <strong>Web App</strong>, ubah <em>Who has access</em> menjadi <strong>Anyone</strong>.</li>
-          <li>Salin <strong>Web App URL</strong> yang dihasilkan ke form di Dashboard Keuangan.</li>
+        <ol start="4" style="font-size: 0.85rem; padding-left: 20px; line-height: 1.7; color: var(--text-muted);">
+          <li>Klik tombol <strong>Deploy &rarr; New deployment</strong> (atau <strong>Terapkan &rarr; Deployment baru</strong>).</li>
+          <li>
+            Pada menu <em>Pilih jenis / Select type</em> (ikon gerigi ⚙️ di kiri atas), pilih:
+            <br>
+            👉 <strong style="color: var(--accent-emerald); background: rgba(16,185,129,0.12); padding: 2px 6px; border-radius: 4px;">Aplikasi web</strong> (atau <strong>Web app</strong>).
+          </li>
+          <li>
+            Isi konfigurasinya sebagai berikut:
+            <ul style="margin: 4px 0 6px 16px; list-style-type: disc;">
+              <li><strong>Jalankan sebagai / Execute as:</strong> Pilih <em>Saya (email Anda) / Me</em>.</li>
+              <li><strong>Yang memiliki akses / Who has access:</strong> Wajib pilih <strong style="color: var(--accent-amber);">Siapa saja / Anyone</strong> (agar web dapat mengirim data tanpa login).</li>
+            </ul>
+          </li>
+          <li>Klik tombol <strong>Terapkan / Deploy</strong>, lalu izinkan akses (<em>Authorize access</em> jika diminta).</li>
+          <li>Salin <strong>URL Aplikasi Web (Web App URL)</strong> yang berakhiran <code>/exec</code>, lalu tempelkan ke kolom input di tombol <strong>Google Sheets</strong> di pojok kanan atas aplikasi ini.</li>
         </ol>
       </div>
       <div class="modal-footer">
