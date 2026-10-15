@@ -204,6 +204,16 @@ export const BudgetStore = {
     const current = BudgetStore.getBudgets();
     delete current[id];
     saveToStorage(STORAGE_KEY_BUDGETS, current);
+
+    // Also remove from current period ledger in monthly history
+    const history = BudgetStore.getHistory();
+    const periodKey = BudgetStore.getSelectedPeriod();
+    if (history[periodKey] && history[periodKey].items && history[periodKey].items[id]) {
+      delete history[periodKey].items[id];
+      history[periodKey].updatedAt = new Date().toISOString();
+      saveToStorage(STORAGE_KEY_BUDGET_HISTORY, history);
+    }
+
     return current;
   },
 
