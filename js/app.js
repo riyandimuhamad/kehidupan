@@ -52,6 +52,7 @@ class KehidupanApp {
     this.activeModuleId = 'dashboard';
     this.chartInstance = null;
     this.history = getFromStorage('history', []);
+    this.activeHistoryFilter = 'all';
 
     this.initElements();
     this.checkInitialCleanState();
@@ -130,6 +131,20 @@ class KehidupanApp {
     this.copyScriptBtn = document.getElementById('copyScriptBtn');
     this.appsScriptCodeSnippet = document.getElementById('appsScriptCodeSnippet');
 
+    // Sheets Popover & Topbar Elements
+    this.sheetsPopover = document.getElementById('sheetsPopover');
+    this.topbarSyncDot = document.getElementById('topbarSyncDot');
+    this.popoverStatusBadge = document.getElementById('popoverStatusBadge');
+    this.topbarSheetUrlInput = document.getElementById('topbarSheetUrlInput');
+    this.topbarSaveUrlBtn = document.getElementById('topbarSaveUrlBtn');
+    this.topbarSyncNowBtn = document.getElementById('topbarSyncNowBtn');
+    this.topbarSyncStatusMsg = document.getElementById('topbarSyncStatusMsg');
+    this.openGuideFromPopover = document.getElementById('openGuideFromPopover');
+
+    // History elements
+    this.historyFilterContainer = document.getElementById('historyFilterContainer');
+    this.historyItemCountBadge = document.getElementById('historyItemCountBadge');
+
     this.addModuleModalBtn = document.getElementById('addModuleModalBtn');
     this.addModuleModal = document.getElementById('addModuleModal');
     this.closeAddModuleModal = document.getElementById('closeAddModuleModal');
@@ -143,7 +158,37 @@ class KehidupanApp {
     this.topbarCategoryBadge = document.getElementById('topbarCategoryBadge');
   }
 
+  updateSheetsStatusUI() {
+    const url = BudgetStore.getSpreadsheetUrl();
+    if (this.topbarSheetUrlInput) {
+      this.topbarSheetUrlInput.value = url || '';
+    }
+
+    if (url && url.trim().length > 10) {
+      if (this.topbarSyncDot) {
+        this.topbarSyncDot.className = 'sync-status-dot connected';
+        this.topbarSyncDot.title = 'Status: Terhubung ke Google Sheets';
+      }
+      if (this.popoverStatusBadge) {
+        this.popoverStatusBadge.className = 'badge-status-connected';
+        this.popoverStatusBadge.innerHTML = '<i class="fa-solid fa-check"></i> Terhubung';
+      }
+    } else {
+      if (this.topbarSyncDot) {
+        this.topbarSyncDot.className = 'sync-status-dot';
+        this.topbarSyncDot.title = 'Status: Belum Terhubung';
+      }
+      if (this.popoverStatusBadge) {
+        this.popoverStatusBadge.className = 'badge-status-disconnected';
+        this.popoverStatusBadge.innerText = 'Belum Terhubung';
+      }
+    }
+  }
+
   bindEvents() {
+    // Initial sync status update
+    this.updateSheetsStatusUI();
+
     // Navigation Tabs Switcher
     this.navTabs.addEventListener('click', (e) => {
       const btn = e.target.closest('.nav-btn');
@@ -219,11 +264,65 @@ class KehidupanApp {
     this.closeHistoryModalBtn.addEventListener('click', () => this.closeModal(this.historyModal));
     this.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
 
-    // Google Sheets Modal
-    this.sheetsModalBtn.addEventListener('click', () => {
+    // History filter clicks
+    this.historyFilterContainer?.addEventListener('click', (e) => {
+      const chip = e.target.closest('.history-filter-chip');
+      if (chip) {
+        this.activeHistoryFilter = chip.getAttribute('data-filter') || 'all';
+        this.historyFilterContainer.querySelectorAll('.history-filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        this.renderHistoryList();
+      }
+    });
+
+    // Google Sheets Popover Toggle
+    this.sheetsModalBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = this.sheetsPopover.style.display === 'block';
+      this.sheetsPopover.style.display = isVisible ? 'none' : 'block';
+      this.updateSheetsStatusUI();
+    });
+
+    // Close popover when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.sheetsPopover && !e.target.closest('.sheets-popover-container')) {
+        this.sheetsPopover.style.display = 'none';
+      }
+    });
+
+    // Topbar Save URL
+    this.topbarSaveUrlBtn?.addEventListener('click', () => {
+      const url = this.topbarSheetUrlInput.value.trim();
+      BudgetStore.setSpreadsheetUrl(url);
+      this.updateSheetsStatusUI();
+      this.topbarSyncStatusMsg.innerHTML = '<span style="color: var(--accent-emerald); font-weight: 600;"><i class="fa-solid fa-check"></i> Link URL tersimpan!</span>';
+      setTimeout(() => {
+        if (this.topbarSyncStatusMsg) this.topbarSyncStatusMsg.innerHTML = '';
+      }, 3500);
+    });
+
+    // Topbar Sync Now
+    this.topbarSyncNowBtn?.addEventListener('click', async () => {
+      const url = this.topbarSheetUrlInput.value.trim();
+      this.topbarSyncStatusMsg.innerHTML = '<span style="color: var(--accent-amber);"><i class="fa-solid fa-spinner fa-spin"></i> Menyinkronkan data...</span>';
+      const res = await SpreadsheetService.syncToSpreadsheet(url);
+      if (res.success) {
+        this.updateSheetsStatusUI();
+        this.topbarSyncStatusMsg.innerHTML = `<span style="color: var(--accent-emerald); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> ${res.message}</span>`;
+      } else {
+        this.topbarSyncStatusMsg.innerHTML = `<span style="color: var(--accent-rose); font-weight: 600;"><i class="fa-solid fa-circle-xmark"></i> ${res.message}</span>`;
+      }
+    });
+
+    // Open guide modal from popover
+    this.openGuideFromPopover?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.sheetsPopover.style.display = 'none';
       this.appsScriptCodeSnippet.innerText = SpreadsheetService.getAppsScriptTemplate();
       this.openModal(this.sheetsModal);
     });
+
+    // Google Sheets Modal Guide
     this.closeSheetsModal.addEventListener('click', () => this.closeModal(this.sheetsModal));
     this.closeSheetsModalBtn.addEventListener('click', () => this.closeModal(this.sheetsModal));
     this.copyScriptBtn.addEventListener('click', () => {
@@ -312,7 +411,7 @@ class KehidupanApp {
 
     // Auto save calculation to recent history snapshot
     if (activeModule.id !== 'dashboard') {
-      this.saveHistorySnapshot(activeModule.name, result.quickStats);
+      this.saveHistorySnapshot(activeModule.name, result.quickStats, activeModule.id);
     }
   }
 
@@ -585,38 +684,87 @@ class KehidupanApp {
     });
   }
 
-  saveHistorySnapshot(moduleName, quickStats) {
+  saveHistorySnapshot(moduleName, quickStats, activeModuleId) {
     if (!quickStats) return;
+    const moduleId = activeModuleId || this.activeModuleId;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     const snapshot = {
       id: Date.now(),
+      moduleId: moduleId,
       module: moduleName,
       qty: quickStats.totalQty,
       cost: quickStats.totalCost,
-      date: formatDate(new Date())
+      date: `${formatDate(now)} pukul ${timeStr}`,
+      timestamp: now.getTime()
     };
 
-    this.history = [snapshot, ...this.history.filter(h => h.module !== moduleName)].slice(0, 10);
+    // Keep chronological history up to 30 items
+    this.history = [snapshot, ...this.history.filter(h => h.moduleId !== moduleId || (Date.now() - h.timestamp > 3000))].slice(0, 30);
     saveToStorage('history', this.history);
   }
 
   openHistoryModal() {
+    this.renderHistoryFilters();
     this.renderHistoryList();
     this.openModal(this.historyModal);
   }
 
+  renderHistoryFilters() {
+    if (!this.historyFilterContainer) return;
+    const uniqueModules = [{ id: 'all', name: 'Semua Modul' }];
+    const seen = new Set();
+    this.history.forEach(item => {
+      if (item.moduleId && !seen.has(item.moduleId)) {
+        seen.add(item.moduleId);
+        uniqueModules.push({ id: item.moduleId, name: item.module });
+      }
+    });
+
+    this.historyFilterContainer.innerHTML = uniqueModules.map(m => `
+      <button type="button" class="history-filter-chip ${this.activeHistoryFilter === m.id ? 'active' : ''}" data-filter="${m.id}">
+        ${m.name}
+      </button>
+    `).join('');
+  }
+
   renderHistoryList() {
-    if (this.history.length === 0) {
-      this.historyListContainer.innerHTML = '<p class="sub-text">Belum ada riwayat perhitungan tersimpan.</p>';
+    if (!this.historyListContainer) return;
+
+    let filtered = this.history;
+    if (this.activeHistoryFilter && this.activeHistoryFilter !== 'all') {
+      filtered = this.history.filter(h => h.moduleId === this.activeHistoryFilter);
+    }
+
+    if (this.historyItemCountBadge) {
+      this.historyItemCountBadge.innerText = `${filtered.length} Catatan`;
+    }
+
+    if (filtered.length === 0) {
+      this.historyListContainer.innerHTML = `
+        <div style="text-align: center; padding: 30px 10px; color: var(--text-muted);">
+          <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; opacity: 0.35; margin-bottom: 10px; display: block;"></i>
+          <p style="font-size: 0.9rem; font-weight: 600; margin: 0 0 4px;">Belum ada riwayat tercatat</p>
+          <span style="font-size: 0.78rem;">Ubah input atau parameter pada kalkulator untuk mulai mencatat riwayat perubahan.</span>
+        </div>
+      `;
       return;
     }
 
-    this.historyListContainer.innerHTML = this.history.map(item => `
-      <div class="history-item">
-        <div class="history-info">
-          <h5>${item.module}</h5>
-          <p>${item.date} &bull; Total: ${item.qty}</p>
+    this.historyListContainer.innerHTML = filtered.map(item => `
+      <div class="history-item" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; margin-bottom: 10px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+        <div class="history-info" style="flex: 1; min-width: 0;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <h5 style="margin: 0; font-size: 0.88rem; font-weight: 700; color: var(--text-main);">${item.module}</h5>
+            <span class="badge" style="font-size: 0.65rem; padding: 2px 6px; margin: 0;">${item.qty || 'Hasil Hitung'}</span>
+          </div>
+          <p style="margin: 0; font-size: 0.74rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+            <i class="fa-regular fa-clock" style="font-size: 0.7rem;"></i> ${item.date}
+          </p>
         </div>
-        <div class="history-cost">${item.cost}</div>
+        <div class="history-cost" style="text-align: right; font-family: var(--font-heading); font-size: 1rem; font-weight: 800; color: var(--accent-emerald); white-space: nowrap;">
+          ${item.cost}
+        </div>
       </div>
     `).join('');
   }
@@ -624,6 +772,7 @@ class KehidupanApp {
   clearHistory() {
     this.history = [];
     saveToStorage('history', []);
+    this.renderHistoryFilters();
     this.renderHistoryList();
   }
 

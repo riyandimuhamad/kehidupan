@@ -131,10 +131,56 @@
         </div>
 
         <div class="topbar-actions">
-          <button id="sheetsModalBtn" class="secondary-btn sheets-btn" title="Integrasi Google Sheets API">
-            <i class="fa-solid fa-file-excel"></i>
-            <span>Google Sheets</span>
-          </button>
+          <!-- Google Sheets Popover Trigger & Dropdown -->
+          <div class="sheets-popover-container" style="position: relative;">
+            <button id="sheetsModalBtn" class="secondary-btn sheets-btn" title="Integrasi Google Sheets API">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Google Sheets</span>
+              <span id="topbarSyncDot" class="sync-status-dot" title="Status: Belum Terhubung"></span>
+            </button>
+
+            <!-- Popover Dropdown Card -->
+            <div id="sheetsPopover" class="sheets-popover-card" style="display: none;">
+              <div class="sheets-popover-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i>
+                  <strong>Database Google Sheets</strong>
+                </div>
+                <span id="popoverStatusBadge" class="badge-status-disconnected">Belum Terhubung</span>
+              </div>
+              
+              <div class="sheets-popover-body">
+                <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">
+                  Webhook URL Google Apps Script:
+                </label>
+                <div class="input-wrapper" style="margin-bottom: 8px;">
+                  <i class="fa-solid fa-link input-icon" style="left: 10px; font-size: 0.75rem;"></i>
+                  <input type="url" id="topbarSheetUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" style="font-size: 0.75rem; padding: 6px 10px 6px 28px;">
+                </div>
+
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                  <button type="button" id="topbarSaveUrlBtn" class="outline-btn" style="padding: 5px 10px; font-size: 0.75rem;">
+                    Simpan Link
+                  </button>
+                  <button type="button" id="topbarSyncNowBtn" class="primary-btn" style="padding: 5px 12px; font-size: 0.75rem; flex: 1; justify-content: center; background: linear-gradient(135deg, var(--accent-emerald), #059669);">
+                    <i class="fa-solid fa-rotate" style="margin-right: 4px;"></i> Sync Sekarang
+                  </button>
+                </div>
+
+                <div id="topbarSyncStatusMsg" style="font-size: 0.72rem; min-height: 18px; margin-bottom: 6px;"></div>
+
+                <div style="border-top: 1px solid var(--border-color); padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <a href="#" id="openGuideFromPopover" style="font-size: 0.72rem; color: var(--primary); text-decoration: none; font-weight: 600;">
+                    <i class="fa-solid fa-book-open"></i> Panduan Setup Skrip
+                  </a>
+                  <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" style="font-size: 0.72rem; color: var(--text-muted); text-decoration: none;">
+                    Buka Sheets <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <button id="themeToggleBtn" class="icon-btn" title="Ganti Tema">
             <i class="fa-solid fa-sun"></i>
           </button>
@@ -249,12 +295,24 @@
 
   <!-- Modal History -->
   <div class="modal-overlay" id="historyModal">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 680px;">
       <div class="modal-header">
-        <h3><i class="fa-clock-rotate-left fa-solid"></i> Riwayat Perhitungan Saved</h3>
+        <div>
+          <h3><i class="fa-clock-rotate-left fa-solid"></i> Riwayat Perhitungan & Perubahan</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 0;">Riwayat perhitungan per modul tersimpan otomatis setiap kali kalkulator dijalankan.</p>
+        </div>
         <button class="modal-close" id="closeHistoryModal">&times;</button>
       </div>
-      <div class="modal-body" id="historyListContainer">
+
+      <!-- History Filter Bar -->
+      <div style="padding: 10px 24px; background: var(--bg-input); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+        <div id="historyFilterContainer" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <!-- Injected JS Filter chips: Semua, Modul Aktif, etc. -->
+        </div>
+        <span id="historyItemCountBadge" style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">0 Riwayat</span>
+      </div>
+
+      <div class="modal-body" id="historyListContainer" style="max-height: 420px; overflow-y: auto; padding: 18px 24px;">
         <!-- Injected JS -->
       </div>
       <div class="modal-footer">
