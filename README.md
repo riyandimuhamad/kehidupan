@@ -1,8 +1,8 @@
-# 🍃 Kehidupan - Financial & Household Essentials Planner
+# 🏠 RumahBudget - Household Budget & Essentials Planner
 
-**Kehidupan** adalah aplikasi web modern untuk menghitung, mengestimasi, dan mengelola kebutuhan harian rumah tangga (Beras, Air Galon, Listrik PLN, Gas LPG, BBM & Transportasi, Internet/Paket Data, Sembako, Hunian/KPR) serta mengintegrasikan hasilnya langsung ke **Dashboard Keuangan Bulanan** dan **Google Sheets (Spreadsheet Database API)**.
+**RumahBudget** adalah aplikasi web modern untuk menghitung, mengestimasi, dan mengelola kebutuhan harian rumah tangga (Beras, Air Galon, Listrik PLN, Gas LPG, BBM & Transportasi, Internet/Paket Data, Sembako, Hunian/KPR, Pendidikan, Kesehatan, Investasi, Pajak, Zakat) serta mengintegrasikan hasilnya langsung ke **Dashboard Keuangan Bulanan** dan **Google Sheets (Spreadsheet Database API)**.
 
-![Kehidupan App Banner](https://img.shields.io/badge/Kehidupan-Financial%20Planner-6366f1?style=for-the-badge&logo=leaf)
+![RumahBudget App Banner](https://img.shields.io/badge/RumahBudget-Financial%20Planner-6366f1?style=for-the-badge&logo=homeadvisor)
 ![License](https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge)
 
 ---
@@ -60,4 +60,4 @@
 
 ---
 
-&copy; 2026 **Kehidupan App** &bull; Perencanaan Kebutuhan & Keuangan Rumah Tangga Indonesia.
+&copy; 2026 **RumahBudget App** &bull; Perencanaan Kebutuhan & Keuangan Rumah Tangga Indonesia.
