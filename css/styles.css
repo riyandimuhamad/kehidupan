@@ -562,12 +562,18 @@ body.dark-mode .nav-btn:hover {
 
 /* App Footer */
 .app-footer {
-  padding: 24px 32px 32px;
-  border-top: none;
+  padding: 30px 20px 20px;
+  border: none !important;
+  box-shadow: none !important;
   text-align: center;
   font-size: 0.78rem;
   color: var(--text-muted);
-  background: transparent;
+  background: transparent !important;
+}
+
+.app-footer p {
+  margin: 0;
+  border: none !important;
 }
 
 /* Mobile Sidebar Backdrop */
