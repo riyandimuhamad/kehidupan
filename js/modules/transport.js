@@ -553,11 +553,13 @@ export const TransportModule = {
     // Rows for Private Vehicles (If ON)
     if (s.enable_pribadi) {
       vehicleCalculations.forEach(vc => {
+        const isMobil = vc.jenis === 'mobil';
+        const badgeHtml = `<span class="badge-vehicle ${isMobil ? 'badge-mobil' : 'badge-motor'}"><i class="fa-solid ${isMobil ? 'fa-car-side' : 'fa-motorcycle'}" style="font-size:0.65rem;"></i> ${isMobil ? 'Mobil' : 'Motor'}</span>`;
         tableRows.push({
           isCurrent: false,
           cells: [
             `<strong>Pribadi</strong>`,
-            `${vc.nama || 'Kendaraan'} <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? 'Mobil' : 'Motor'}</span>`,
+            `${vc.nama || 'Kendaraan'} ${badgeHtml}`,
             `${formatRupiah(vc.bbmBulanan)} <span style="font-size:0.72rem; color:var(--text-muted);">(${formatNumber(vc.literBulanan, 1)} L)</span>`,
             `${formatRupiah(vc.totalPajakBulanan + vc.asuransiBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Pajak ${formatRupiah(vc.totalPajakBulanan)}${vc.asuransiBulanan > 0 ? ` + Asuransi ${formatRupiah(vc.asuransiBulanan)}` : ''})</span>`,
             `${formatRupiah(vc.perawatanBulanan + vc.parkirTolBulanan)} <span style="font-size:0.72rem; color:var(--text-muted); display:block;">(Servis ${formatRupiah(vc.perawatanBulanan)}${vc.parkirTolBulanan > 0 ? ` + Parkir/Tol ${formatRupiah(vc.parkirTolBulanan)}` : ''})</span>`,
@@ -609,19 +611,23 @@ export const TransportModule = {
         'Total TCO / Bulan',
         'Total TCO / Tahun'
       ],
-      rows: vehicleCalculations.map(vc => ({
-        isCurrent: false,
-        cells: [
-          `<strong>${vc.nama || 'Kendaraan'}</strong> <span class="badge" style="font-size:0.68rem;">${vc.jenis === 'mobil' ? 'Mobil' : 'Motor'}</span>`,
-          formatRupiah(vc.bbmBulanan),
-          `${formatRupiah(vc.totalPajakBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.pajak_tahunan || 0)}/thn)</span>`,
-          `${formatRupiah(vc.asuransiBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.asuransi_tahunan || 0)}/thn)</span>`,
-          formatRupiah(vc.perawatanBulanan),
-          formatRupiah(vc.parkirTolBulanan),
-          `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`,
-          `<strong>${formatRupiah(vc.totalBiayaBulanan * 12)}</strong>`
-        ]
-      }))
+      rows: vehicleCalculations.map(vc => {
+        const isMobil = vc.jenis === 'mobil';
+        const badgeHtml = `<span class="badge-vehicle ${isMobil ? 'badge-mobil' : 'badge-motor'}"><i class="fa-solid ${isMobil ? 'fa-car-side' : 'fa-motorcycle'}" style="font-size:0.65rem;"></i> ${isMobil ? 'Mobil' : 'Motor'}</span>`;
+        return {
+          isCurrent: false,
+          cells: [
+            `<strong>${vc.nama || 'Kendaraan'}</strong> ${badgeHtml}`,
+            formatRupiah(vc.bbmBulanan),
+            `${formatRupiah(vc.totalPajakBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.pajak_tahunan || 0)}/thn)</span>`,
+            `${formatRupiah(vc.asuransiBulanan)} <span style="font-size:0.68rem; color:var(--text-muted); display:block; font-weight:normal;">(${formatRupiah(vc.asuransi_tahunan || 0)}/thn)</span>`,
+            formatRupiah(vc.perawatanBulanan),
+            formatRupiah(vc.parkirTolBulanan),
+            `<strong class="highlight">${formatRupiah(vc.totalBiayaBulanan)}</strong>`,
+            `<strong>${formatRupiah(vc.totalBiayaBulanan * 12)}</strong>`
+          ]
+        };
+      })
     };
 
     const chartLabels = [];
