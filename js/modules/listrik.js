@@ -46,8 +46,8 @@ export const ListrikModule = {
   name: 'Listrik PLN',
   icon: 'fa-bolt',
   badge: 'Module Energi',
-  title: 'Kalkulator Estimasi Listrik PLN & PLTS Surya',
-  subtitle: 'Kalkulasi akurat sistem Prabayar (Token), Pascabayar (Tagihan Bulanan), serta penghematan PLTS Atap Energi Terbarukan.',
+  title: 'Kalkulator Estimasi Listrik PLN & PLTS',
+  subtitle: 'Kalkulasi akurat sistem Prabayar (Token), Pascabayar (Tagihan Bulanan), serta penghematan PLTS (Energi Terbarukan).',
 
   defaults: {
     sistem_listrik: 'prabayar', // 'prabayar' | 'pascabayar'
@@ -102,10 +102,10 @@ export const ListrikModule = {
           </label>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
             <button type="button" class="sistem-chip option-chip ${isPrabayar ? 'active' : ''}" data-val="prabayar" style="justify-content: center; font-size: 0.78rem; padding: 9px 8px;">
-              <i class="fa-bolt-lightning fa-solid" style="margin-right: 6px; color: var(--accent-amber);"></i> Prabayar (Token / Listrik Pintar)
+              <i class="fa-bolt-lightning fa-solid" style="margin-right: 6px; font-size: 0.8rem; opacity: 0.85;"></i> Prabayar (Token / Listrik Pintar)
             </button>
             <button type="button" class="sistem-chip option-chip ${isPascabayar ? 'active' : ''}" data-val="pascabayar" style="justify-content: center; font-size: 0.78rem; padding: 9px 8px;">
-              <i class="fa-file-invoice-dollar fa-solid" style="margin-right: 6px; color: var(--accent-sky);"></i> Pascabayar (Tagihan Bulanan)
+              <i class="fa-file-invoice-dollar fa-solid" style="margin-right: 6px; font-size: 0.8rem; opacity: 0.85;"></i> Pascabayar (Tagihan Bulanan)
             </button>
           </div>
           <input type="hidden" id="sistem_listrik" value="${data.sistem_listrik}">
@@ -119,26 +119,26 @@ export const ListrikModule = {
         </div>
       </div>
 
-      <!-- Section 2: PLTS Atap Surya (Energi Terbarukan) - Opsional Toggle On/Off -->
+      <!-- Section 2: PLTS (Energi Terbarukan) - Opsional Toggle On/Off -->
       <div class="card" style="margin-bottom: 14px; border: 1px solid ${isPltsEnabled ? 'rgba(16, 185, 129, 0.4)' : 'var(--border-color)'}; background: ${isPltsEnabled ? 'rgba(16, 185, 129, 0.03)' : 'var(--bg-card)'}; border-radius: var(--radius-md); padding: 12px; transition: all 0.2s ease;">
-        <label for="togglePlts" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; user-select: none;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: ${isPltsEnabled ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-input)'}; color: ${isPltsEnabled ? 'var(--accent-emerald)' : 'var(--text-muted)'}; font-size: 0.95rem;">
+        <label for="togglePlts" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; user-select: none; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); color: var(--text-muted); font-size: 0.9rem; flex-shrink: 0;">
               <i class="fa-solar-panel fa-solid"></i>
             </div>
-            <div>
-              <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                <span>PLTS Atap Surya (Energi Terbarukan)</span>
+            <div style="flex: 1; min-width: 0; padding-right: 6px;">
+              <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>PLTS (Energi Terbarukan)</span>
                 <span style="font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; background: ${isPltsEnabled ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-input)'}; color: ${isPltsEnabled ? 'var(--accent-emerald)' : 'var(--text-muted)'}; font-weight: 600;">
                   ${isPltsEnabled ? 'Aktif' : 'Non-Aktif'}
                 </span>
               </div>
-              <p style="font-size: 0.71rem; color: var(--text-muted); margin: 0;">
+              <p style="font-size: 0.71rem; color: var(--text-muted); margin: 2px 0 0 0; line-height: 1.35;">
                 Gunakan panel surya mandiri untuk memangkas tagihan listrik PLN
               </p>
             </div>
           </div>
-          <input type="checkbox" id="togglePlts" ${isPltsEnabled ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent-emerald); cursor: pointer;">
+          <input type="checkbox" id="togglePlts" ${isPltsEnabled ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent-emerald); cursor: pointer; flex-shrink: 0; margin-left: 8px;">
         </label>
 
         <!-- Container Input PLTS (Tampil Jika Dinyalakan) -->
