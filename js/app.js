@@ -353,7 +353,7 @@ class KehidupanApp {
     this.breakdownTable.querySelector('thead').innerHTML = theadHTML;
     this.breakdownTable.querySelector('tbody').innerHTML = tbodyHTML;
 
-    // Standard Footnote / Keterangan Durasi Kalender (hanya jika tabel memuat durasi 7 hari/mingguan)
+    // Standard Footnote / Keterangan Durasi Kalender (hanya khusus pada modul Hiburan & Sosial)
     let noteContainer = document.getElementById('tableCalendarFootnote');
     if (!noteContainer) {
       noteContainer = document.createElement('div');
@@ -361,8 +361,7 @@ class KehidupanApp {
       this.breakdownTable.closest('.table-wrapper')?.after(noteContainer);
     }
 
-    const hasWeeklyRow = rows.some(r => r.cells.some(c => typeof c === 'string' && (c.includes('7 Hari') || c.includes('Minggu') || c.includes('Siklus Beli'))));
-    if (hasWeeklyRow) {
+    if (this.activeModuleId === 'hiburan') {
       noteContainer.style.display = 'block';
       noteContainer.innerHTML = `
         <div style="margin-top: 10px; padding: 8px 12px; background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.18); border-radius: 8px; display: flex; align-items: flex-start; gap: 8px;">
@@ -370,7 +369,8 @@ class KehidupanApp {
           <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.45;">
             <strong style="color: var(--text-main);">Catatan Standar Kalender:</strong> 
             1 Bulan dinormalisasi <strong>30 Hari</strong> (atau rata-rata <strong>4,33 Minggu</strong> = 52 minggu / 12 bulan). 
-            Jika paket atau pengeluaran dibeli dalam siklus mingguan (7 hari) atau 14 hari, alokasi bulanan dihitung secara proporsional ke 30 hari kalender.
+            Jika Anda mengisi frekuensi mingguan (misal 1x/minggu), total 1 bulan mencakup 4 minggu penuh (28 hari) ditambah selisih 2 hari kalender secara proporsional. 
+            Baris <strong>7 Hari</strong> menghitung murni 1 minggu pas tanpa selisih kalender.
           </div>
         </div>
       `;
