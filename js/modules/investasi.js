@@ -289,7 +289,7 @@ export const InvestasiModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🛡️ Alokasi Dana Darurat</strong>`,
+          `<strong>Alokasi Dana Darurat</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(6,182,212,0.15); color: var(--accent-sky);">Proteksi</span>`,
           `Target ${multiplier_darurat} Bulan (${formatRupiah(targetDanaDarurat)})`,
           formatRupiah(alokasi_darurat_bulan),
@@ -299,7 +299,7 @@ export const InvestasiModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>🏦 Tabungan Rencana Bank</strong>`,
+          `<strong>Tabungan Rencana Bank</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(245,158,11,0.15); color: var(--accent-amber);">Likuid</span>`,
           `Tujuan Jangka Pendek (1-2 Tahun)`,
           formatRupiah(tabungan_rencana_bulan),
@@ -309,7 +309,7 @@ export const InvestasiModule = {
       {
         isCurrent: false,
         cells: [
-          `<strong>📈 Investasi Rutin (DCA)</strong>`,
+          `<strong>Investasi Rutin (DCA)</strong>`,
           `<span class="badge" style="font-size:0.7rem; padding: 2px 8px; background: rgba(16,185,129,0.15); color: var(--accent-emerald);">Growth</span>`,
           `Pertumbuhan Aset (Reksa Dana/SBN/Emas)`,
           formatRupiah(investasi_rutin_bulan),
