@@ -249,6 +249,12 @@ export const AirModule = {
       const res = AirModule.calculate(current);
       const monthlyCost = res.monthlyCost;
 
+      if (monthlyCost <= 0 || (current.dewasa === 0 && current.anak === 0 && current.air_masak_liter === 0)) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Parameter air masih 0. Silakan isi jumlah anggota keluarga atau liter masak terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('air', {
         id: 'air',
         name: 'Air Galon Minum',

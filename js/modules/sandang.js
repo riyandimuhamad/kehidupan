@@ -388,6 +388,12 @@ export const SandangModule = {
         const res = SandangModule.calculate(currentInputs);
         const monthlyCost = res.total_biaya;
 
+        if (monthlyCost <= 0) {
+          notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Estimasi biaya sandang masih Rp 0. Silakan isi alokasi pakaian atau laundry terlebih dahulu.</span>`;
+          setTimeout(() => notice.innerHTML = '', 4500);
+          return;
+        }
+
         BudgetStore.saveBudgetItem('sandang', {
           id: 'sandang',
           name: 'Sandang & Perawatan',

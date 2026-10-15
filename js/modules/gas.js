@@ -200,6 +200,12 @@ export const GasModule = {
       const res = GasModule.calculate(current);
       const monthlyCost = res.monthlyCost;
 
+      if (monthlyCost <= 0 || (current.jumlah_anggota === 0 && current.intensitas_masak === 0)) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Parameter gas masih 0. Silakan isi jumlah anggota keluarga atau jam nyala kompor terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('gas', {
         id: 'gas',
         name: 'Gas LPG Dapur',

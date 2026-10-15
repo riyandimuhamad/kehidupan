@@ -313,6 +313,12 @@ export const AirPamModule = {
         const res = AirPamModule.calculate({ ...currentInputs, hari: 30 });
         const monthlyCost = res.total_biaya;
 
+        if (monthlyCost <= 0) {
+          notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Estimasi biaya air masih Rp 0. Silakan sesuaikan jumlah jiwa atau tarif terlebih dahulu.</span>`;
+          setTimeout(() => notice.innerHTML = '', 4500);
+          return;
+        }
+
         let sourceLabel = 'Air Bersih';
         if (currentInputs.sumber_air === 'sumur') {
           sourceLabel = `Sumur Bor (${currentInputs.orang} jiwa - Listrik & Perawatan)`;

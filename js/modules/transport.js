@@ -438,6 +438,12 @@ export const TransportModule = {
       const currentV = TransportModule.getVehicles();
       const calcResult = TransportModule.calculate({ settings: currentS, vehicles: currentV });
 
+      if (calcResult.grandTotalBiayaBulanan <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Total mobilitas masih Rp 0. Tambahkan kendaraan pribadi atau aktifkan opsi transportasi umum terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('transport', {
         id: 'transport',
         name: 'BBM & Transportasi',

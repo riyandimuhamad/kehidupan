@@ -261,6 +261,12 @@ export const ZakatModule = {
       const currentInputs = ZakatModule.getFormInputs(container);
       const res = ZakatModule.calculateMonthly(currentInputs);
 
+      if (!res.total_biaya || res.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Nominal zakat/donasi masih Rp 0. Aktifkan zakat penghasilan/maal atau masukkan nilai sedekah.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4000);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('zakat', {
         id: 'zakat',
         name: 'Zakat & Donasi Sosial',

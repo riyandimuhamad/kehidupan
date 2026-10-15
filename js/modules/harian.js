@@ -185,6 +185,12 @@ export const HarianModule = {
       const res = HarianModule.calculate(currentInputs);
       const monthlyCost = res.total_biaya;
 
+      if (!monthlyCost || monthlyCost <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Estimasi budget harian masih Rp 0. Masukkan nominal makan siang atau jajan harian.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4000);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('harian', {
         id: 'harian',
         name: 'Budget Harian / Uang Saku',

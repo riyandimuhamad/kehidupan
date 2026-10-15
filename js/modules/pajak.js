@@ -151,6 +151,12 @@ export const PajakModule = {
       const currentInputs = PajakModule.getFormInputs(container);
       const res = PajakModule.calculateMonthly(currentInputs);
 
+      if (!res.total_biaya || res.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Nominal sinking fund pajak masih Rp 0. Masukkan rincian pajak/iuran terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4000);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('pajak', {
         id: 'pajak',
         name: 'PBB & Administrasi Tahunan',

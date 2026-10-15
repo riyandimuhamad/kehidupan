@@ -407,6 +407,12 @@ export const PendidikanModule = {
         const currentChildren = PendidikanModule.getChildren();
         const calcResult = PendidikanModule.calculate({ children: currentChildren });
 
+        if (calcResult.total_biaya <= 0 || currentChildren.length === 0) {
+          notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Belum ada profil anak atau biaya masih Rp 0. Tambahkan profil anak terlebih dahulu.</span>`;
+          setTimeout(() => notice.innerHTML = '', 4500);
+          return;
+        }
+
         BudgetStore.saveBudgetItem('pendidikan', {
           id: 'pendidikan',
           name: 'Pendidikan & Anak',

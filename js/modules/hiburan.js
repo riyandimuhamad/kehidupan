@@ -191,6 +191,12 @@ export const HiburanModule = {
       const currentInputs = HiburanModule.getFormInputs(container);
       const res = HiburanModule.calculateMonthly(currentInputs);
 
+      if (res.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Alokasi hiburan masih Rp 0. Masukkan nominal pengeluaran gaya hidup/hiburan terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('hiburan', {
         id: 'hiburan',
         name: 'Hiburan & Gaya Hidup',

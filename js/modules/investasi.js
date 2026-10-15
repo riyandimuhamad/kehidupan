@@ -192,6 +192,12 @@ export const InvestasiModule = {
       const currentInputs = InvestasiModule.getFormInputs(container);
       const res = InvestasiModule.calculateMonthly(currentInputs);
 
+      if (!res.total_biaya || res.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Nominal tabungan/investasi masih Rp 0. Masukkan alokasi tabungan terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4000);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('tabungan', {
         id: 'tabungan',
         name: 'Tabungan, Darurat & Investasi',

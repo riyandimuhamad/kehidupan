@@ -304,6 +304,12 @@ export const SewaModule = {
       const res = SewaModule.calculate(currentInputs);
       const monthlyCost = res.total_biaya;
 
+      if (monthlyCost <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Biaya tempat tinggal masih Rp 0. Silakan isi nominal biaya hunian terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       const sharingInfo = currentInputs.jumlah_sharing > 1 ? ` (Patungan ${currentInputs.jumlah_sharing} Orang)` : '';
 
       BudgetStore.saveBudgetItem('sewa', {

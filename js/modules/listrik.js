@@ -454,6 +454,12 @@ export const ListrikModule = {
       const currentInputs = ListrikModule.getFormInputs(container);
       const monthlyRes = ListrikModule.calculateMonthly(currentInputs);
 
+      if (!monthlyRes.total_biaya || monthlyRes.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Estimasi tagihan listrik masih Rp 0. Masukkan pemakaian kWh atau peralatan listrik.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4000);
+        return;
+      }
+
       const sistemLabel = currentInputs.sistem_listrik === 'prabayar' ? 'Prabayar (Token)' : 'Pascabayar';
       const pltsNote = currentInputs.enable_plts ? ' + PLTS Surya' : '';
       const dayaLabel = DAYA_LABELS[currentInputs.daya_va] || `${currentInputs.daya_va} VA`;

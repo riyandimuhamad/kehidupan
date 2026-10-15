@@ -327,6 +327,12 @@ export const SembakoModule = {
       const res = SembakoModule.calculate(currentInputs);
       const monthlyCost = res.total_biaya;
 
+      if (monthlyCost <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Total belanja sembako masih Rp 0. Silakan isi kuantitas atau harga kebutuhan dapur terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('sembako', {
         id: 'sembako',
         name: 'Sembako & Dapur',

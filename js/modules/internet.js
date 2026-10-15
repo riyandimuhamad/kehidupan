@@ -283,6 +283,12 @@ export const InternetModule = {
       const currentHp = InternetModule.getHpList();
       const calcResult = InternetModule.calculate({ settings: currentS, hpList: currentHp });
 
+      if (calcResult.total_biaya <= 0) {
+        notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Total biaya internet masih Rp 0. Aktifkan langganan WiFi atau tambahkan paket HP terlebih dahulu.</span>`;
+        setTimeout(() => notice.innerHTML = '', 4500);
+        return;
+      }
+
       BudgetStore.saveBudgetItem('internet', {
         id: 'internet',
         name: 'Internet & Paket Data',

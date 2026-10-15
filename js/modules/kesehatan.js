@@ -412,6 +412,12 @@ export const KesehatanModule = {
         const res = KesehatanModule.calculate({ members: currentMembers });
         const monthlyCost = res.total_biaya;
 
+        if (monthlyCost <= 0 || currentMembers.length === 0) {
+          notice.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-circle-exclamation fa-solid"></i> Belum ada profil anggota keluarga atau biaya masih Rp 0. Tambahkan profil keluarga terlebih dahulu.</span>`;
+          setTimeout(() => notice.innerHTML = '', 4500);
+          return;
+        }
+
         BudgetStore.saveBudgetItem('kesehatan', {
           id: 'kesehatan',
           name: 'Kesehatan & BPJS',
