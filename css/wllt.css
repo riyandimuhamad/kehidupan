@@ -1,0 +1,723 @@
+/* ==========================================================================
+   WLLT / DOMPET & TRANSAKSI HARIAN - MOBILE & DESKTOP STYLES
+   ========================================================================== */
+
+.wllt-container {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 0 16px 120px;
+  position: relative;
+  font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif);
+}
+
+/* Header greeting & switcher */
+.wllt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-top: 8px;
+}
+
+.wllt-greeting h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wllt-greeting p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.wllt-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wllt-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wllt-icon-btn:hover {
+  background: var(--bg-input);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Hero Dark Card (Sekilas Hari Ini / Sisa Budget) */
+.wllt-hero-card {
+  background: linear-gradient(145deg, #0f172a, #1e293b);
+  border-radius: 24px;
+  padding: 24px;
+  color: #fff;
+  box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.4);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wllt-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wllt-hero-subtitle {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.wllt-hero-subtitle i {
+  color: #fbbf24;
+}
+
+.wllt-hero-balance {
+  font-size: 2.1rem;
+  font-weight: 800;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wllt-hero-subtext {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.wllt-progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.wllt-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981, #06b6d4);
+  transition: width 0.5s ease;
+}
+
+.wllt-hero-tag {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  font-size: 0.76rem;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.wllt-hero-cashflow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wllt-cashflow-item span.label {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.wllt-cashflow-item span.val {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.wllt-cashflow-item.income span.val {
+  color: #34d399;
+}
+
+.wllt-cashflow-item.expense span.val {
+  color: #f87171;
+}
+
+/* Scan Struk Pill Banner */
+.wllt-scan-banner {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-radius: 18px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 22px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wllt-scan-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.3);
+}
+
+.wllt-scan-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wllt-scan-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  color: #38bdf8;
+}
+
+.wllt-scan-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.wllt-scan-text p {
+  margin: 0;
+  font-size: 0.74rem;
+  color: #94a3b8;
+}
+
+/* Grid Menu Utama (8 Icons) */
+.wllt-menu-section {
+  margin-bottom: 24px;
+}
+
+.wllt-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.wllt-section-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.wllt-section-header a,
+.wllt-section-header button {
+  font-size: 0.78rem;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.wllt-grid-menu {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.wllt-menu-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 14px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-main);
+}
+
+.wllt-menu-btn:hover,
+.wllt-menu-btn.active {
+  background: var(--bg-input);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.wllt-menu-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.wllt-menu-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Sub-views Header & Tabs */
+.wllt-subtab-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.wllt-subtab-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.wllt-subtab-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* Transactions List Styling */
+.wllt-tx-day-group {
+  margin-bottom: 18px;
+}
+
+.wllt-tx-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.wllt-tx-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  margin-bottom: 8px;
+  transition: transform 0.15s ease;
+}
+
+.wllt-tx-item:hover {
+  transform: translateX(4px);
+  border-color: var(--border-hover);
+}
+
+.wllt-tx-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wllt-tx-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.wllt-tx-info h5 {
+  margin: 0 0 3px 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.wllt-tx-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wllt-tx-amount {
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+
+.wllt-tx-amount.income {
+  color: #10b981;
+}
+
+.wllt-tx-amount.expense {
+  color: #ef4444;
+}
+
+/* Debts & Receivables Cards */
+.wllt-card-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.wllt-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.wllt-card-info h4 {
+  margin: 0 0 2px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.wllt-card-info p {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.wllt-card-amount {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ef4444;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+
+.wllt-card-amount.receivable {
+  color: #10b981;
+}
+
+.wllt-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.76rem;
+}
+
+/* Calendar View */
+.wllt-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.wllt-calendar-day-header {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.wllt-calendar-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  min-height: 52px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.wllt-calendar-cell.current-day {
+  border: 2px solid #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.wllt-calendar-cell .day-num {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.wllt-calendar-cell .day-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.wllt-calendar-cell .day-badge.expense {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.wllt-calendar-cell .day-badge.income {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+/* Bottom Floating Navigation (Mobile & Desktop App) */
+.wllt-bottom-nav {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 28px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 12px;
+  z-index: 999;
+}
+
+body.dark-mode .wllt-bottom-nav {
+  background: rgba(30, 41, 59, 0.92);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.wllt-nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.wllt-nav-item i {
+  font-size: 1.15rem;
+}
+
+.wllt-nav-item.active {
+  color: var(--primary);
+}
+
+.wllt-fab-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border: 3px solid #fff;
+  color: #fff;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+  transform: translateY(-12px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.dark-mode .wllt-fab-btn {
+  border-color: #334155;
+  background: linear-gradient(135deg, var(--primary), var(--accent-emerald));
+}
+
+.wllt-fab-btn:hover {
+  transform: translateY(-16px) scale(1.05);
+}
+
+/* WLLT-Ai Floating Badge & Chat Window */
+.wllt-ai-badge {
+  position: fixed;
+  bottom: 95px;
+  right: 20px;
+  z-index: 998;
+  cursor: pointer;
+  animation: floatBounce 3s ease-in-out infinite;
+}
+
+.wllt-ai-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  padding: 3px;
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+}
+
+.wllt-ai-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+@keyframes floatBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Modal Chat WLLT-Ai */
+.wllt-chat-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1001;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.wllt-chat-modal.open {
+  display: flex;
+}
+
+.wllt-chat-box {
+  width: 100%;
+  max-width: 520px;
+  height: 85vh;
+  background: var(--bg-card);
+  border-radius: 28px 28px 0 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.wllt-chat-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.wllt-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wllt-chat-bubble {
+  max-width: 82%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.wllt-chat-bubble.ai {
+  align-self: flex-start;
+  background: var(--bg-input);
+  color: var(--text-main);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.wllt-chat-bubble.user {
+  align-self: flex-end;
+  background: #10b981;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.wllt-chat-input-bar {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--bg-card);
+}
+
+.wllt-chat-input-bar input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  padding: 10px 18px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.85rem;
+}

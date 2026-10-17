@@ -20,6 +20,7 @@ import { InvestasiModule } from './modules/investasi.js';
 import { PajakModule } from './modules/pajak.js';
 import { ZakatModule } from './modules/zakat.js';
 import { DashboardModule } from './modules/dashboard.js';
+import { DompetModule } from './modules/dompet.js';
 
 import { BudgetStore } from './services/budgetStore.js';
 import { SpreadsheetService } from './services/spreadsheetService.js';
@@ -27,6 +28,9 @@ import { saveToStorage, getFromStorage, formatDate } from './utils/formatters.js
 
 class KehidupanApp {
   constructor() {
+    // Expose app instance globally for cross-module navigation
+    window.AppInstance = this;
+
     // Registry of available modules
     this.modules = {
       beras: BerasModule,
@@ -46,7 +50,8 @@ class KehidupanApp {
       investasi: InvestasiModule,
       pajak: PajakModule,
       zakat: ZakatModule,
-      dashboard: DashboardModule
+      dashboard: DashboardModule,
+      dompet: DompetModule
     };
 
     this.activeModuleId = 'dashboard';
@@ -340,10 +345,34 @@ class KehidupanApp {
   loadModule(moduleId) {
     this.activeModuleId = moduleId;
     const activeModule = this.modules[moduleId];
+    if (!activeModule) return;
+
+    const heroBanner = document.querySelector('.hero-banner');
+    const calcGrid = document.getElementById('calculatorGrid');
+    const dompetContainer = document.getElementById('dompetContainer');
 
     // Update Topbar Breadcrumb
     if (this.topbarCategoryBadge && activeModule) {
       this.topbarCategoryBadge.innerHTML = `<i class="fa-solid ${activeModule.icon}"></i> ${activeModule.name}`;
+    }
+
+    // Special handler for DompetModule (Mobile-First Finance Hub)
+    if (moduleId === 'dompet') {
+      if (heroBanner) heroBanner.style.display = 'none';
+      if (calcGrid) calcGrid.style.display = 'none';
+      if (dompetContainer) {
+        dompetContainer.style.display = 'block';
+        activeModule.render(dompetContainer);
+      }
+      return;
+    }
+
+    // Normal Calculator / Dashboard Modules
+    if (heroBanner) heroBanner.style.display = 'flex';
+    if (calcGrid) calcGrid.style.display = 'grid';
+    if (dompetContainer) {
+      dompetContainer.style.display = 'none';
+      dompetContainer.innerHTML = '';
     }
 
     // Update Hero Metadata
