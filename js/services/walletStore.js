@@ -457,9 +457,15 @@ export const WalletStore = {
 
   // --- USER PROFILE & USERNAME ---
   getUserProfile: () => {
+    const hr = new Date().getHours();
+    let dynamicGreeting = 'Selamat Pagi';
+    if (hr >= 11 && hr < 15) dynamicGreeting = 'Selamat Siang';
+    else if (hr >= 15 && hr < 18) dynamicGreeting = 'Selamat Sore';
+    else if (hr >= 18 || hr < 4) dynamicGreeting = 'Selamat Malam';
+
     return getFromStorage(STORAGE_KEY_USER_PROFILE, {
-      name: 'Prayasa',
-      greeting: 'Selamat Siang',
+      name: 'Riyandi',
+      greeting: dynamicGreeting,
       avatarUrl: ''
     });
   },

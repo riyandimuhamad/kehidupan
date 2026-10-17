@@ -436,7 +436,7 @@ export const DompetModule = {
     }
   },
 
-  // 1. BERANDA (Main Mobile Dashboard)
+  // 1. BERANDA (Main Mobile & Desktop Bento Hub)
   renderBerandaTab: (view, overview, profile, container) => {
     const wallets = WalletStore.getWallets();
 
@@ -444,128 +444,146 @@ export const DompetModule = {
       <!-- Greeting Header -->
       <div class="wllt-header">
         <div class="wllt-greeting">
-          <h2>Selamat Siang, ${profile.name}! 👋</h2>
-          <p>Semangat mengatur keuanganmu hari ini ya! ✨</p>
+          <h2>${profile.greeting || 'Selamat Datang'}, ${profile.name || 'Riyandi'}! 👋</h2>
+          <p>Kelola arus kas, pos kebutuhan, dan pantau kesehatan finansial harianmu.</p>
         </div>
         <div class="wllt-header-actions">
-          <button class="wllt-icon-btn" id="wlltSwitchToPlannerBtn" title="Buka Mode Perencanaan Anggaran Rumah Tangga">
+          <button class="wllt-action-pill-btn" id="wlltSwitchToPlannerBtn" title="Buka Mode Perencanaan Anggaran Rumah Tangga">
             <i class="fa-solid fa-calculator"></i>
+            <span>Mode Planner</span>
           </button>
         </div>
       </div>
 
-      <!-- Hero Card: Sekilas Hari Ini -->
-      <div class="wllt-hero-card">
-        <div class="wllt-hero-subtitle">
-          <i class="fa-bolt fa-solid"></i> SEKILAS HARI INI
-        </div>
-        <div class="wllt-hero-balance">
-          ${formatRupiah(overview.totalSaldo)}
-          <span style="font-size: 0.9rem; font-weight: 500; opacity: 0.7;"><i class="fa-eye fa-solid"></i></span>
-        </div>
-        <div class="wllt-hero-subtext">budget harian yang tersisa & saldo aktif</div>
-
-        <!-- Progress bar pemakaian budget -->
-        <div class="wllt-progress-bar">
-          <div class="wllt-progress-fill" style="width: ${Math.min(100, Math.round((overview.totalPengeluaranBulan / (overview.totalPlannedBudget || 1)) * 100))}%;"></div>
-        </div>
-
-        <!-- Sisa Batas Aman Tag -->
-        <div class="wllt-hero-tag">
-          <i class="fa-circle-check fa-solid"></i>
-          Sisa batas aman harian ~${formatRupiah(overview.sisaBatasAmanHarian)}/hari sampai akhir bulan
-        </div>
-
-        <!-- Cashflow item -->
-        <div class="wllt-hero-cashflow">
-          <div class="wllt-cashflow-item income">
-            <span class="label">Pemasukan Bulan Ini</span>
-            <span class="val">+${formatRupiah(overview.totalPemasukanBulan)}</span>
-          </div>
-          <div class="wllt-cashflow-item expense">
-            <span class="label">Pengeluaran Bulan Ini</span>
-            <span class="val">-${formatRupiah(overview.totalPengeluaranBulan)}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scan Struk Banner -->
-      <div class="wllt-scan-banner" id="wlltScanBannerBtn">
-        <div class="wllt-scan-info">
-          <div class="wllt-scan-icon"><i class="fa-camera fa-solid"></i></div>
-          <div class="wllt-scan-text">
-            <h4>Scan Struk / Catat AI</h4>
-            <p>Ketik bahasa alami, WLLT-Ai catat otomatis ✨</p>
-          </div>
-        </div>
-        <i class="fa-chevron-right fa-solid" style="color: #64748b;"></i>
-      </div>
-
-      <!-- Grid Menu Utama (8 Menu Pilihan) -->
-      <div class="wllt-menu-section">
-        <div class="wllt-section-header">
-          <h3>Menu Utama</h3>
-        </div>
-        <div class="wllt-grid-menu">
-          <button class="wllt-menu-btn" data-sub="budget">
-            <div class="wllt-menu-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;"><i class="fa-wallet fa-solid"></i></div>
-            <span class="wllt-menu-label">Budget</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="goals">
-            <div class="wllt-menu-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="fa-bullseye fa-solid"></i></div>
-            <span class="wllt-menu-label">Goals</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="wallets">
-            <div class="wllt-menu-icon" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;"><i class="fa-gem fa-solid"></i></div>
-            <span class="wllt-menu-label">Dompet</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="hutang">
-            <div class="wllt-menu-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i class="fa-file-invoice-dollar fa-solid"></i></div>
-            <span class="wllt-menu-label">Hutang</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="piutang">
-            <div class="wllt-menu-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="fa-hand-holding-dollar fa-solid"></i></div>
-            <span class="wllt-menu-label">Piutang</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="transaksi">
-            <div class="wllt-menu-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;"><i class="fa-receipt fa-solid"></i></div>
-            <span class="wllt-menu-label">Transaksi</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="laporan">
-            <div class="wllt-menu-icon" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;"><i class="fa-chart-pie fa-solid"></i></div>
-            <span class="wllt-menu-label">Laporan</span>
-          </button>
-          <button class="wllt-menu-btn" data-sub="langganan">
-            <div class="wllt-menu-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;"><i class="fa-arrows-rotate fa-solid"></i></div>
-            <span class="wllt-menu-label">Rutin</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Dompet Aktif Carousel -->
-      <div style="margin-bottom: 24px;">
-        <div class="wllt-section-header">
-          <h3>💳 Dompet Aktif</h3>
-          <span style="font-size: 0.76rem; color: var(--text-muted);">${wallets.length} Dompet</span>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
-          ${wallets.map(w => `
-            <div class="wllt-card-item" style="padding: 12px; margin-bottom: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(37,99,235,0.1); color: ${w.color}; display: flex; align-items: center; justify-content: center;">
-                  <i class="fa-solid ${w.icon}"></i>
-                </div>
-                <span style="font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">${w.type}</span>
-              </div>
-              <h5 style="margin: 0 0 2px 0; font-size: 0.85rem; font-weight: 700;">${w.name}</h5>
-              <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); font-family: var(--font-heading);">${formatRupiah(w.balance)}</div>
+      <!-- Bento Grid Layout: 2 Columns on Desktop, Single Column on Mobile -->
+      <div class="wllt-bento-layout">
+        
+        <!-- Bento Column Left / Main -->
+        <div class="wllt-bento-col-main">
+          
+          <!-- Hero Card: Sekilas Hari Ini -->
+          <div class="wllt-hero-card">
+            <div class="wllt-hero-subtitle">
+              <i class="fa-bolt fa-solid"></i> SEKILAS HARI INI
             </div>
-          `).join('')}
-        </div>
-      </div>
+            <div class="wllt-hero-balance">
+              ${formatRupiah(overview.totalSaldo)}
+              <span style="font-size: 1rem; font-weight: 500; opacity: 0.8;"><i class="fa-eye fa-solid"></i></span>
+            </div>
+            <div class="wllt-hero-subtext">Total Saldo Dompet Aktif & Budget Harian Tersisa</div>
 
-      <!-- Kalender Aktivitas Bulan Ini -->
-      ${DompetModule.renderCalendarSnippet()}
+            <!-- Progress bar pemakaian budget -->
+            <div class="wllt-progress-bar">
+              <div class="wllt-progress-fill" style="width: ${Math.min(100, Math.round((overview.totalPengeluaranBulan / (overview.totalPlannedBudget || 1)) * 100))}%;"></div>
+            </div>
+
+            <!-- Sisa Batas Aman Tag -->
+            <div class="wllt-hero-tag">
+              <i class="fa-circle-check fa-solid"></i>
+              Sisa batas aman harian ~${formatRupiah(overview.sisaBatasAmanHarian)}/hari sampai akhir bulan
+            </div>
+
+            <!-- Cashflow item -->
+            <div class="wllt-hero-cashflow">
+              <div class="wllt-cashflow-item income">
+                <span class="label">Pemasukan Bulan Ini</span>
+                <span class="val">+${formatRupiah(overview.totalPemasukanBulan)}</span>
+              </div>
+              <div class="wllt-cashflow-item expense">
+                <span class="label">Pengeluaran Bulan Ini</span>
+                <span class="val">-${formatRupiah(overview.totalPengeluaranBulan)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scan Struk Banner -->
+          <div class="wllt-scan-banner" id="wlltScanBannerBtn">
+            <div class="wllt-scan-info">
+              <div class="wllt-scan-icon"><i class="fa-robot fa-solid"></i></div>
+              <div class="wllt-scan-text">
+                <h4>WLLT-Ai Smart Assistant</h4>
+                <p>Ketik transaksi bebas atau minta audit keuangan mingguan ✨</p>
+              </div>
+            </div>
+            <button class="primary-btn" style="padding: 8px 16px; font-size: 0.8rem; border-radius: 999px;">
+              Buka AI <i class="fa-chevron-right fa-solid" style="margin-left: 4px;"></i>
+            </button>
+          </div>
+
+          <!-- Grid Menu Utama (8 Menu Pilihan) -->
+          <div class="wllt-menu-section">
+            <div class="wllt-section-header">
+              <h3>Menu Utama & Fitur Finansial</h3>
+            </div>
+            <div class="wllt-grid-menu">
+              <button class="wllt-menu-btn" data-sub="budget">
+                <div class="wllt-menu-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;"><i class="fa-wallet fa-solid"></i></div>
+                <span class="wllt-menu-label">Budget</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="goals">
+                <div class="wllt-menu-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="fa-bullseye fa-solid"></i></div>
+                <span class="wllt-menu-label">Goals</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="wallets">
+                <div class="wllt-menu-icon" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;"><i class="fa-gem fa-solid"></i></div>
+                <span class="wllt-menu-label">Dompet</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="hutang">
+                <div class="wllt-menu-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i class="fa-file-invoice-dollar fa-solid"></i></div>
+                <span class="wllt-menu-label">Hutang</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="piutang">
+                <div class="wllt-menu-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="fa-hand-holding-dollar fa-solid"></i></div>
+                <span class="wllt-menu-label">Piutang</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="transaksi">
+                <div class="wllt-menu-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;"><i class="fa-receipt fa-solid"></i></div>
+                <span class="wllt-menu-label">Transaksi</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="laporan">
+                <div class="wllt-menu-icon" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;"><i class="fa-chart-pie fa-solid"></i></div>
+                <span class="wllt-menu-label">Laporan</span>
+              </button>
+              <button class="wllt-menu-btn" data-sub="langganan">
+                <div class="wllt-menu-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;"><i class="fa-arrows-rotate fa-solid"></i></div>
+                <span class="wllt-menu-label">Rutin</span>
+              </button>
+            </div>
+          </div>
+
+        </div><!-- End col-main -->
+
+        <!-- Bento Column Right / Side -->
+        <div class="wllt-bento-col-side">
+          
+          <!-- Dompet Aktif List -->
+          <div>
+            <div class="wllt-section-header">
+              <h3>💳 Dompet & Rekening Aktif</h3>
+              <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">${wallets.length} Dompet</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+              ${wallets.map(w => `
+                <div class="wllt-card-item" style="padding: 14px; margin-bottom: 0;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <div style="width: 34px; height: 34px; border-radius: 10px; background: rgba(37,99,235,0.12); color: ${w.color}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                      <i class="fa-solid ${w.icon}"></i>
+                    </div>
+                    <span style="font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">${w.type}</span>
+                  </div>
+                  <h5 style="margin: 0 0 2px 0; font-size: 0.88rem; font-weight: 800;">${w.name}</h5>
+                  <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); font-family: var(--font-heading);">${formatRupiah(w.balance)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Kalender Aktivitas Bulan Ini -->
+          ${DompetModule.renderCalendarSnippet()}
+
+        </div><!-- End col-side -->
+
+      </div><!-- End wllt-bento-layout -->
     `;
 
     // Events in Beranda

@@ -457,7 +457,7 @@ class KehidupanApp {
     this.summaryCardsGrid.className = `summary-cards-grid cards-count-${count}`;
 
     this.summaryCardsGrid.innerHTML = cards.map(c => `
-      <div class="result-card ${c.type || ''}">
+      <div class="result-card ${c.type || ''}" title="Klik untuk lihat sorotan">
         <div class="res-icon">
           <i class="fa-solid ${c.icon || 'fa-calculator'}"></i>
         </div>
@@ -468,6 +468,23 @@ class KehidupanApp {
         </div>
       </div>
     `).join('');
+
+    // Material 3 Active Interactive Ripple & Confetti on Cards
+    this.summaryCardsGrid.querySelectorAll('.result-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (window.confetti) {
+          const rect = card.getBoundingClientRect();
+          const x = (rect.left + rect.width / 2) / window.innerWidth;
+          const y = (rect.top + rect.height / 2) / window.innerHeight;
+          window.confetti({
+            particleCount: 25,
+            spread: 50,
+            origin: { x, y },
+            colors: ['#6366f1', '#10b981', '#06b6d4', '#f59e0b']
+          });
+        }
+      });
+    });
   }
 
   renderTable(headers, rows, secondaryTable = null) {

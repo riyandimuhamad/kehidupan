@@ -14,8 +14,9 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Chart.js CDN -->
+  <!-- Chart.js & Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/wllt.css">
@@ -52,8 +53,8 @@
           <span class="group-label"><i class="fa-solid fa-chart-pie"></i> Ikhtisar & Dompet</span>
           <div class="group-btns">
             <button class="nav-btn dashboard-btn active" data-module="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard Keuangan</button>
-            <button class="nav-btn" data-module="dompet" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-weight: 700;">
-              <i class="fa-solid fa-wallet"></i> Dompet & Transaksi <span style="font-size: 0.65rem; background: #10b981; color: #fff; padding: 1px 5px; border-radius: 4px; margin-left: 4px;">WLLT</span>
+            <button class="nav-btn dompet-nav-btn" data-module="dompet">
+              <i class="fa-solid fa-wallet"></i> Dompet & Transaksi <span class="wllt-badge-tag">WLLT</span>
             </button>
           </div>
         </div>
