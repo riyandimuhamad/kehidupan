@@ -592,7 +592,11 @@ export const DompetModule = {
     });
 
     view.querySelector('#wlltSwitchToPlannerBtn')?.addEventListener('click', () => {
-      window.AppInstance?.loadModule('dashboard');
+      if (window.AppInstance) {
+        window.AppInstance.loadModule('dashboard');
+      } else {
+        window.location.href = 'index.html';
+      }
     });
 
     view.querySelectorAll('.wllt-menu-btn').forEach(btn => {
