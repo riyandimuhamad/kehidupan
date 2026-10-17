@@ -1651,6 +1651,80 @@ body.module-dompet-active .app-footer {
   }
 }
 
+@media (max-width: 768px) {
+  /* Prevent labels and unit texts from colliding/overlapping */
+  .form-group label,
+  .form-group label[style*="white-space: nowrap"] {
+    white-space: normal !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    min-height: auto !important;
+    line-height: 1.35 !important;
+    align-items: center !important;
+  }
+
+  .form-group label .unit {
+    margin-left: auto;
+    font-size: 0.72rem;
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+
+  /* Automatically collapse hardcoded inline 2-column & 3-column grids in module forms */
+  #dynamicFormFields div[style*="grid-template-columns: 1fr 1fr"],
+  #dynamicFormFields div[style*="grid-template-columns:1fr 1fr"],
+  #dynamicFormFields div[style*="grid-template-columns: 1fr 1fr 1fr"],
+  #dynamicFormFields div[style*="grid-template-columns:1fr 1fr 1fr"],
+  #dynamicFormFields div[style*="grid-template-columns: repeat(2"],
+  #dynamicFormFields div[style*="grid-template-columns:repeat(2"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Ensure card headers and table headers don't push buttons offscreen or overlap */
+  .card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .table-actions {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  .table-actions .outline-btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    font-size: 0.76rem !important;
+    padding: 8px 10px !important;
+  }
+
+  /* Form control font and padding for touch friendliness without clipping */
+  .form-control {
+    font-size: 0.88rem !important;
+  }
+
+  /* Options chips horizontal flow and tap spacing */
+  .form-options {
+    gap: 6px !important;
+  }
+
+  .option-chip {
+    padding: 6px 10px !important;
+    font-size: 0.74rem !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  /* Cards inside dynamic forms */
+  #dynamicFormFields .card {
+    padding: 14px 12px !important;
+    margin-bottom: 12px !important;
+  }
+}
+
 @media (max-width: 640px) {
   .topbar-breadcrumb {
     display: none;
@@ -1670,6 +1744,19 @@ body.module-dompet-active .app-footer {
     grid-template-columns: 1fr !important;
   }
 
+  .hero-banner {
+    padding: 16px 14px !important;
+  }
+
+  .hero-text h2 {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .hero-text p {
+    font-size: 0.85rem !important;
+  }
+
   .hero-stats {
     flex-direction: column;
     width: 100%;
@@ -1677,6 +1764,17 @@ body.module-dompet-active .app-footer {
 
   .mini-stat-card {
     min-width: 100%;
+    padding: 12px 14px !important;
+  }
+
+  .mini-stat-card .stat-value {
+    font-size: 1.25rem !important;
+  }
+
+  /* Table padding on narrow mobile */
+  .data-table th, .data-table td {
+    padding: 9px 10px !important;
+    font-size: 0.78rem !important;
   }
 }
 
