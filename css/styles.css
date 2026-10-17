@@ -1680,26 +1680,345 @@ body.module-dompet-active .app-footer {
   }
 }
 
+/* Print Only Header (Hidden on Screen) */
+.print-report-header {
+  display: none;
+}
+
 /* Print Styling */
 @media print {
-  body {
-    background: #fff;
-    color: #000;
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 15mm 15mm;
   }
 
-  .app-header, .header-actions, .nav-tabs, .hero-banner, .extensibility-banner, .table-actions, .sm-btn {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Hide interactive web UI chrome */
+  .app-sidebar,
+  .sidebar-backdrop,
+  .app-topbar,
+  .app-header,
+  .header-actions,
+  .nav-tabs,
+  .hero-banner,
+  .hero-stats,
+  .extensibility-banner,
+  .table-actions,
+  .sm-btn,
+  .outline-btn,
+  .primary-btn,
+  .secondary-btn,
+  .card-header .btn,
+  .modal-overlay,
+  .wllt-bottom-nav,
+  .wllt-ai-badge,
+  .wllt-ai-chat-window,
+  .app-footer,
+  .form-card, /* Hide input form controls from print output for clean invoice/report */
+  #analysisChart,
+  .chart-card {
     display: none !important;
   }
 
-  .card {
-    border: 1px solid #ccc !important;
-    box-shadow: none !important;
-    background: #fff !important;
-    color: #000 !important;
+  /* Reset layout grids so table and summaries fill full page width */
+  .app-layout {
+    display: block !important;
   }
 
-  .data-table th, .data-table td {
-    border-bottom: 1px solid #ccc !important;
-    color: #000 !important;
+  .app-main-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .calculator-grid {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin: 0 !important;
+  }
+
+  .results-column {
+    display: block !important;
+    width: 100% !important;
+    gap: 0 !important;
+  }
+
+  /* Show and style official print header */
+  .print-report-header {
+    display: block !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 12px !important;
+    border-bottom: 2px solid #1f2937 !important;
+  }
+
+  .print-header-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 10px !important;
+  }
+
+  .print-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .print-brand-icon {
+    font-size: 26pt !important;
+    color: #059669 !important;
+  }
+
+  .print-app-title {
+    font-size: 20pt !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    line-height: 1.1 !important;
+    color: #111827 !important;
+  }
+
+  .print-app-title span {
+    color: #10b981 !important;
+  }
+
+  .print-app-sub {
+    font-size: 8.5pt !important;
+    color: #6b7280 !important;
+    margin: 2px 0 0 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .print-meta {
+    text-align: right !important;
+  }
+
+  .print-meta-badge {
+    display: inline-block !important;
+    padding: 3px 8px !important;
+    border: 1px solid #059669 !important;
+    background: #ecfdf5 !important;
+    color: #065f46 !important;
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    border-radius: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .print-date {
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+  }
+
+  .print-divider {
+    height: 1px !important;
+    background: #e5e7eb !important;
+    margin: 10px 0 !important;
+  }
+
+  .print-subject-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+  }
+
+  .print-subject-label {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    color: #9ca3af !important;
+    letter-spacing: 1px !important;
+    display: block !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print-subject-title {
+    font-size: 15pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    margin: 0 !important;
+  }
+
+  .print-subject-stat {
+    text-align: right !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+  }
+
+  .print-stat-label {
+    font-size: 7.5pt !important;
+    color: #6b7280 !important;
+    display: block !important;
+  }
+
+  .print-stat-value {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    color: #059669 !important;
+  }
+
+  /* Summary Cards */
+  .summary-cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    gap: 10px !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .summary-card {
+    border: 1px solid #d1d5db !important;
+    background: #f9fafb !important;
+    border-radius: 6px !important;
+    padding: 10px 12px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .summary-card .card-info .card-title {
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .summary-card .card-info .card-value {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    line-height: 1.2 !important;
+  }
+
+  .summary-card .card-info .card-subtext {
+    font-size: 7pt !important;
+    color: #9ca3af !important;
+    margin-top: 3px !important;
+  }
+
+  .summary-card .card-icon {
+    display: none !important;
+  }
+
+  /* Table Card Styling */
+  .card.table-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    page-break-inside: auto !important;
+  }
+
+  .card.table-card .card-header {
+    border-bottom: 1.5px solid #111827 !important;
+    padding: 0 0 8px 0 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .card.table-card .card-header h3 {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    margin: 0 0 3px 0 !important;
+  }
+
+  .card.table-card .card-header .sub-text {
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+  }
+
+  .table-wrapper {
+    overflow: visible !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Data Table */
+  table.data-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8.5pt !important;
+    margin-top: 6px !important;
+  }
+
+  table.data-table thead th {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 7.5pt !important;
+    padding: 8px 10px !important;
+    border: 1px solid #d1d5db !important;
+    text-align: left !important;
+  }
+
+  table.data-table tbody td {
+    padding: 7px 10px !important;
+    border: 1px solid #e5e7eb !important;
+    color: #1f2937 !important;
+    font-size: 8.5pt !important;
+  }
+
+  table.data-table tbody tr:nth-child(even) td {
+    background-color: #f9fafb !important;
+  }
+
+  table.data-table tbody tr.current-row td {
+    background-color: #e0f2fe !important;
+    font-weight: 700 !important;
+    border-top: 1.5px solid #0284c7 !important;
+    border-bottom: 1.5px solid #0284c7 !important;
+  }
+
+  table.data-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Secondary breakdown tables */
+  #secondaryTableContainer {
+    display: block !important;
+    margin-top: 15px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #secondaryTableContainer h4 {
+    font-size: 10.5pt !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    margin-bottom: 6px !important;
   }
 }
+

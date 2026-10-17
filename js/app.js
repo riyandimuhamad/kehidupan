@@ -261,7 +261,7 @@ class KehidupanApp {
 
     // Export CSV & Print
     this.exportCsvBtn.addEventListener('click', () => this.exportCsv());
-    this.printBtn.addEventListener('click', () => window.print());
+    this.printBtn.addEventListener('click', () => this.printReport());
 
     // History Modal
     this.historyBtn.addEventListener('click', () => this.openHistoryModal());
@@ -857,6 +857,40 @@ class KehidupanApp {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  printReport() {
+    const activeModule = this.modules[this.activeModuleId];
+    const moduleTitle = activeModule ? activeModule.name : 'Kebutuhan Rumah Tangga';
+    const now = new Date();
+    const formattedDate = new Intl.DateTimeFormat('id-ID', {
+      dateStyle: 'full',
+      timeStyle: 'short'
+    }).format(now);
+
+    const printDateEl = document.getElementById('printCurrentDate');
+    const printModuleTitleEl = document.getElementById('printModuleTitle');
+    const printQuickValueEl = document.getElementById('printQuickValue');
+    const printQuickLabelEl = document.getElementById('printQuickLabel');
+    const quickTotalCostEl = document.getElementById('quickTotalCost');
+    const quickStatLabel2El = document.getElementById('quickStatLabel2');
+
+    if (printDateEl) printDateEl.textContent = `Dicetak: ${formattedDate}`;
+    if (printModuleTitleEl) printModuleTitleEl.textContent = `Laporan Perencanaan - ${moduleTitle}`;
+    if (printQuickValueEl && quickTotalCostEl) {
+      printQuickValueEl.textContent = quickTotalCostEl.textContent || 'Rp 0';
+    }
+    if (printQuickLabelEl && quickStatLabel2El) {
+      printQuickLabelEl.textContent = `${quickStatLabel2El.textContent}:`;
+    }
+
+    // Set page title temporarily so browser default PDF header/filename matches
+    const originalTitle = document.title;
+    document.title = `Laporan_RumahBudget_${this.activeModuleId}_${now.toISOString().slice(0, 10)}`;
+    window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
   }
 
   initTheme() {
