@@ -1688,8 +1688,8 @@ body.module-dompet-active .app-footer {
 /* Print Styling */
 @media print {
   @page {
-    size: A4 portrait;
-    margin: 12mm 15mm 15mm 15mm;
+    size: auto;
+    margin: 10mm 12mm 12mm 12mm;
   }
 
   *,
@@ -1707,11 +1707,13 @@ body.module-dompet-active .app-footer {
   html, body {
     background: #ffffff !important;
     color: #111827 !important;
-    font-size: 10pt !important;
-    line-height: 1.4 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
   }
 
   /* Hide interactive web UI chrome */
@@ -1735,21 +1737,26 @@ body.module-dompet-active .app-footer {
   .wllt-ai-badge,
   .wllt-ai-chat-window,
   .app-footer,
-  .form-card, /* Hide input form controls from print output for clean invoice/report */
+  .form-card,
   #analysisChart,
   .chart-card {
     display: none !important;
   }
 
-  /* Reset layout grids so table and summaries fill full page width */
+  /* Reset layout grids so table and summaries fill full page width without overflow */
   .app-layout {
     display: block !important;
+    width: 100% !important;
+    min-height: auto !important;
+    overflow: visible !important;
   }
 
   .app-main-wrapper {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
   }
 
   .main-content {
@@ -1757,6 +1764,7 @@ body.module-dompet-active .app-footer {
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    overflow: visible !important;
   }
 
   .calculator-grid {
@@ -1764,19 +1772,22 @@ body.module-dompet-active .app-footer {
     grid-template-columns: 1fr !important;
     gap: 0 !important;
     margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .results-column {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
     gap: 0 !important;
   }
 
   /* Show and style official print header */
   .print-report-header {
     display: block !important;
-    margin-bottom: 20px !important;
-    padding-bottom: 12px !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
     border-bottom: 2px solid #1f2937 !important;
   }
 
@@ -1784,22 +1795,22 @@ body.module-dompet-active .app-footer {
     display: flex !important;
     justify-content: space-between !important;
     align-items: flex-start !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 8px !important;
   }
 
   .print-brand {
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
 
   .print-brand-icon {
-    font-size: 26pt !important;
+    font-size: 22pt !important;
     color: #059669 !important;
   }
 
   .print-app-title {
-    font-size: 20pt !important;
+    font-size: 18pt !important;
     font-weight: 800 !important;
     margin: 0 !important;
     line-height: 1.1 !important;
@@ -1811,7 +1822,7 @@ body.module-dompet-active .app-footer {
   }
 
   .print-app-sub {
-    font-size: 8.5pt !important;
+    font-size: 7.5pt !important;
     color: #6b7280 !important;
     margin: 2px 0 0 !important;
     text-transform: uppercase !important;
@@ -1824,25 +1835,25 @@ body.module-dompet-active .app-footer {
 
   .print-meta-badge {
     display: inline-block !important;
-    padding: 3px 8px !important;
+    padding: 2px 7px !important;
     border: 1px solid #059669 !important;
     background: #ecfdf5 !important;
     color: #065f46 !important;
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     font-weight: 700 !important;
     border-radius: 4px !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
   }
 
   .print-date {
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     color: #6b7280 !important;
   }
 
   .print-divider {
     height: 1px !important;
     background: #e5e7eb !important;
-    margin: 10px 0 !important;
+    margin: 8px 0 !important;
   }
 
   .print-subject-row {
@@ -1852,16 +1863,16 @@ body.module-dompet-active .app-footer {
   }
 
   .print-subject-label {
-    font-size: 7.5pt !important;
+    font-size: 7pt !important;
     font-weight: 700 !important;
     color: #9ca3af !important;
-    letter-spacing: 1px !important;
+    letter-spacing: 0.8px !important;
     display: block !important;
     margin-bottom: 2px !important;
   }
 
   .print-subject-title {
-    font-size: 15pt !important;
+    font-size: 13pt !important;
     font-weight: 800 !important;
     color: #111827 !important;
     margin: 0 !important;
@@ -1871,64 +1882,86 @@ body.module-dompet-active .app-footer {
     text-align: right !important;
     background: #f9fafb !important;
     border: 1px solid #e5e7eb !important;
-    padding: 6px 14px !important;
-    border-radius: 6px !important;
+    padding: 4px 12px !important;
+    border-radius: 5px !important;
   }
 
   .print-stat-label {
-    font-size: 7.5pt !important;
+    font-size: 7pt !important;
     color: #6b7280 !important;
     display: block !important;
   }
 
   .print-stat-value {
-    font-size: 12pt !important;
+    font-size: 11pt !important;
     font-weight: 800 !important;
     color: #059669 !important;
   }
 
-  /* Summary Cards */
+  /* Summary Cards - Support .result-card cleanly without ellipsis truncation */
   .summary-cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
-    gap: 10px !important;
-    margin-bottom: 20px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    width: 100% !important;
   }
 
-  .summary-card {
+  .summary-cards-grid .result-card {
+    flex: 1 1 calc(25% - 8px) !important;
+    min-width: 120px !important;
     border: 1px solid #d1d5db !important;
     background: #f9fafb !important;
     border-radius: 6px !important;
-    padding: 10px 12px !important;
+    padding: 8px 10px !important;
     box-shadow: none !important;
+    transform: none !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  .summary-card .card-info .card-title {
-    font-size: 8pt !important;
-    color: #6b7280 !important;
-    font-weight: 600 !important;
-    margin-bottom: 4px !important;
+  .summary-cards-grid .result-card::before {
+    display: none !important;
   }
 
-  .summary-card .card-info .card-value {
-    font-size: 12pt !important;
+  .summary-cards-grid .result-card .res-icon {
+    display: none !important;
+  }
+
+  .summary-cards-grid .result-card .res-info {
+    overflow: visible !important;
+  }
+
+  .summary-cards-grid .result-card .res-label {
+    font-size: 7.5pt !important;
+    color: #4b5563 !important;
+    font-weight: 700 !important;
+    margin-bottom: 3px !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    line-height: 1.25 !important;
+  }
+
+  .summary-cards-grid .result-card .res-val {
+    font-size: 11pt !important;
     font-weight: 800 !important;
     color: #111827 !important;
-    line-height: 1.2 !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
   }
 
-  .summary-card .card-info .card-subtext {
-    font-size: 7pt !important;
-    color: #9ca3af !important;
+  .summary-cards-grid .result-card .res-note {
+    font-size: 6.8pt !important;
+    color: #6b7280 !important;
     margin-top: 3px !important;
-  }
-
-  .summary-card .card-icon {
-    display: none !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   /* Table Card Styling */
@@ -1938,38 +1971,49 @@ body.module-dompet-active .app-footer {
     padding: 0 !important;
     margin: 0 !important;
     background: transparent !important;
+    width: 100% !important;
+    max-width: 100% !important;
     page-break-inside: auto !important;
   }
 
   .card.table-card .card-header {
     border-bottom: 1.5px solid #111827 !important;
-    padding: 0 0 8px 0 !important;
-    margin-bottom: 10px !important;
+    padding: 0 0 6px 0 !important;
+    margin-bottom: 8px !important;
   }
 
   .card.table-card .card-header h3 {
-    font-size: 12pt !important;
+    font-size: 11pt !important;
     font-weight: 800 !important;
     color: #111827 !important;
-    margin: 0 0 3px 0 !important;
+    margin: 0 0 2px 0 !important;
   }
 
   .card.table-card .card-header .sub-text {
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     color: #6b7280 !important;
+  }
+
+  .card.table-card .card-body {
+    padding: 0 !important;
   }
 
   .table-wrapper {
     overflow: visible !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  /* Data Table */
+  /* Data Table: Strict 100% width, dynamic wrap, no horizontal clipping */
   table.data-table {
     width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
     border-collapse: collapse !important;
-    font-size: 8.5pt !important;
-    margin-top: 6px !important;
+    font-size: 7.5pt !important;
+    margin-top: 4px !important;
+    page-break-inside: auto !important;
   }
 
   table.data-table thead th {
@@ -1977,17 +2021,41 @@ body.module-dompet-active .app-footer {
     color: #111827 !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    font-size: 7.5pt !important;
-    padding: 8px 10px !important;
-    border: 1px solid #d1d5db !important;
+    font-size: 6.8pt !important;
+    padding: 6px 6px !important;
+    border: 1px solid #9ca3af !important;
     text-align: left !important;
+    vertical-align: middle !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    line-height: 1.25 !important;
   }
 
   table.data-table tbody td {
-    padding: 7px 10px !important;
-    border: 1px solid #e5e7eb !important;
+    padding: 5px 6px !important;
+    border: 1px solid #d1d5db !important;
     color: #1f2937 !important;
-    font-size: 8.5pt !important;
+    font-size: 7.5pt !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: normal !important;
+  }
+
+  table.data-table tbody td strong {
+    color: #111827 !important;
+  }
+
+  table.data-table tbody td strong.highlight {
+    color: #059669 !important;
+    font-size: 8pt !important;
+  }
+
+  table.data-table tbody td .badge {
+    display: inline-block !important;
+    font-size: 6.5pt !important;
+    padding: 1px 4px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 3px !important;
   }
 
   table.data-table tbody tr:nth-child(even) td {
@@ -1995,10 +2063,10 @@ body.module-dompet-active .app-footer {
   }
 
   table.data-table tbody tr.current-row td {
-    background-color: #e0f2fe !important;
+    background-color: #f0fdf4 !important;
     font-weight: 700 !important;
-    border-top: 1.5px solid #0284c7 !important;
-    border-bottom: 1.5px solid #0284c7 !important;
+    border-top: 1.5px solid #059669 !important;
+    border-bottom: 1.5px solid #059669 !important;
   }
 
   table.data-table tr {
@@ -2009,16 +2077,23 @@ body.module-dompet-active .app-footer {
   /* Secondary breakdown tables */
   #secondaryTableContainer {
     display: block !important;
-    margin-top: 15px !important;
+    margin-top: 14px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    width: 100% !important;
   }
 
   #secondaryTableContainer h4 {
-    font-size: 10.5pt !important;
+    font-size: 9.5pt !important;
     font-weight: 700 !important;
     color: #111827 !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 3px !important;
+  }
+
+  #secondaryTableContainer p {
+    font-size: 7.2pt !important;
+    color: #6b7280 !important;
+    margin-bottom: 5px !important;
   }
 }
 
