@@ -1448,10 +1448,15 @@ body.dark-mode .data-table tbody tr.current-row:hover td {
 /* Footer */
 .app-footer {
   text-align: center;
-  padding-top: 30px;
+  padding: 30px 20px 40px;
   color: var(--text-subtle);
   font-size: 0.82rem;
   border-top: 1px solid var(--border-color);
+  margin-top: 30px;
+}
+
+body.module-dompet-active .app-footer {
+  display: none !important;
 }
 
 /* Modal Overlay */

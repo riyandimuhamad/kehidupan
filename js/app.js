@@ -356,8 +356,9 @@ class KehidupanApp {
       this.topbarCategoryBadge.innerHTML = `<i class="fa-solid ${activeModule.icon}"></i> ${activeModule.name}`;
     }
 
-    // Special handler for DompetModule (Mobile-First Finance Hub)
+    // Special handler for DompetModule (Mobile & Desktop Bento Hub)
     if (moduleId === 'dompet') {
+      document.body.classList.add('module-dompet-active');
       if (heroBanner) heroBanner.style.display = 'none';
       if (calcGrid) calcGrid.style.display = 'none';
       if (dompetContainer) {
@@ -368,6 +369,7 @@ class KehidupanApp {
     }
 
     // Normal Calculator / Dashboard Modules
+    document.body.classList.remove('module-dompet-active');
     if (heroBanner) heroBanner.style.display = 'flex';
     if (calcGrid) calcGrid.style.display = 'grid';
     if (dompetContainer) {
