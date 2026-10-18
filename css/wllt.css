@@ -1,42 +1,58 @@
 /* ==========================================================================
-   RUMAHBUDGET - WLLT FINANCE HUB STYLES (M3 & BENTO GRID ADAPTIVE)
-   Supports Light & Dark Modes seamlessly, Mobile & Desktop Responsive.
+   RUMAHBUDGET - WLLT PERSONAL FINANCE HUB (NEO-FINTECH REDESIGN)
+   Modern, Sleek, Professional Financial Dashboard.
    ========================================================================== */
 
-/* Main Container: Mobile (centered 540px) vs Desktop (wide Bento Grid up to 1280px) */
+/* Main Container: Adaptif Phone, Tablet & Desktop */
 .wllt-container {
   width: 100%;
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 10px 24px 130px;
+  padding: 12px 24px 130px;
   box-sizing: border-box;
-  font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
 }
 
 @media (max-width: 768px) {
   .wllt-container {
-    max-width: 540px;
-    padding: 6px 14px 120px;
+    padding: 8px 16px 120px;
   }
 }
 
-/* Header greeting & profile switcher */
+/* Header Greeting & Profile */
 .wllt-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 12px 0 6px;
+  margin-bottom: 22px;
+  padding: 8px 0 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
+.wllt-greeting-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #10b981;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
 .wllt-greeting h2 {
-  font-size: 1.6rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--text-main);
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
   font-family: var(--font-heading, 'Outfit', sans-serif);
   letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
 .wllt-greeting p {
@@ -56,7 +72,7 @@
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  border-radius: 999px;
+  border-radius: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-main);
@@ -75,18 +91,64 @@
 }
 
 /* ==========================================================================
+   SUB-NAVIGATION PILL BAR (Horizontal Scrollable Tabs)
+   ========================================================================== */
+.wllt-subnav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.wllt-subnav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.wllt-subnav-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.wllt-subnav-chip:hover {
+  color: var(--text-main);
+  border-color: var(--border-highlight);
+  background: var(--bg-card-hover);
+}
+
+.wllt-subnav-chip.active {
+  background: #10b981;
+  color: #ffffff !important;
+  border-color: #10b981;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+/* ==========================================================================
    DESKTOP BENTO GRID LAYOUT
    ========================================================================== */
 .wllt-bento-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 22px;
 }
 
 @media (min-width: 1024px) {
   .wllt-bento-layout {
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 24px;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 26px;
     align-items: start;
   }
 
@@ -104,17 +166,17 @@
 }
 
 /* ==========================================================================
-   HERO STATS CARD (Material 3 Dynamic Surface with Gradient)
+   HERO STATS CARD (Neo-Fintech Card Design)
    ========================================================================== */
 .wllt-hero-card {
-  background: linear-gradient(135deg, #091322 0%, #112239 50%, #0f2c42 100%);
-  border-radius: 26px;
+  background: linear-gradient(135deg, #0e1726 0%, #172439 60%, #0d2836 100%);
+  border-radius: 24px;
   padding: 26px;
   color: #ffffff;
-  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.45);
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 body.light-mode .wllt-hero-card {
@@ -122,58 +184,92 @@ body.light-mode .wllt-hero-card {
   color: #ffffff;
 }
 
-.wllt-hero-card::before {
+.wllt-hero-card::after {
   content: '';
   position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%);
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.28), transparent 70%);
   border-radius: 50%;
   pointer-events: none;
+}
+
+.wllt-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .wllt-hero-subtitle {
   font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
+  letter-spacing: 1.2px;
+  font-weight: 800;
   color: #94a3b8;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 8px;
 }
 
 .wllt-hero-subtitle i {
-  color: #f59e0b;
+  color: #10b981;
+}
+
+.wllt-hero-health-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.wllt-hero-balance-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
 }
 
 .wllt-hero-balance {
-  font-size: 2.3rem;
+  font-size: 2.35rem;
   font-weight: 800;
   font-family: var(--font-heading, 'Outfit', sans-serif);
   letter-spacing: -0.5px;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   color: #ffffff;
+  line-height: 1.1;
 }
 
 .wllt-hero-subtext {
   font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 18px;
+}
+
+/* Progress bar pemakaian budget */
+.wllt-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
   color: #cbd5e1;
-  margin-bottom: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 .wllt-progress-bar {
   height: 8px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .wllt-progress-fill {
@@ -183,57 +279,107 @@ body.light-mode .wllt-hero-card {
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.wllt-hero-tag {
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #34d399;
-  font-size: 0.78rem;
-  padding: 10px 14px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
-
-.wllt-hero-cashflow {
+/* Quick Action Strip inside Hero Card */
+.wllt-hero-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.wllt-cashflow-item span.label {
-  display: block;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  color: #94a3b8;
+.wllt-hero-action-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #ffffff;
+  font-size: 0.74rem;
   font-weight: 700;
-  margin-bottom: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.wllt-cashflow-item span.val {
+.wllt-hero-action-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.wllt-hero-action-btn i {
+  font-size: 1.1rem;
+}
+
+.wllt-hero-action-btn.green i { color: #34d399; }
+.wllt-hero-action-btn.red i { color: #f87171; }
+.wllt-hero-action-btn.purple i { color: #c084fc; }
+
+/* Cashflow 2 Column Summary */
+.wllt-cashflow-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.wllt-cashflow-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wllt-cashflow-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.wllt-cashflow-icon.inc {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.wllt-cashflow-icon.exp {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.wllt-cashflow-data .cf-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.wllt-cashflow-data .cf-val {
+  font-size: 1.18rem;
   font-weight: 800;
   font-family: var(--font-heading, 'Outfit', sans-serif);
 }
 
-.wllt-cashflow-item.income span.val {
-  color: #34d399;
-}
-
-.wllt-cashflow-item.expense span.val {
-  color: #f87171;
-}
+.wllt-cashflow-data .cf-val.inc { color: #10b981; }
+.wllt-cashflow-data .cf-val.exp { color: #ef4444; }
 
 /* ==========================================================================
-   SCAN STRUK & AI CHAT BANNER
+   AI COPILOT STRIP
    ========================================================================== */
 .wllt-scan-banner {
   background: var(--bg-card);
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -246,8 +392,8 @@ body.light-mode .wllt-hero-card {
 
 .wllt-scan-banner:hover {
   transform: translateY(-2px);
-  border-color: var(--primary);
-  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.15);
+  border-color: #10b981;
+  box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.15);
 }
 
 .wllt-scan-info {
@@ -257,20 +403,20 @@ body.light-mode .wllt-hero-card {
 }
 
 .wllt-scan-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: var(--primary-light);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(16, 185, 129, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
-  color: var(--primary);
+  color: #10b981;
 }
 
 .wllt-scan-text h4 {
   margin: 0 0 2px 0;
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--text-main);
 }
